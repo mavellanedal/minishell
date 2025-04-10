@@ -69,6 +69,7 @@ all: ${NAME}
 # Create static library
 ${NAME}: ${OBJS_LIBFT} $(OBJS_BONUS) ${OBJS_PRINTF} ${OBJS_GNL}
 	ar rc ${NAME} ${OBJS_LIBFT} ${OBJS_BONUS} ${OBJS_PRINTF} ${OBJS_GNL}
+	@echo "$(GREEN)Project compiled!$(DEF_COLOR)"
 	ranlib ${NAME}
 
 # Bonus target
@@ -83,10 +84,12 @@ ${NAME}: ${OBJS_LIBFT} $(OBJS_BONUS) ${OBJS_PRINTF} ${OBJS_GNL}
 # Clean up object files
 clean:
 	${RM} ${OBJS_LIBFT} ${OBJS_BONUS} ${OBJS_PRINTF} $(OBJS_GNL)
+	@echo "$(RED)Cleaned object files$(DEF_COLOR)"
 
 # Clean and remove the library
 fclean: clean
 	${RM} ${NAME}
+	@echo "$(RED)Cleaned all binaries$(DEF_COLOR)"
 
 # Rebuild the project
 re: fclean all
