@@ -3,13 +3,49 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/04/10 13:43:23 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/04/22 17:54:27 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../lib/ultimate_libft.h"
+#ifndef MINISHELL_H
+# define MINISHELL_H
 
+# include "../lib/ultimate_libft.h"
+# include <readline/readline.h>
+# include <readline/history.h>
+# include <stdbool.h>
 
+// Redirección (<, >, >>, <<) con su archivo de destino
+typedef struct s_redir
+{
+	int				type;
+	char			*file;
+	struct s_redir	*next;
+}	t_redir;
+
+// Comando con sus argumentos y redirecciones
+typedef struct s_cmd
+{
+	char			**args;
+	t_redir			*redirs;
+	struct s_cmd	*next;
+}	t_cmd;
+
+// Estado interno usado para separar tokens (normi)
+typedef struct s_token_state
+{
+	int	i;
+	int	j;
+	int	start;
+}	t_token_state;
+
+// parse/tokenize.c
+bool	is_quotes(const char *str, int i);
+void	save_token(char **tokens, t_token_state *s, const char *input, int end);
+void	handle_token(char **tokens, const char *input, t_token_state *s);
+char	**tokenize_input(const char *input);
+
+#endif

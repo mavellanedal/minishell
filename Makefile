@@ -26,7 +26,8 @@ LIBFT_LIB = $(LIBFTDIR)/ultimate_libft.a
 RM = rm -f
 HEADER = include/minishell.h
 
-SRCS = src/main.c\
+SRCS = 	src/main.c \
+		src/parser/tokenizer.c \
 
 OBJS = $(SRCS:.c=.o)
 
@@ -38,7 +39,7 @@ all: make_libft $(NAME)
 
 $(NAME): $(LIBFTDIR_LIB) $(OBJS)
 	@echo "$(GREEN)Compiling minishell!$(DEF_COLOR)"
-	$(CC) $(FLAGS) $(OBJS) $(LIBFT_LIB) -o $(NAME)
+	$(CC) $(FLAGS) $(OBJS) $(LIBFT_LIB) -o $(NAME) -lreadline
 	@echo "$(GREEN)Minishell compiled!$(DEF_COLOR)"
 
 make_libft:
