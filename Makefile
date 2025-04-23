@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+         #
+#    By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/10 13:29:38 by mavellan          #+#    #+#              #
-#    Updated: 2025/04/10 13:45:10 by mavellan         ###   ########.fr        #
+#    Updated: 2025/04/23 19:03:59 by ebalana-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,6 +28,8 @@ HEADER = include/minishell.h
 
 SRCS = 	src/main.c \
 		src/parser/tokenizer.c \
+		src/parser/expand.c \
+		src/parser/handle.c \
 
 OBJS = $(SRCS:.c=.o)
 
