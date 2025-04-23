@@ -1,2 +1,2 @@
 # minishell
-42 minishell Project - Ernes Baleñá and Miquel Avellaneda
+42 minishell Project - Ernes Balañá and Miquel Avellaneda
