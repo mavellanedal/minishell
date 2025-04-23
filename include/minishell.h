@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/04/22 17:54:27 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/04/23 16:17:19 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,12 @@ typedef struct s_token_state
 	int	j;
 	int	start;
 }	t_token_state;
+
+typedef struct s_quote_state
+{
+	bool	in_single;
+	bool	in_double;
+}	t_quote_state;
 
 // parse/tokenize.c
 bool	is_quotes(const char *str, int i);

@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:40:15 by mavellan          #+#    #+#             */
-/*   Updated: 2025/04/22 18:12:45 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/04/23 16:18:15 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ int	main(void)
 {
 	char	*line;
 	char	**tokens;
+	int		i;
 
 	while (1)
 	{
@@ -45,13 +46,19 @@ int	main(void)
 		{
 			add_history(line);
 			tokens = tokenize_input(line);
-			for (int i = 0; tokens[i]; i++)
-				printf("Token[%d]: %s\n", i, tokens[i]);
-			for (int i = 0; tokens[i]; i++)
-				free(tokens[i]);
-			free(tokens);
+			if (tokens)
+			{
+				i = 0;
+				while (tokens[i])
+				{
+					printf("Token[%d]: %s\n", i, tokens[i]);
+					free(tokens[i]);
+					i++;
+				}
+				free(tokens);
+			}
 		}
 		free(line);
 	}
-	return 0;
+	return (0);
 }
