@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/04/24 15:42:39 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/04/24 17:08:54 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include "../lib/ultimate_libft.h"
 # include <readline/readline.h>
 # include <readline/history.h>
+# include <sys/wait.h>
 # include <stdbool.h>
 
 # define UNCLOSED_QUOTES	"Error: Unclosed quotes\n"
@@ -84,5 +85,11 @@ int				expand_named_variable(const char *str, int i, \
 char *result, int j);
 void			process_expansion_loop(t_expand_state *s);
 char			*expand_variables(const char *str, int last_status);
+
+// utils.c | BUILT INS
+int				ft_echo(char **args);
+int				ft_pwd(void);
+int				ft_exit(char **args);
+int				execute_builtin(char **args);
 
 #endif
