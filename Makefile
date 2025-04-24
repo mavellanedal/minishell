@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+         #
+#    By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/10 13:29:38 by mavellan          #+#    #+#              #
-#    Updated: 2025/04/10 13:45:10 by mavellan         ###   ########.fr        #
+#    Updated: 2025/04/23 19:03:59 by ebalana-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,7 +26,10 @@ LIBFT_LIB = $(LIBFTDIR)/ultimate_libft.a
 RM = rm -f
 HEADER = include/minishell.h
 
-SRCS = src/main.c\
+SRCS = 	src/main.c \
+		src/parser/tokenizer.c \
+		src/parser/expand.c \
+		src/parser/handle.c \
 
 OBJS = $(SRCS:.c=.o)
 
@@ -38,7 +41,7 @@ all: make_libft $(NAME)
 
 $(NAME): $(LIBFTDIR_LIB) $(OBJS)
 	@echo "$(GREEN)Compiling minishell!$(DEF_COLOR)"
-	$(CC) $(FLAGS) $(OBJS) $(LIBFT_LIB) -o $(NAME)
+	$(CC) $(FLAGS) $(OBJS) $(LIBFT_LIB) -o $(NAME) -lreadline
 	@echo "$(GREEN)Minishell compiled!$(DEF_COLOR)"
 
 make_libft:

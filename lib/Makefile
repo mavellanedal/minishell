@@ -20,6 +20,7 @@ SRCS_LIBFT = libft/ft_isalpha.c \
 			 libft/ft_memchr.c \
 			 libft/ft_memcmp.c \
 			 libft/ft_strnstr.c \
+			 libft/ft_strndup.c \
 			 libft/ft_atoi.c \
 			 libft/ft_strdup.c \
 			 libft/ft_calloc.c \
