@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:40:15 by mavellan          #+#    #+#             */
-/*   Updated: 2025/04/23 19:44:16 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/04/24 17:09:28 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,34 +46,38 @@ int	main(void)
 		{
 			add_history(line);
 			tokens = tokenize_input(line, last_status);
-
 			if (tokens)
 			{
-				pid_t pid = fork();
-				if (pid == 0)
-				{
-					for (int i = 0; tokens[i]; i++)
-					{
-						char *expanded = remove_quotes_and_expand(tokens[i], last_status);
-						free(tokens[i]);
-						tokens[i] = expanded;
-					}
-					execvp(tokens[0], tokens);
-					exit(127);
-				}
-				else
-				{
-					int status;
-					waitpid(pid, &status, 0);
-					last_status = WIFEXITED(status) ? WEXITSTATUS(status) : 1;
-				}
+				// Expandir variables y eliminar comillas
 				for (int i = 0; tokens[i]; i++)
-					printf("Token[%d]: %s\n", i, tokens[i]);
-
-				for (int i = 0; tokens[i]; i++)
+				{
+					char *expanded = remove_quotes_and_expand(tokens[i], last_status);
 					free(tokens[i]);
-				free(tokens);
+					tokens[i] = expanded;
+				}
+
+				// 👇 Ejecutar builtins si corresponde
+				if (execute_builtin(tokens) == -1)
+				{
+					// No es builtin → comando externo
+					pid_t pid = fork();
+					if (pid == 0)
+					{
+						execvp(tokens[0], tokens);
+						perror("execvp");
+						exit(127);
+					}
+					else
+					{
+						int status;
+						waitpid(pid, &status, 0);
+						last_status = WIFEXITED(status) ? WEXITSTATUS(status) : 1;
+					}
+				}
 			}
+			for (int i = 0; tokens && tokens[i]; i++)
+				free(tokens[i]);
+			free(tokens);
 		}
 		free(line);
 	}
