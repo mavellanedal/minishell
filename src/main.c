@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:40:15 by mavellan          #+#    #+#             */
-/*   Updated: 2025/04/23 17:35:29 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/04/24 13:46:29 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,22 +63,26 @@
 // 	return (0);
 // }
 
-int	main(void)
+int	main(int argc, char **argv, char *env[])
 {
 	char	*line;
 	char	**tokens;
 	int		last_status = 0;
+	t_env	env_struct;
 
+	(void)argc;
+	(void)argv;
+	env_struct.env = env;
 	while (1)
 	{
+		env_struct.paths = get_path_array(env_struct.env);
 		line = readline("minishell$ ");
 		if (!line)
-			break;
+			break ;
 		if (*line)
 		{
 			add_history(line);
 			tokens = tokenize_input(line, last_status);
-
 			if (tokens)
 			{
 				pid_t pid = fork();

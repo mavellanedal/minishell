@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/04/23 19:34:59 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/04/24 13:44:27 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,23 +62,38 @@ typedef struct s_expand_state
 	int			last_status;
 }	t_expand_state;
 
+typedef struct s_env
+{
+	char		**env;
+	char		**paths;
+}	t_env;
+
 // parse/tokenize.c
 t_quote_state	get_quote_state(const char *str, int up_to);
-void	save_token(char **tokens, t_token_state *s, const char *input, int end);
-void	init_token_state(t_token_state *s, int last_status);
-char	**tokenize_input(const char *input, int last_status);
+void			save_token(char **tokens, t_token_state *s, \
+const char *input, int end);
+void			init_token_state(t_token_state *s, int last_status);
+char			**tokenize_input(const char *input, int last_status);
 
 // parse/handle.c
-void	handle_end(char **tokens, const char *input, t_token_state *s);
-void	handle_redirection(char **tokens, const char *input, t_token_state *s);
-void	handle_dollar(t_expand_state *s);
-void	handle_quote(char c, bool *in_single, bool *in_double, bool *has_single);
+void			handle_end(char **tokens, const char *input, t_token_state *s);
+void			handle_redirection(char **tokens, const char *input, \
+t_token_state *s);
+void			handle_dollar(t_expand_state *s);
+void			handle_quote(char c, bool *in_single, bool *in_double, \
+bool *has_single);
 
 // parse/expand.c
-char	*strip_quotes(const char *token, bool *has_single);
-char	*remove_quotes_and_expand(const char *token, int last_status);
-int		expand_named_variable(const char *str, int i, char *result, int j);
-void	process_expansion_loop(t_expand_state *s);
-char	*expand_variables(const char *str, int last_status);
+char			*strip_quotes(const char *token, bool *has_single);
+char			*remove_quotes_and_expand(const char *token, int last_status);
+int				expand_named_variable(const char *str, int i, \
+char *result, int j);
+void			process_expansion_loop(t_expand_state *s);
+char			*expand_variables(const char *str, int last_status);
+
+// executor/executor.c
+char			**complete_paths(char **paths);
+char			**get_path_array(char **env);
+char			*get_env_value(char **env, const char *name);
 
 #endif

@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+         #
+#    By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/10 13:29:38 by mavellan          #+#    #+#              #
-#    Updated: 2025/04/23 19:03:59 by ebalana-         ###   ########.fr        #
+#    Updated: 2025/04/24 13:43:21 by mavellan         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,6 +30,8 @@ SRCS = 	src/main.c \
 		src/parser/tokenizer.c \
 		src/parser/expand.c \
 		src/parser/handle.c \
+		src/executor/getters.c \
+		src/executor/executor.c \
 
 OBJS = $(SRCS:.c=.o)
 
