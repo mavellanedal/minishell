@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 18:38:07 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/04/24 15:25:14 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/04/24 15:41:05 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,10 @@ void	handle_quote(char c, bool *in_single, bool *in_double, bool *has_single)
 
 void	handle_dollar(t_expand_state *s)
 {
+	int		start;
+	char	*var;
+	char	*val;
+
 	if (s->str[*(s->i)] == '?')
 	{
 		s->j += sprintf(s->res + s->j, "%d", s->last_status);
@@ -75,14 +79,14 @@ void	handle_dollar(t_expand_state *s)
 	}
 	else if (ft_isalpha(s->str[*(s->i)]) || s->str[*(s->i)] == '_')
 	{
-		int start = *(s->i);
+		start = *(s->i);
 		while (ft_isalnum(s->str[*(s->i)]) || s->str[*(s->i)] == '_')
 			(*(s->i))++;
-		char *var = ft_substr(s->str, start, *(s->i) - start);
-		char *val = getenv(var);
-		free(var);
+		var = ft_substr(s->str, start, *(s->i) - start);
+		val = getenv(var);
 		if (val)
 			s->j += sprintf(s->res + s->j, "%s", val);
+		free(var);
 	}
 	else
 	{
