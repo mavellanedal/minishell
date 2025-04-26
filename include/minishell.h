@@ -68,6 +68,22 @@ typedef struct s_env
 	char		**paths;
 }	t_env;
 
+typedef struct s_command
+{
+	char	**tokens;
+	char	*infile;
+	char	*outfile;
+	int		append;
+}	t_command;
+
+typedef struct s_data
+{
+	t_cmd	*cmds;
+	int		num_cmds;
+	char	**envp;
+} t_data;
+
+
 // parse/tokenize.c
 t_quote_state	get_quote_state(const char *str, int up_to);
 void			save_token(char **tokens, t_token_state *s, \
