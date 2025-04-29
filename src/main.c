@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:40:15 by mavellan          #+#    #+#             */
-/*   Updated: 2025/04/24 17:09:28 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/04/29 17:13:56 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,14 @@
 // 	return 0;
 // }
 
-int	main(void)
+int main(int argc, char **argv, char **envp)
 {
 	char	*line;
 	char	**tokens;
 	int		last_status = 0;
+	t_env	*env_list;
 
+	env_list = create_env_list(envp);
 	while (1)
 	{
 		line = readline("minishell$ ");
@@ -57,7 +59,7 @@ int	main(void)
 				}
 
 				// 👇 Ejecutar builtins si corresponde
-				if (execute_builtin(tokens) == -1)
+				if (execute_builtin(tokens, env_list) == -1)
 				{
 					// No es builtin → comando externo
 					pid_t pid = fork();

@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 16:10:41 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/04/24 17:03:46 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/04/29 18:07:24 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,13 @@ int	ft_echo(char **args)
 {
 	int	i;
 	int	newline;
-
+	
 	i = 1;
 	newline = 1;
-	if (args[1] && ft_strcmp(args[1], "-n") == 0)
+	while (args[i] && args[i][0] == '-' && ft_strncmp(args[i], "-n", 2) == 0)
 	{
 		newline = 0;
-		i = 2;
+		i++;
 	}
 	while (args[i])
 	{
@@ -49,25 +49,55 @@ int	ft_pwd(void)
 
 int	ft_exit(char **args)
 {
-	printf("exit\n");
+	int	exit_code;
 	if (args[1])
 	{
-		if (!ft_isnumber(args[1]))
-		{
-			printf("exit: %s: numeric argument required\n", args[1]);
-			exit(255);
-		}
-		if (args[2])
-		{
-			printf("exit: too many arguments\n");
-			return (1);
-		}
-		exit(ft_atoi(args[1]) % 256);
+		exit_code = ft_atoi(args[1]);
+		if (exit_code < 0)
+			exit_code = 255;
 	}
-	exit(0);
+	else
+		exit_code = 0;
+	printf("exit\n");
+	exit(exit_code);
 }
 
-int	execute_builtin(char **args)
+t_env *create_env_list(char **envp)
+{
+	t_env	*head;
+	t_env	*node;
+	int		i;
+	
+	head = NULL;
+	i = 0;
+	while (envp[i])
+	{
+		char **split = ft_split(envp[i], '=');
+		node = malloc(sizeof(t_env));
+		node->key = strdup(split[0]);
+		node->value = strdup(split[1] ? split[1] : "");
+		node->next = head;
+		head = node;
+		free(split[0]);
+		if (split[1]) free(split[1]);
+		free(split);
+		i++;
+	}
+	return (head);
+}
+
+int ft_env(t_env *env_list)
+{
+    while (env_list)
+    {
+        if (env_list->value)
+            printf("%s=%s\n", env_list->key, env_list->value);
+        env_list = env_list->next;
+    }
+    return (0);
+}
+
+int execute_builtin(char **args, t_env *env_list)
 {
 	if (!args || !args[0])
 		return (-1);
@@ -77,5 +107,7 @@ int	execute_builtin(char **args)
 		return (ft_pwd());
 	if (ft_strcmp(args[0], "exit") == 0)
 		return (ft_exit(args));
+	if (ft_strcmp(args[0], "env") == 0)
+		return (ft_env(env_list));
 	return (-1);
 }

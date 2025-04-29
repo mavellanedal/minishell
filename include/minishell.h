@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/04/24 17:08:54 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/04/29 17:13:47 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,14 @@ typedef struct s_cmd
 	t_redir			*redirs;
 	struct s_cmd	*next;
 }	t_cmd;
+
+// Env estructura
+typedef struct s_env
+{
+    char *key;
+    char *value;
+    struct s_env *next;
+} t_env;
 
 // Estado interno usado para separar tokens (normi)
 typedef struct s_token_state
@@ -90,6 +98,7 @@ char			*expand_variables(const char *str, int last_status);
 int				ft_echo(char **args);
 int				ft_pwd(void);
 int				ft_exit(char **args);
-int				execute_builtin(char **args);
+int				execute_builtin(char **args, t_env *env_list);
+t_env			*create_env_list(char **envp);
 
 #endif
