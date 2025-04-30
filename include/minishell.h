@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/04/30 13:08:09 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/04/30 13:52:00 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@
 # include <stdbool.h>
 
 # define UNCLOSED_QUOTES	"Error: Unclosed quotes\n"
+# define UNSET				"unset: `%s`: not a valid identifier\n"
+# define ENV				"env: %s: No such file or directory\n"
 
 // Redirección (<, >, >>, <<) con su archivo de destino
 typedef struct s_redir
@@ -98,11 +100,14 @@ char			*expand_variables(const char *str, int last_status);
 int				ft_echo(char **args);
 int				ft_pwd(void);
 int				ft_exit(char **args);
+int				ft_unset(char **args, t_env **env_list);
 int				execute_builtin(char **args, t_env *env_list);
 
 // built_ins/env.c
 t_env			*create_node_env(char *env_var);
 t_env			*create_env_list(char **envp);
 int				ft_env(t_env *env_list);
+int				is_valid_identifier(const char *str);
+void			remove_env_key(t_env **env_list, const char *key);
 
 #endif

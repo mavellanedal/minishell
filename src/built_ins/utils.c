@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 16:10:41 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/04/30 13:16:17 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/04/30 13:52:08 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,26 @@ int	ft_exit(char **args)
 	exit(exit_code);
 }
 
+int	ft_unset(char **args, t_env **env_list)
+{
+	int	i;
+
+	i = 1;
+	while (args[i])
+	{
+		if (!is_valid_identifier(args[i]))
+		{
+			fprintf(stderr, UNSET, args[i]);
+		}
+		else
+		{
+			remove_env_key(env_list, args[i]);
+		}
+		i++;
+	}
+	return (0);
+}
+
 /*
 127 → comando no encontrado.
 126 → comando encontrado pero no ejecutable (por ejemplo, sin permisos).
@@ -90,10 +110,12 @@ int	execute_builtin(char **args, t_env *env_list)
 	{
 		if (args[1] != NULL)
 		{
-			fprintf(stderr, "env: %s: No such file or directory\n", args[1]);
+			fprintf(stderr, ENV, args[1]);
 			return (127);
 		}
 		return (ft_env(env_list));
 	}
+	if (ft_strcmp(args[0], "unset") == 0)
+		return (ft_unset(args, &env_list));
 	return (-1);
 }
