@@ -6,7 +6,7 @@
 #    By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/10 13:29:38 by mavellan          #+#    #+#              #
-#    Updated: 2025/04/30 12:35:56 by ebalana-         ###   ########.fr        #
+#    Updated: 2025/04/30 16:00:55 by ebalana-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,6 +32,7 @@ SRCS = 	src/main.c \
 		src/parser/handle.c \
 		src/built_ins/utils.c \
 		src/built_ins/env.c \
+		src/built_ins/cd_handler.c \
 
 OBJS = $(SRCS:.c=.o)
 

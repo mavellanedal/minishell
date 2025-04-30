@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:40:15 by mavellan          #+#    #+#             */
-/*   Updated: 2025/04/30 13:11:39 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/04/30 16:42:32 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,17 +32,17 @@ int	main(int argc, char **argv, char **envp)
 			tokens = tokenize_input(line, last_status);
 			if (tokens)
 			{
-				printf("-----------------------------------------\n");
+				//printf("-----------------------------------------\n");
 				int i = 0;
 				while (tokens[i])
 				{
-					printf("Tokens[%d] = [%s]\n", i, tokens[i]);
+					//printf("Tokens[%d] = [%s]\n", i, tokens[i]);
 					char *expanded = remove_quotes_and_expand(tokens[i], last_status);
 					free(tokens[i]);
 					tokens[i] = expanded;
 					i++;
 				}
-				printf("-----------------------------------------\n");
+				//printf("-----------------------------------------\n");
 				// Si no es built-in, ejecutar como externo
 				if (execute_builtin(tokens, env_list) == -1)
 				{

@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/04/30 13:52:00 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/04/30 16:46:15 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,5 +109,13 @@ t_env			*create_env_list(char **envp);
 int				ft_env(t_env *env_list);
 int				is_valid_identifier(const char *str);
 void			remove_env_key(t_env **env_list, const char *key);
+
+// built_ins/cd_handler.c
+char			*get_env_value(t_env *env, const char *key);
+void			update_env_var(t_env *env, const char *key, \
+const char *new_value);
+char			*get_cd_target(char **args, t_env *env);
+void			update_pwd_vars(t_env *env, char *oldpwd);
+int				ft_cd(char **args, t_env *env);
 
 #endif
