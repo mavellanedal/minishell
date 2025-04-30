@@ -6,7 +6,7 @@
 #    By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/10 13:29:38 by mavellan          #+#    #+#              #
-#    Updated: 2025/04/24 16:29:40 by ebalana-         ###   ########.fr        #
+#    Updated: 2025/04/30 12:35:56 by ebalana-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,7 +30,8 @@ SRCS = 	src/main.c \
 		src/parser/tokenizer.c \
 		src/parser/expand.c \
 		src/parser/handle.c \
-		src/utils.c \
+		src/built_ins/utils.c \
+		src/built_ins/env.c \
 
 OBJS = $(SRCS:.c=.o)
 
