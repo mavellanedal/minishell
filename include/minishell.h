@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/04/30 16:46:15 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/02 17:08:42 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ int				ft_exit(char **args);
 int				ft_unset(char **args, t_env **env_list);
 int				execute_builtin(char **args, t_env *env_list);
 
-// built_ins/env.c
+// built_ins/env_handler.c
 t_env			*create_node_env(char *env_var);
 t_env			*create_env_list(char **envp);
 int				ft_env(t_env *env_list);
@@ -117,5 +117,13 @@ const char *new_value);
 char			*get_cd_target(char **args, t_env *env);
 void			update_pwd_vars(t_env *env, char *oldpwd);
 int				ft_cd(char **args, t_env *env);
+
+// built_ins/export_handler.c
+
+int	ft_export(char **args, t_env **env);
+
+void load_env_from_file(t_env **env);
+void save_env_to_file(t_env *env);
+
 
 #endif

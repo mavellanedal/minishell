@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env.c                                              :+:      :+:    :+:   */
+/*   env_handler.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 12:33:10 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/04/30 13:52:17 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/02 18:29:10 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ void	remove_env_key(t_env **env_list, const char *key)
 	prev = NULL;
 	while (curr)
 	{
-		if (ft_strcmp(curr->key, key) == 0)
+		if (curr->key && ft_strcmp(curr->key, key) == 0)
 		{
 			if (prev)
 				prev->next = curr->next;

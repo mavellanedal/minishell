@@ -6,11 +6,43 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:40:15 by mavellan          #+#    #+#             */
-/*   Updated: 2025/04/30 16:42:32 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/02 17:11:14 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
+
+void load_env_from_file(t_env **env)
+{
+    FILE *file = fopen(".env", "r");
+    if (!file) return;
+
+    char line[1024];
+    while (fgets(line, sizeof(line), file)) {
+        char *key = strtok(line, "=");
+        char *value = strtok(NULL, "\n");
+        if (key && value) {
+            add_or_update_env(env, key, value);
+        }
+    }
+    fclose(file);
+}
+
+void save_env_to_file(t_env *env) {
+    FILE *file = fopen(".env", "w");
+    if (!file) {
+        perror("No se pudo abrir el archivo .env para guardar las variables");
+        return;
+    }
+
+    t_env *tmp = env;
+    while (tmp) {
+        fprintf(file, "%s=%s\n", tmp->key, tmp->value ? tmp->value : "(null)");
+        tmp = tmp->next;
+    }
+
+    fclose(file);
+}
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -21,6 +53,7 @@ int	main(int argc, char **argv, char **envp)
 
 	last_status = 0;
 	env_list = create_env_list(envp);
+	load_env_from_file(&env_list);
 	while (1)
 	{
 		line = readline("minishell$ ");
@@ -32,17 +65,17 @@ int	main(int argc, char **argv, char **envp)
 			tokens = tokenize_input(line, last_status);
 			if (tokens)
 			{
-				//printf("-----------------------------------------\n");
+				printf("-----------------------------------------\n");
 				int i = 0;
 				while (tokens[i])
 				{
-					//printf("Tokens[%d] = [%s]\n", i, tokens[i]);
+					printf("Tokens[%d] = [%s]\n", i, tokens[i]);
 					char *expanded = remove_quotes_and_expand(tokens[i], last_status);
 					free(tokens[i]);
 					tokens[i] = expanded;
 					i++;
 				}
-				//printf("-----------------------------------------\n");
+				printf("-----------------------------------------\n");
 				// Si no es built-in, ejecutar como externo
 				if (execute_builtin(tokens, env_list) == -1)
 				{
@@ -71,5 +104,6 @@ int	main(int argc, char **argv, char **envp)
 		}
 		free(line);
 	}
+	save_env_to_file(env_list);
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 16:10:41 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/04/30 15:55:15 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/02 18:36:06 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,8 @@ int	ft_unset(char **args, t_env **env_list)
 		}
 		i++;
 	}
+	save_env_to_file(*env_list);
+	load_env_from_file(*env_list);
 	return (0);
 }
 
@@ -119,5 +121,7 @@ int	execute_builtin(char **args, t_env *env_list)
 		return (ft_unset(args, &env_list));
 	if (ft_strcmp(args[0], "cd") == 0)
 		return (ft_cd(args, env_list));
+	if (ft_strcmp(args[0], "export") == 0)
+    	return (ft_export(args, &env_list));
 	return (-1);
 }
