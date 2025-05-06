@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/02 17:08:42 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/06 18:12:49 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ int				ft_echo(char **args);
 int				ft_pwd(void);
 int				ft_exit(char **args);
 int				ft_unset(char **args, t_env **env_list);
-int				execute_builtin(char **args, t_env *env_list);
+int				execute_builtin(char **args, t_env **env_list); //int				execute_builtin(char **args, t_env *env_list);
 
 // built_ins/env_handler.c
 t_env			*create_node_env(char *env_var);
@@ -122,8 +122,8 @@ int				ft_cd(char **args, t_env *env);
 
 int	ft_export(char **args, t_env **env);
 
-void load_env_from_file(t_env **env);
-void save_env_to_file(t_env *env);
 
+char	**env_list_to_array(t_env *env_list);
+void	free_env_array(char **env_array);
 
 #endif

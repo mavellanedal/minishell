@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 16:10:41 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/05/02 18:36:06 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/06 18:11:47 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,8 +87,6 @@ int	ft_unset(char **args, t_env **env_list)
 		}
 		i++;
 	}
-	save_env_to_file(*env_list);
-	load_env_from_file(*env_list);
 	return (0);
 }
 
@@ -98,6 +96,8 @@ int	ft_unset(char **args, t_env **env_list)
 1 → error genérico.
 0 → todo OK.
 */
+/*
+MODIFICACION CODI AMB NOU CANVI EXECVE
 int	execute_builtin(char **args, t_env *env_list)
 {
 	if (!args || !args[0])
@@ -121,7 +121,37 @@ int	execute_builtin(char **args, t_env *env_list)
 		return (ft_unset(args, &env_list));
 	if (ft_strcmp(args[0], "cd") == 0)
 		return (ft_cd(args, env_list));
+		return (ft_cd(args, env_list));
 	if (ft_strcmp(args[0], "export") == 0)
     	return (ft_export(args, &env_list));
+	return (-1);
+}
+*/
+
+int	execute_builtin(char **args, t_env **env_list)
+{
+	if (!args || !args[0])
+		return (-1);
+	if (ft_strcmp(args[0], "echo") == 0)
+		return (ft_echo(args));
+	if (ft_strcmp(args[0], "pwd") == 0)
+		return (ft_pwd());
+	if (ft_strcmp(args[0], "exit") == 0)
+		return (ft_exit(args));
+	if (ft_strcmp(args[0], "env") == 0)
+	{
+		if (args[1] != NULL)
+		{
+			fprintf(stderr, ENV, args[1]);
+			return (127);
+		}
+		return (ft_env(*env_list));
+	}
+	if (ft_strcmp(args[0], "unset") == 0)
+		return (ft_unset(args, env_list));
+	if (ft_strcmp(args[0], "cd") == 0)
+		return (ft_cd(args, *env_list));
+	if (ft_strcmp(args[0], "export") == 0)
+		return (ft_export(args, env_list));
 	return (-1);
 }

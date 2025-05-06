@@ -6,42 +6,71 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:40:15 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/02 17:11:14 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/06 17:27:12 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-void load_env_from_file(t_env **env)
+/*
+	Convierte la lista de variables de entorno a un array para execve
+*/
+char	**env_list_to_array(t_env *env_list)
 {
-    FILE *file = fopen(".env", "r");
-    if (!file) return;
+	int		count;
+	int		len;
+	t_env	*temp;
+	char	**env_array;
 
-    char line[1024];
-    while (fgets(line, sizeof(line), file)) {
-        char *key = strtok(line, "=");
-        char *value = strtok(NULL, "\n");
-        if (key && value) {
-            add_or_update_env(env, key, value);
-        }
-    }
-    fclose(file);
+	count = 0;
+	temp = env_list;
+	while (temp)
+	{
+		if (temp->value) // Solo contamos si tiene valor
+			count++;
+		temp = temp->next;
+	}
+	// Asignar memoria para el array
+	env_array = malloc(sizeof(char *) * (count + 1));
+	if (!env_array)
+		return (NULL);
+	// Copiar variables al array
+	temp = env_list;
+	count = 0;
+	while (temp)
+	{
+		if (temp->value) // Solo añadimos si tiene valor
+		{
+			len = ft_strlen(temp->key) + ft_strlen(temp->value) + 2; // +2 para '=' y '\0'
+			env_array[count] = malloc(len);
+			if (env_array[count])
+			{
+				snprintf(env_array[count], len, "%s=%s", temp->key, temp->value);
+				count++;
+			}
+		}
+		temp = temp->next;
+	}
+	env_array[count] = NULL;
+	return (env_array);
 }
 
-void save_env_to_file(t_env *env) {
-    FILE *file = fopen(".env", "w");
-    if (!file) {
-        perror("No se pudo abrir el archivo .env para guardar las variables");
-        return;
-    }
+/*
+	Liberar memoria del array de entorno
+*/
+void	free_env_array(char **env_array)
+{
+	int i;
 
-    t_env *tmp = env;
-    while (tmp) {
-        fprintf(file, "%s=%s\n", tmp->key, tmp->value ? tmp->value : "(null)");
-        tmp = tmp->next;
-    }
-
-    fclose(file);
+	i = 0;
+	if (!env_array)
+		return;
+	while (env_array[i])
+	{
+		free(env_array[i]);
+		i++;
+	}
+	free(env_array);
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -52,13 +81,12 @@ int	main(int argc, char **argv, char **envp)
 	t_env	*env_list;
 
 	last_status = 0;
-	env_list = create_env_list(envp);
-	load_env_from_file(&env_list);
+	env_list = create_env_list(envp);    
 	while (1)
 	{
 		line = readline("minishell$ ");
 		if (!line)
-			break ; //Ctrl+D
+			break; // Ctrl+D
 		if (*line)
 		{
 			add_history(line);
@@ -76,14 +104,17 @@ int	main(int argc, char **argv, char **envp)
 					i++;
 				}
 				printf("-----------------------------------------\n");
+				
 				// Si no es built-in, ejecutar como externo
-				if (execute_builtin(tokens, env_list) == -1)
+				if (execute_builtin(tokens, &env_list) == -1)
 				{
+					char **env_array = env_list_to_array(env_list);
 					pid_t pid = fork();
 					if (pid == 0)
 					{
-						execvp(tokens[0], tokens);
-						perror("execvp");
+						execve(tokens[0], tokens, env_array);
+						perror("execve");
+						free_env_array(env_array);
 						exit(127);
 					}
 					else
@@ -92,6 +123,7 @@ int	main(int argc, char **argv, char **envp)
 						waitpid(pid, &status, 0);
 						last_status = WIFEXITED(status) ? WEXITSTATUS(status) : 1;
 					}
+					free_env_array(env_array);
 				}
 			}
 			int j = 0;
@@ -104,6 +136,5 @@ int	main(int argc, char **argv, char **envp)
 		}
 		free(line);
 	}
-	save_env_to_file(env_list);
 	return (0);
 }
