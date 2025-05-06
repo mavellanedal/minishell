@@ -6,14 +6,15 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:40:15 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/06 17:27:12 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/06 18:47:34 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
 /*
-	Convierte la lista de variables de entorno a un array para execve
+ * Función actualizada para convertir la lista de env a un array de strings para execve
+ * Solo incluye variables que tienen has_value = 1
 */
 char	**env_list_to_array(t_env *env_list)
 {
@@ -26,7 +27,7 @@ char	**env_list_to_array(t_env *env_list)
 	temp = env_list;
 	while (temp)
 	{
-		if (temp->value) // Solo contamos si tiene valor
+		if (temp->has_value) // Solo contamos si has_value = 1
 			count++;
 		temp = temp->next;
 	}
@@ -39,7 +40,7 @@ char	**env_list_to_array(t_env *env_list)
 	count = 0;
 	while (temp)
 	{
-		if (temp->value) // Solo añadimos si tiene valor
+		if (temp->has_value) // Solo añadimos si has_value = 1
 		{
 			len = ft_strlen(temp->key) + ft_strlen(temp->value) + 2; // +2 para '=' y '\0'
 			env_array[count] = malloc(len);

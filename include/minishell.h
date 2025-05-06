@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/06 18:12:49 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/06 18:46:36 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ typedef struct s_env
 {
 	char			*key;
 	char			*value;
+	int         	has_value;
 	struct s_env	*next;
 }	t_env;
 
