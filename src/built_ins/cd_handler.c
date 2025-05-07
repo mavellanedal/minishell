@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 14:52:32 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/04/30 16:47:06 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/06 18:09:51 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,14 @@ int	ft_cd(char **args, t_env *env)
 {
 	char	*target;
 	char	*oldpwd;
+	int		count_arg;
 
+	count_arg = ft_arrlen(args);
+	if (count_arg > 2)
+	{
+		write(2, "cd: too many arguments\n", 23);
+		return (1);
+	}
 	oldpwd = getcwd(NULL, 0);
 	target = get_cd_target(args, env);
 	if (!target)

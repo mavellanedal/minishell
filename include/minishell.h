@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/04/30 16:46:15 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/06 18:46:36 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ typedef struct s_env
 {
 	char			*key;
 	char			*value;
+	int         	has_value;
 	struct s_env	*next;
 }	t_env;
 
@@ -101,9 +102,9 @@ int				ft_echo(char **args);
 int				ft_pwd(void);
 int				ft_exit(char **args);
 int				ft_unset(char **args, t_env **env_list);
-int				execute_builtin(char **args, t_env *env_list);
+int				execute_builtin(char **args, t_env **env_list); //int				execute_builtin(char **args, t_env *env_list);
 
-// built_ins/env.c
+// built_ins/env_handler.c
 t_env			*create_node_env(char *env_var);
 t_env			*create_env_list(char **envp);
 int				ft_env(t_env *env_list);
@@ -117,5 +118,13 @@ const char *new_value);
 char			*get_cd_target(char **args, t_env *env);
 void			update_pwd_vars(t_env *env, char *oldpwd);
 int				ft_cd(char **args, t_env *env);
+
+// built_ins/export_handler.c
+
+int	ft_export(char **args, t_env **env);
+
+
+char	**env_list_to_array(t_env *env_list);
+void	free_env_array(char **env_array);
 
 #endif
