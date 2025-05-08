@@ -6,7 +6,7 @@
 /*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 12:50:46 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/02 14:39:54 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/05/08 12:36:09 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ void	execute_command(t_cmd *cmd, char **envp, int *pipe_fds)
 	}
 	if (pid == 0)
 	{
-		apply_redirection(cmd);
+		apply_redirections(cmd);
 		if (pipe_fds != NULL)
 		{
 			dup2(pipe_fds[1], STDOUT_FILENO);

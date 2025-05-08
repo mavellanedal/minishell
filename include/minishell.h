@@ -6,7 +6,7 @@
 /*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/08 12:16:39 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/05/08 12:27:35 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ typedef struct s_env
 {
 	char			*key;
 	char			*value;
-	int         	has_value;
+	int				has_value;
 	struct s_env	*next;
 }	t_env;
 
@@ -85,7 +85,7 @@ typedef struct s_data
 	t_cmd	*cmds;
 	int		num_cmds;
 	char	**envp;
-} t_data;
+}	t_data;
 
 
 // parse/tokenize.c
@@ -114,13 +114,13 @@ void			handle_quote(char c, bool *in_single, bool *in_double, \
 bool *has_single);
 
 // parse/expand.c
-char					*strip_quotes(const char *token, bool *has_single);
-char					*remove_quotes_and_expand(const char *token, int last_status);
-int						expand_named_variable(const char *str, int i, \
+char			*strip_quotes(const char *token, bool *has_single);
+char			*remove_quotes_and_expand(const char *token, int last_status);
+int				expand_named_variable(const char *str, int i, \
 \
 char *result, int j);
-void					process_expansion_loop(t_expand_state *s);
-char					*expand_variables(const char *str, int last_status);
+void			process_expansion_loop(t_expand_state *s);
+char			*expand_variables(const char *str, int last_status);
 
 // built_ins/utils.c
 int				ft_echo(char **args);
@@ -137,7 +137,7 @@ int				is_valid_identifier(const char *str);
 void			remove_env_key(t_env **env_list, const char *key);
 
 // built_ins/cd_handler.c
-char			*get_env_value(t_env *env, const char *key);
+char			*get_env_value(t_env **env, const char *key);
 void			update_env_var(t_env *env, const char *key, \
 const char *new_value);
 char			*get_cd_target(char **args, t_env *env);
@@ -146,11 +146,11 @@ int				ft_cd(char **args, t_env *env);
 
 // built_ins/export_handler.c
 
-int	ft_export(char **args, t_env **env);
+int				ft_export(char **args, t_env **env);
 
 
-char	**env_list_to_array(t_env *env_list);
-void	free_env_array(char **env_array);
+char			**env_list_to_array(t_env *env_list);
+void			free_env_array(char **env_array);
 
 // executor/executor.c
 static void		apply_redirections(t_cmd *cmd);
@@ -168,8 +168,11 @@ char			**free_partial_envp(char **envp, int until);
 // executor/utils.c
 int				check_redir_type(t_redir *r);
 
+// executor/getters.c
+char			**complete_paths(char **paths);
+
 // executor/child_process.c
-static void	setup_child_process(t_cmd *cmd, int prev_read, \
+static void		setup_child_process(t_cmd *cmd, int prev_read, \
 int *pipe_fds, char **envp);
 static pid_t	fork_and_execute_command(t_cmd *cmd, char **envp, \
 int prev_read, int *pipe_fds);
