@@ -6,7 +6,7 @@
 /*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 16:19:27 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/05/02 13:38:59 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/05/08 12:16:59 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <string.h>
 # include <stddef.h>
 
+int		ft_arrlen(char **arr);
 int		ft_isalpha(int c);
 int		ft_isdigit(int c);
 int		ft_isdigit_str(char *str);

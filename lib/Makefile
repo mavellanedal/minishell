@@ -1,5 +1,6 @@
 # Source files
 SRCS_LIBFT = libft/ft_isalpha.c \
+			 libft/ft_arrlen.c \
 			 libft/ft_isdigit.c \
 			 libft/ft_isdigit_str.c \
 			 libft/ft_isalnum.c \
