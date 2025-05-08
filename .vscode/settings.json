@@ -1,4 +1,5 @@
 {
-	"C_Cpp.errorSquiggles": "disabled",
-	"C_Cpp.default.compilerPath": ""
+    "files.associations": {
+        "minishell.h": "c"
+    }
 }

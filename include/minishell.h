@@ -6,7 +6,7 @@
 /*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/02 13:15:55 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/05/02 14:36:43 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,15 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <sys/wait.h>
+# include <sys/types.h>
 # include <stdbool.h>
 
 # define UNCLOSED_QUOTES	"Error: Unclosed quotes\n"
 # define UNSET				"unset: `%s`: not a valid identifier\n"
 # define ENV				"env: %s: No such file or directory\n"
+# define REDIR_OUT			1
+# define REDIR_APPEND		2
+# define REDIR_IN			3
 
 // Redirección (<, >, >>, <<) con su archivo de destino
 typedef struct s_redir
@@ -36,6 +40,8 @@ typedef struct s_cmd
 {
 	char			**args;
 	t_redir			*redirs;
+	int				fd_in;
+	int				fd_out;
 	struct s_cmd	*next;
 }	t_cmd;
 
@@ -72,20 +78,6 @@ typedef struct s_expand_state
 	int			j;
 	int			last_status;
 }	t_expand_state;
-
-typedef struct s_env
-{
-	char		**env;
-	char		**paths;
-}	t_env;
-
-typedef struct s_command
-{
-	char	**tokens;
-	char	*infile;
-	char	*outfile;
-	int		append;
-}	t_command;
 
 typedef struct s_data
 {
@@ -152,8 +144,25 @@ void			update_pwd_vars(t_env *env, char *oldpwd);
 int				ft_cd(char **args, t_env *env);
 
 // executor/executor.c
-char			**complete_paths(char **paths);
-char			**get_path_array(char **env);
-char			*get_env_value(char **env, const char *name);
+static void		apply_redirections(t_cmd *cmd);
+void			execute_command(t_cmd *cmd, char **envp, int *pipe_fds);
+void			create_pipes(t_cmd *cmd, int *pipe_fds);
+void			wait_for_processes(pid_t pid);
+void			executor(t_cmd *cmd_list, t_env *env);
+
+// executor/envp_handler.c
+char			**env_to_envp(t_env *env_list);
+char			**convert_env_to_envp(t_env *env);
+int				fill_envp_array(t_env *env, char **envp);
+char			**free_partial_envp(char **envp, int until);
+
+// executor/utils.c
+int				check_redir_type(t_redir *r);
+
+// executor/child_process.c
+static void	setup_child_process(t_cmd *cmd, int prev_read, \
+int *pipe_fds, char **envp);
+static pid_t	fork_and_execute_command(t_cmd *cmd, char **envp, \
+int prev_read, int *pipe_fds);
 
 #endif

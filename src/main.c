@@ -6,7 +6,7 @@
 /*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:40:15 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/02 13:16:26 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/05/02 13:41:07 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ int	main(int argc, char **argv, char **envp)
 	env_list = create_env_list(envp);
 	while (1)
 	{
-		env_struct.paths = get_path_array(env_struct.env);
 		line = readline("minishell$ ");
 		if (!line)
 			break ; //Ctrl+D
