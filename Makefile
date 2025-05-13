@@ -37,7 +37,7 @@ SRCS = 	src/main.c \
 		src/executor/getters.c \
 		src/executor/executor.c \
 		src/executor/utils.c \
-		src/child_process.c \
+		src/executor/child_process.c \
 
 OBJS = $(SRCS:.c=.o)
 

@@ -12,7 +12,7 @@
 
 #include "../../include/minishell.h"
 
-static void	apply_redirections(t_cmd *cmd)
+void	apply_redirections(t_cmd *cmd)
 {
 	t_redir	*r;
 	int		fd;

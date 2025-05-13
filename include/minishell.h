@@ -23,9 +23,10 @@
 # define UNCLOSED_QUOTES	"Error: Unclosed quotes\n"
 # define UNSET				"unset: `%s`: not a valid identifier\n"
 # define ENV				"env: %s: No such file or directory\n"
-# define REDIR_OUT			1
-# define REDIR_APPEND		2
-# define REDIR_IN			3
+#define REDIR_IN 1
+#define REDIR_OUT 2
+#define REDIR_APPEND 3
+#define REDIR_HEREDOC 4
 
 // Redirección (<, >, >>, <<) con su archivo de destino
 typedef struct s_redir
@@ -137,7 +138,7 @@ int				is_valid_identifier(const char *str);
 void			remove_env_key(t_env **env_list, const char *key);
 
 // built_ins/cd_handler.c
-char			*get_env_value(t_env **env, const char *key);
+char			*get_env_value(t_env *env, const char *key);
 void			update_env_var(t_env *env, const char *key, \
 const char *new_value);
 char			*get_cd_target(char **args, t_env *env);
@@ -145,36 +146,34 @@ void			update_pwd_vars(t_env *env, char *oldpwd);
 int				ft_cd(char **args, t_env *env);
 
 // built_ins/export_handler.c
-
 int				ft_export(char **args, t_env **env);
-
-
 char			**env_list_to_array(t_env *env_list);
 void			free_env_array(char **env_array);
 
 // executor/executor.c
-static void		apply_redirections(t_cmd *cmd);
+void		apply_redirections(t_cmd *cmd);
 void			execute_command(t_cmd *cmd, char **envp, int *pipe_fds);
 void			create_pipes(t_cmd *cmd, int *pipe_fds);
 void			wait_for_processes(pid_t pid);
 void			executor(t_cmd *cmd_list, t_env *env);
 
 // executor/envp_handler.c
-char			**env_to_envp(t_env *env_list);
 char			**convert_env_to_envp(t_env *env);
 int				fill_envp_array(t_env *env, char **envp);
 char			**free_partial_envp(char **envp, int until);
 
 // executor/utils.c
 int				check_redir_type(t_redir *r);
+t_cmd			*parse_tokens_to_cmd_list(char **tokens);
+void			free_cmd_list(t_cmd *cmd);
 
 // executor/getters.c
 char			**complete_paths(char **paths);
 
 // executor/child_process.c
-static void		setup_child_process(t_cmd *cmd, int prev_read, \
+void		setup_child_process(t_cmd *cmd, int prev_read, \
 int *pipe_fds, char **envp);
-static pid_t	fork_and_execute_command(t_cmd *cmd, char **envp, \
-int prev_read, int *pipe_fds);
+pid_t	fork_and_execute_command(t_cmd *cmd, char **envp, \
+	int prev_read, int *pipe_fds);
 
 #endif

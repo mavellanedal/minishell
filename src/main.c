@@ -74,7 +74,7 @@ void	free_env_array(char **env_array)
 	free(env_array);
 }
 
-int	main(int argc, char **argv, char **envp)
+/*int	main(int argc, char **argv, char **envp)
 {
 	char	*line;
 	char	**tokens;
@@ -133,6 +133,47 @@ int	main(int argc, char **argv, char **envp)
 				free(tokens[j]);
 				j++;
 			}
+			free(tokens);
+		}
+		free(line);
+	}
+	return (0);
+} */
+
+int	main(int argc, char **argv, char **envp)
+{
+	char	*line;
+	char	**tokens;
+	int		last_status = 0;
+	t_env	*env_list = create_env_list(envp);
+
+	while (1)
+	{
+		line = readline("minishell$ ");
+		if (!line)
+			break;
+		if (*line)
+		{
+			add_history(line);
+			tokens = tokenize_input(line, last_status);
+			if (tokens)
+			{
+				for (int i = 0; tokens[i]; i++)
+				{
+					char *expanded = remove_quotes_and_expand(tokens[i], last_status);
+					free(tokens[i]);
+					tokens[i] = expanded;
+				}
+
+				t_cmd *cmd_list = parse_tokens_to_cmd_list(tokens); // <-- Debes implementar
+				if (cmd_list)
+				{
+					executor(cmd_list, env_list);
+					free_cmd_list(cmd_list); // <-- También debes tener esta función
+				}
+			}
+			for (int j = 0; tokens && tokens[j]; j++)
+				free(tokens[j]);
 			free(tokens);
 		}
 		free(line);

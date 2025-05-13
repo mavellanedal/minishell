@@ -12,7 +12,7 @@
 
 #include "../../include/minishell.h"
 
-static void	setup_child_process(t_cmd *cmd, int prev_read, \
+void	setup_child_process(t_cmd *cmd, int prev_read, \
 int *pipe_fds, char **envp)
 {
 	if (prev_read != 1)
@@ -34,7 +34,7 @@ int *pipe_fds, char **envp)
 	}
 }
 
-static pid_t	fork_and_execute_command(t_cmd *cmd, char **envp, \
+pid_t	fork_and_execute_command(t_cmd *cmd, char **envp, \
 int prev_read, int *pipe_fds)
 {
 	pid_t	pid;
