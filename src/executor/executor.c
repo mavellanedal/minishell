@@ -102,7 +102,7 @@ void	executor(t_cmd *cmd_list, t_env *env)
 	pid_t	pid;
 	char	**envp;
 
-	envp = env_to_envp(env);
+	envp = convert_env_to_envp(env);
 	if (!envp)
 	{
 		perror("Error \n Filed to create envp");
