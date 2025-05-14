@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 16:19:27 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/05/06 18:04:38 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/14 16:26:54 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,9 @@ int		ft_arrlen(char **arr);
 int		ft_isalpha(int c);
 int		ft_isdigit(int c);
 int		ft_isdigit_str(char *str);
+int		ft_is_echo_n_flag(const char *str);
+int		ft_is_numeric(const char *str);
+int		ft_is_too_long_numeric(const char *str);
 int		ft_isalnum(int c);
 int		ft_isascii(int c);
 int		ft_isprint(int c);

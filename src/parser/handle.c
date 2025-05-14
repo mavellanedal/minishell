@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 18:38:07 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/04/24 15:41:05 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/12 15:21:36 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,16 +38,16 @@ void	handle_redirection(char **tokens, const char *input, t_token_state *s)
 			save_token(tokens, s, input, s->i);
 			if (input[s->i + 1] == input[s->i])
 			{
-				tokens[s->j++] = strndup(&input[s->i], 2);
+				tokens[s->j++] = ft_strndup(&input[s->i], 2);
 				s->i++;
 			}
 			else
-				tokens[s->j++] = strndup(&input[s->i], 1);
+				tokens[s->j++] = ft_strndup(&input[s->i], 1);
 		}
 		else
 		{
 			save_token(tokens, s, input, s->i);
-			tokens[s->j++] = strndup(&input[s->i], 1);
+			tokens[s->j++] = ft_strndup(&input[s->i], 1);
 		}
 		s->start = s->i + 1;
 	}
@@ -93,3 +93,37 @@ void	handle_dollar(t_expand_state *s)
 		s->res[s->j++] = '$';
 	}
 }
+
+// void	handle_dollar(t_expand_state *s) //Sense sprintf(posar aquest per minishell)
+// {
+// 	int		start;
+// 	char	*var;
+// 	char	*val;
+// 	char	*tmp;
+// 	int		len;
+
+// 	if (s->str[*(s->i)] == '?')
+// 	{
+// 		tmp = ft_itoa(s->last_status);
+// 		len = ft_strlen(tmp);
+// 		ft_memcpy(s->res + s->j, tmp, len);
+// 		s->j += len;
+// 		free(tmp);
+// 		(*(s->i))++;
+// 		return ;
+// 	}
+// 	if (!ft_isalpha(s->str[*(s->i)]) && s->str[*(s->i)] != '_')
+// 		return (s->res[s->j++] = '$', (void)0);
+// 	start = *(s->i);
+// 	while (ft_isalnum(s->str[*(s->i)]) || s->str[*(s->i)] == '_')
+// 		(*(s->i))++;
+// 	var = ft_substr(s->str, start, *(s->i) - start);
+// 	val = getenv(var);
+// 	if (val)
+// 	{
+// 		len = ft_strlen(val);
+// 		ft_memcpy(s->res + s->j, val, len);
+// 		s->j += len;
+// 	}
+// 	free(var);
+// }
