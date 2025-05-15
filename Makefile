@@ -6,7 +6,7 @@
 #    By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/10 13:29:38 by mavellan          #+#    #+#              #
-#    Updated: 2025/05/14 09:43:57 by mavellan         ###   ########.fr        #
+#    Updated: 2025/05/15 12:57:28 by mavellan         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -38,6 +38,7 @@ SRCS = 	src/main.c \
 		src/executor/utils.c \
 		src/executor/child_process.c \
 		src/executor/envp_handler.c \
+		src/executor/command_path.c \
 
 OBJS = $(SRCS:.c=.o)
 

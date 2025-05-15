@@ -6,7 +6,7 @@
 /*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:40:15 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/15 08:53:48 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/05/15 12:34:15 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,18 +164,14 @@ int	main(int argc, char **argv, char **envp)
 					free(tokens[i]);
 					tokens[i] = expanded;
 				}
-
 				t_cmd *cmd_list = parse_tokens_to_cmd_list(tokens);
-				int i = 0;
 				if (cmd_list)
 				{
 					executor(cmd_list, env_list);
 					free_cmd_list(cmd_list);
 				}
 			}
-			for (int j = 0; tokens && tokens[j]; j++)
-				free(tokens[j]);
-			free(tokens);
+			ft_free(tokens);
 		}
 		free(line);
 	}
