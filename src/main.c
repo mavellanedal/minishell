@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:40:15 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/06 18:47:34 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/15 16:02:05 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ int	main(int argc, char **argv, char **envp)
 		if (*line)
 		{
 			add_history(line);
-			tokens = tokenize_input(line, last_status);
+			tokens = tokenize_input(line, last_status, env_list);
 			if (tokens)
 			{
 				printf("-----------------------------------------\n");
@@ -99,7 +99,7 @@ int	main(int argc, char **argv, char **envp)
 				while (tokens[i])
 				{
 					printf("Tokens[%d] = [%s]\n", i, tokens[i]);
-					char *expanded = remove_quotes_and_expand(tokens[i], last_status);
+					char *expanded = remove_quotes_and_expand(tokens[i], last_status, env_list);
 					free(tokens[i]);
 					tokens[i] = expanded;
 					i++;
