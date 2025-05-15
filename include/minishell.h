@@ -6,7 +6,7 @@
 /*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/08 12:27:35 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/05/14 09:48:39 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,15 @@ typedef struct s_data
 	char	**envp;
 }	t_data;
 
+typedef struct s_exec_data
+{
+	t_cmd	*cmd;
+	char	**envp;
+	int		prev_read;
+	int		*pipe_fds;
+	t_env	*env_list;
+}	t_exec_data;
+
 
 // parse/tokenize.c
 t_quote_state	get_quote_state(const char *str, int up_to);
@@ -151,29 +160,24 @@ char			**env_list_to_array(t_env *env_list);
 void			free_env_array(char **env_array);
 
 // executor/executor.c
-void		apply_redirections(t_cmd *cmd);
-void			execute_command(t_cmd *cmd, char **envp, int *pipe_fds);
-void			create_pipes(t_cmd *cmd, int *pipe_fds);
+void			apply_redirections(t_cmd *cmd);
 void			wait_for_processes(pid_t pid);
-void			executor(t_cmd *cmd_list, t_env *env);
+void			executor(t_cmd *cmd_list, t_env *env_list);
 
 // executor/envp_handler.c
 char			**convert_env_to_envp(t_env *env);
 int				fill_envp_array(t_env *env, char **envp);
 char			**free_partial_envp(char **envp, int until);
+int				count_env_vars(t_env *env);
 
 // executor/utils.c
 int				check_redir_type(t_redir *r);
 t_cmd			*parse_tokens_to_cmd_list(char **tokens);
 void			free_cmd_list(t_cmd *cmd);
 
-// executor/getters.c
-char			**complete_paths(char **paths);
-
 // executor/child_process.c
-void		setup_child_process(t_cmd *cmd, int prev_read, \
-int *pipe_fds, char **envp);
-pid_t	fork_and_execute_command(t_cmd *cmd, char **envp, \
-	int prev_read, int *pipe_fds);
+void			setup_child_process(t_cmd *cmd_list, t_exec_data *exec_data);
+pid_t			fork_and_execute_command(t_cmd *cmd_list, t_exec_data *exec_data);
+
 
 #endif

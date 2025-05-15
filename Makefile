@@ -6,7 +6,7 @@
 #    By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/10 13:29:38 by mavellan          #+#    #+#              #
-#    Updated: 2025/05/08 12:16:08 by mavellan         ###   ########.fr        #
+#    Updated: 2025/05/14 09:43:57 by mavellan         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,10 +34,10 @@ SRCS = 	src/main.c \
 		src/built_ins/env_handler.c \
 		src/built_ins/cd_handler.c \
 		src/built_ins/export_handler.c \
-		src/executor/getters.c \
 		src/executor/executor.c \
 		src/executor/utils.c \
 		src/executor/child_process.c \
+		src/executor/envp_handler.c \
 
 OBJS = $(SRCS:.c=.o)
 

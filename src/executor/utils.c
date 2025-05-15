@@ -6,7 +6,7 @@
 /*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 14:15:21 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/02 14:17:03 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/05/14 09:46:24 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ int	check_redir_type(t_redir *r)
 {
 	int	fd;
 
+	ft_printf("Dentro de check_redir_type\n");
 	if (r->type == REDIR_OUT)
 		fd = open(r->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	else if (r->type == REDIR_APPEND)
@@ -88,7 +89,7 @@ t_cmd	*parse_tokens_to_cmd_list(char **tokens)
 		current = new_cmd;
 
 		if (tokens[i] && strcmp(tokens[i], "|") == 0)
-			i++; // Saltar '|'
+			i++;
 	}
 	return (head);
 }

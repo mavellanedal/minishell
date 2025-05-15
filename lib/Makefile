@@ -36,7 +36,8 @@ SRCS_LIBFT = libft/ft_isalpha.c \
 			 libft/ft_putchar_fd.c \
 			 libft/ft_putstr_fd.c \
 			 libft/ft_putendl_fd.c \
-			 libft/ft_putnbr_fd.c
+			 libft/ft_putnbr_fd.c \
+			 libft/ft_free.c \
 
 SRCS_BONUS = libft/ft_lstnew_bonus.c \
 			 libft/ft_lstadd_front_bonus.c \

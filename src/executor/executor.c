@@ -6,7 +6,7 @@
 /*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 12:50:46 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/08 12:36:09 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/05/14 09:48:46 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ void	apply_redirections(t_cmd *cmd)
 	t_redir	*r;
 	int		fd;
 
+	ft_printf("Dentro de apply_redirections\n");
 	r = cmd->redirs;
 	while (r)
 	{
@@ -35,52 +36,14 @@ void	apply_redirections(t_cmd *cmd)
 	}
 }
 
-void	execute_command(t_cmd *cmd, char **envp, int *pipe_fds)
-{
-	pid_t	pid;
-
-	pid = fork();
-	if (pid < 0)
-	{
-		perror("fork");
-		exit(1);
-	}
-	if (pid == 0)
-	{
-		apply_redirections(cmd);
-		if (pipe_fds != NULL)
-		{
-			dup2(pipe_fds[1], STDOUT_FILENO);
-			close(pipe_fds[0]);
-			close(pipe_fds[1]);
-		}
-
-		if (execve(cmd->args[0], cmd->args, envp) == -1)
-		{
-			perror("Error executing the command");
-			exit(127);
-		}
-	}
-}
-
-void	create_pipes(t_cmd *cmd, int *pipe_fds)
-{
-	if (cmd->next != NULL)
-	{
-		if (pipe(pipe_fds) == -1)
-		{
-			perror("pipe");
-			exit(1);
-		}
-	}
-}
-
 void	wait_for_processes(pid_t pid)
 {
 	int	status;
 	int	exit_status;
 	int	signal_num;
 
+
+	ft_printf("Dentro de wait_for_processes\n");
 	waitpid(pid, &status, 0);
 	if (WIFEXITED(status))
 	{
@@ -94,43 +57,35 @@ void	wait_for_processes(pid_t pid)
 	}
 }
 
-void	executor(t_cmd *cmd_list, t_env *env)
+void	executor(t_cmd *cmd_list, t_env *env_list)
 {
-	t_cmd	*cmd;
-	int		prev_read;
-	int		pipe_fds[2];
+	t_exec_data	exec_data;
 	pid_t	pid;
-	char	**envp;
 
-	envp = convert_env_to_envp(env);
-	if (!envp)
+	ft_printf("Dentro del executor\n");
+	exec_data.env_list = env_list;
+	exec_data.prev_read = STDIN_FILENO;
+	while (cmd_list)
 	{
-		perror("Error \n Filed to create envp");
-		exit(1);
-	}
-	prev_read = -1;
-	cmd = cmd_list;
-	while (cmd)
-	{
-		if (cmd->next != NULL)
-			create_pipes(cmd, pipe_fds);
+		if (cmd_list->next)
+			pipe(exec_data.pipe_fds);
 		else
 		{
-			pipe_fds[0] = pipe_fds[1];
-			pipe_fds[1] = -1;
+			exec_data.pipe_fds[0] = -1;
+			exec_data.pipe_fds[1] = -1;
 		}
-		pid = fork_and_execute_command(cmd, envp, prev_read, pipe_fds);
-		if (prev_read != -1)
-			close(prev_read);
-		if (cmd->next != NULL)
+		pid = fork_and_execute_command(cmd_list, &exec_data);
+		if (exec_data.prev_read != STDIN_FILENO)
+			close(exec_data.prev_read);
+		if (cmd_list->next != NULL)
 		{
-			close(pipe_fds[1]);
-			prev_read = pipe_fds[0];
+			close(exec_data.pipe_fds[1]);
+			exec_data.prev_read = exec_data.pipe_fds[0];
 		}
 		else
-			prev_read = -1;
+			exec_data.prev_read = -1;
 		wait_for_processes(pid);
-		cmd = cmd->next;
+		exec_data.cmd = exec_data.cmd->next;
 	}
-	ft_free(envp);
+	ft_free(exec_data.envp);
 }

@@ -165,11 +165,11 @@ int	main(int argc, char **argv, char **envp)
 					tokens[i] = expanded;
 				}
 
-				t_cmd *cmd_list = parse_tokens_to_cmd_list(tokens); // <-- Debes implementar
+				t_cmd *cmd_list = parse_tokens_to_cmd_list(tokens);
 				if (cmd_list)
 				{
 					executor(cmd_list, env_list);
-					free_cmd_list(cmd_list); // <-- También debes tener esta función
+					free_cmd_list(cmd_list);
 				}
 			}
 			for (int j = 0; tokens && tokens[j]; j++)
