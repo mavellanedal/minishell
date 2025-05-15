@@ -6,7 +6,7 @@
 /*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/14 09:48:39 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/05/15 09:01:26 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,7 +176,7 @@ t_cmd			*parse_tokens_to_cmd_list(char **tokens);
 void			free_cmd_list(t_cmd *cmd);
 
 // executor/child_process.c
-void			setup_child_process(t_cmd *cmd_list, t_exec_data *exec_data);
+void			setup_child_process(t_exec_data *exec_data);
 pid_t			fork_and_execute_command(t_cmd *cmd_list, t_exec_data *exec_data);
 
 

@@ -6,7 +6,7 @@
 /*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:40:15 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/08 12:17:22 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/05/15 08:53:48 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,6 +166,7 @@ int	main(int argc, char **argv, char **envp)
 				}
 
 				t_cmd *cmd_list = parse_tokens_to_cmd_list(tokens);
+				int i = 0;
 				if (cmd_list)
 				{
 					executor(cmd_list, env_list);

@@ -6,7 +6,7 @@
 /*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 12:50:46 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/14 09:48:46 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/05/15 08:52:43 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,19 +65,21 @@ void	executor(t_cmd *cmd_list, t_env *env_list)
 	ft_printf("Dentro del executor\n");
 	exec_data.env_list = env_list;
 	exec_data.prev_read = STDIN_FILENO;
-	while (cmd_list)
+	exec_data.cmd = cmd_list;
+
+	while (exec_data.cmd)
 	{
-		if (cmd_list->next)
+		if (exec_data.cmd->next)
 			pipe(exec_data.pipe_fds);
 		else
 		{
 			exec_data.pipe_fds[0] = -1;
 			exec_data.pipe_fds[1] = -1;
 		}
-		pid = fork_and_execute_command(cmd_list, &exec_data);
+		pid = fork_and_execute_command(exec_data.cmd, &exec_data);
 		if (exec_data.prev_read != STDIN_FILENO)
 			close(exec_data.prev_read);
-		if (cmd_list->next != NULL)
+		if (exec_data.cmd->next != NULL)
 		{
 			close(exec_data.pipe_fds[1]);
 			exec_data.prev_read = exec_data.pipe_fds[0];
