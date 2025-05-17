@@ -6,7 +6,7 @@
 /*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 12:55:57 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/15 12:58:58 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/05/17 16:08:05 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,5 +52,5 @@ char	*find_command_path(char *cmd, t_env *env_list)
 		i++;
 	}
 	ft_free(paths);
-	return (NULL); // No se encontró
+	return (NULL);
 }

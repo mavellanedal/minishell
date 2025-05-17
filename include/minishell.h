@@ -6,7 +6,7 @@
 /*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/15 16:45:20 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/17 16:17:43 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,7 +150,7 @@ void			free_env_array(char **env_array);
 // executor/executor.c
 void			apply_redirections(t_cmd *cmd);
 void			wait_for_processes(pid_t pid);
-void			executor(t_cmd *cmd_list, t_env *env_list);
+void			executor(t_cmd *cmd_list, t_env *env_list, char **tokens);
 
 // executor/envp_handler.c
 char			**convert_env_to_envp(t_env *env);
@@ -162,6 +162,7 @@ int				count_env_vars(t_env *env);
 int				check_redir_type(t_redir *r);
 t_cmd			*parse_tokens_to_cmd_list(char **tokens);
 void			free_cmd_list(t_cmd *cmd);
+int				is_builtin(char *cmd);
 
 // executor/child_process.c
 void			setup_child_process(t_cmd *cmd, t_exec_data *exec_data);

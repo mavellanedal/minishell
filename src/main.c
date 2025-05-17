@@ -6,7 +6,7 @@
 /*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:40:15 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/17 15:50:06 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/05/17 16:51:52 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,25 +138,22 @@ int main(int argc, char **argv, char **envp)
 			tokens = tokenize_input(line, last_status, env_list);
 			if (tokens)
 			{
-				printf("-----------------------------------------\n");
+				//printf("-----------------------------------------\n");
 				i = 0;
 				while (tokens[i])
 				{
-					printf("Tokens[%d] = [%s]\n", i, tokens[i]);
+					//printf("Tokens[%d] = [%s]\n", i, tokens[i]);
 					expanded = remove_quotes_and_expand(tokens[i], last_status, env_list);
 					free(tokens[i]);
 					tokens[i] = expanded;
 					i++;
 				}
-				printf("-----------------------------------------\n");
-				if (execute_builtin(tokens, &env_list) == -1)
+				//printf("-----------------------------------------\n");
+				cmd_list = parse_tokens_to_cmd_list(tokens);
+				if (cmd_list)
 				{
-					cmd_list = parse_tokens_to_cmd_list(tokens);
-					if (cmd_list)
-					{
-						executor(cmd_list, env_list);
-						free_cmd_list(cmd_list);
-					}
+					executor(cmd_list, env_list, tokens);
+					free_cmd_list(cmd_list);
 				}
 			}
 			j = 0;

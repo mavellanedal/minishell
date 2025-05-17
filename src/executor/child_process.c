@@ -6,7 +6,7 @@
 /*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 14:26:19 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/15 13:26:46 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/05/17 17:13:28 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,11 @@ void	setup_child_process(t_cmd *cmd, t_exec_data *exec_data)
 		close(exec_data->pipe_fds[1]);
 	}
 	apply_redirections(cmd);
+	if (is_builtin(cmd->args[0]))
+	{
+		int	status = execute_builtin(cmd->args, &(exec_data->env_list));
+		exit(status);
+	}
 	envp_array = convert_env_to_envp(exec_data->env_list);
 
 	char *full_path;

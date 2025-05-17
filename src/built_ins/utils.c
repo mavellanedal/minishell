@@ -6,7 +6,7 @@
 /*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 16:10:41 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/05/17 15:50:51 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/05/17 16:47:39 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,7 @@ int	ft_unset(char **args, t_env **env_list)
 1 → error genérico.
 0 → todo OK.
 */
+
 int	execute_builtin(char **args, t_env **env_list)
 {
 	if (!args || !args[0])
@@ -117,6 +118,7 @@ int	execute_builtin(char **args, t_env **env_list)
 		return (ft_pwd());
 	if (ft_strcmp(args[0], "exit") == 0)
 		return (ft_exit(args));
+	printf("llega papi\n");
 	if (ft_strcmp(args[0], "env") == 0)
 	{
 		if (args[1] != NULL)
@@ -132,6 +134,5 @@ int	execute_builtin(char **args, t_env **env_list)
 		return (ft_cd(args, *env_list));
 	if (ft_strcmp(args[0], "export") == 0)
 		return (ft_export(args, env_list));
-	printf("Not a builtin\n");
 	return (-1);
 }
