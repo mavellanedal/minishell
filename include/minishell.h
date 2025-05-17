@@ -6,7 +6,7 @@
 /*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/17 16:17:43 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/05/17 18:14:43 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <sys/wait.h>
 # include <sys/types.h>
 # include <stdbool.h>
+# include <sys/stat.h>
 
 # define UNCLOSED_QUOTES	"Error: Unclosed quotes\n"
 # define UNSET				"unset: `%s`: not a valid identifier\n"
@@ -150,7 +151,7 @@ void			free_env_array(char **env_array);
 // executor/executor.c
 void			apply_redirections(t_cmd *cmd);
 void			wait_for_processes(pid_t pid);
-void			executor(t_cmd *cmd_list, t_env *env_list, char **tokens);
+int			executor(t_cmd *cmd_list, t_env *env_list, char **tokens);
 
 // executor/envp_handler.c
 char			**convert_env_to_envp(t_env *env);

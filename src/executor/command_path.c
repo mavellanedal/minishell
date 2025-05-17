@@ -6,7 +6,7 @@
 /*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 12:55:57 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/17 16:08:05 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/05/17 17:41:48 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ char	*find_command_path(char *cmd, t_env *env_list)
 	// Obtener PATH de env_list
 	while (env_list)
 	{
-		if (strcmp(env_list->key, "PATH") == 0)
+		if (ft_strcmp(env_list->key, "PATH") == 0)
 		{
 			path_var = env_list->value;
 			break;
@@ -39,7 +39,7 @@ char	*find_command_path(char *cmd, t_env *env_list)
 	i = 0;
 	while (paths[i])
 	{
-		full_path = malloc(strlen(paths[i]) + strlen(cmd) + 2);
+		full_path = malloc(ft_strlen(paths[i]) + ft_strlen(cmd) + 2);
 		if (!full_path)
 			break;
 		sprintf(full_path, "%s/%s", paths[i], cmd);

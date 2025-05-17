@@ -6,7 +6,7 @@
 /*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:40:15 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/17 16:51:52 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/05/17 18:25:48 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,7 +152,7 @@ int main(int argc, char **argv, char **envp)
 				cmd_list = parse_tokens_to_cmd_list(tokens);
 				if (cmd_list)
 				{
-					executor(cmd_list, env_list, tokens);
+					last_status = executor(cmd_list, env_list, tokens);
 					free_cmd_list(cmd_list);
 				}
 			}

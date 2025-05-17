@@ -6,7 +6,7 @@
 /*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 12:50:46 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/17 17:17:04 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/05/17 18:14:12 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,13 +36,14 @@ void	apply_redirections(t_cmd *cmd)
 	}
 }
 
-void	executor(t_cmd *cmd_list, t_env *env_list, char **tokens)
+int	executor(t_cmd *cmd_list, t_env *env_list, char **tokens)
 {
 	t_exec_data	exec_data;
 	pid_t		pid;
 	t_cmd		*current_cmd;
 	int			status;
 	bool		must_fork;
+	int			last_status;
 
 	exec_data.env_list = env_list;
 	exec_data.prev_read = STDIN_FILENO;
@@ -80,5 +81,10 @@ void	executor(t_cmd *cmd_list, t_env *env_list, char **tokens)
 		current_cmd = current_cmd->next;
 		i++;
 	}
+	if (WIFEXITED(status))
+		last_status = WEXITSTATUS(status);
+	else
+		last_status = 1;
+	return (last_status);
 }
 
