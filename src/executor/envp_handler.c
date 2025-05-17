@@ -6,7 +6,7 @@
 /*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 12:41:34 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/15 13:10:25 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/05/17 17:42:17 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,16 +43,16 @@ int	fill_envp_array(t_env *env, char **envp)
 	{
 		if (env->value)
 		{
-			len = strlen(env->key) + strlen(env->value) + 2;
+			len = ft_strlen(env->key) + ft_strlen(env->value) + 2;
 			entry = malloc(len);
 			if (!entry)
 			{
 				free_partial_envp(envp, i);
 				return (-1);
 			}
-			strcpy(entry, env->key);
-			strcat(entry, "=");
-			strcat(entry, env->value);
+			ft_strcpy(entry, env->key);
+			ft_strcat(entry, "=");
+			ft_strcat(entry, env->value);
 			envp[i] = entry;
 			i++;
 		}

@@ -6,7 +6,7 @@
 /*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 14:15:21 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/17 17:16:37 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/05/17 17:43:37 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,26 +45,26 @@ t_cmd	*parse_tokens_to_cmd_list(char **tokens)
 		t_redir *redir_head = NULL;
 		int arg_index = 0;
 
-		while (tokens[i] && strcmp(tokens[i], "|") != 0)
+		while (tokens[i] && ft_strcmp(tokens[i], "|") != 0)
 		{
-			if (strcmp(tokens[i], "<") == 0 || strcmp(tokens[i], ">") == 0 ||
-				strcmp(tokens[i], ">>") == 0 || strcmp(tokens[i], "<<") == 0)
+			if (ft_strcmp(tokens[i], "<") == 0 || ft_strcmp(tokens[i], ">") == 0 ||
+				ft_strcmp(tokens[i], ">>") == 0 || ft_strcmp(tokens[i], "<<") == 0)
 			{
 				int redir_type;
 				if (!tokens[i + 1])
 					return (NULL); // error de sintaxis
-				if (strcmp(tokens[i], "<") == 0)
+				if (ft_strcmp(tokens[i], "<") == 0)
 					redir_type = REDIR_IN;
-				else if (strcmp(tokens[i], ">") == 0)
+				else if (ft_strcmp(tokens[i], ">") == 0)
 					redir_type = REDIR_OUT;
-				else if (strcmp(tokens[i], ">>") == 0)
+				else if (ft_strcmp(tokens[i], ">>") == 0)
 					redir_type = REDIR_APPEND;
 				else
 					redir_type = REDIR_HEREDOC;
 
 				t_redir *new_redir = calloc(1, sizeof(t_redir));
 				new_redir->type = redir_type;
-				new_redir->file = strdup(tokens[i + 1]);
+				new_redir->file = ft_strdup(tokens[i + 1]);
 				new_redir->next = redir_head;
 				redir_head = new_redir;
 
@@ -72,7 +72,7 @@ t_cmd	*parse_tokens_to_cmd_list(char **tokens)
 			}
 			else
 			{
-				args[arg_index++] = strdup(tokens[i]);
+				args[arg_index++] = ft_strdup(tokens[i]);
 				i++;
 			}
 		}
@@ -88,7 +88,7 @@ t_cmd	*parse_tokens_to_cmd_list(char **tokens)
 			current->next = new_cmd;
 		current = new_cmd;
 
-		if (tokens[i] && strcmp(tokens[i], "|") == 0)
+		if (tokens[i] && ft_strcmp(tokens[i], "|") == 0)
 			i++;
 	}
 	return (head);
