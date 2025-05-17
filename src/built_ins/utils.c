@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 16:10:41 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/05/14 16:28:51 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/17 15:50:51 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,5 +132,6 @@ int	execute_builtin(char **args, t_env **env_list)
 		return (ft_cd(args, *env_list));
 	if (ft_strcmp(args[0], "export") == 0)
 		return (ft_export(args, env_list));
+	printf("Not a builtin\n");
 	return (-1);
 }

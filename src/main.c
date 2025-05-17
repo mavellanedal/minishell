@@ -6,7 +6,7 @@
 /*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:40:15 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/15 18:23:55 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/17 15:50:06 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,68 +112,62 @@ void	update_shlvl(t_env **env_list)
 
 int main(int argc, char **argv, char **envp)
 {
-    char    *line;
-    char    **tokens;
-    int     last_status;
-    t_env   *env_list;
+	char    *line;
+	char	*expanded;
+	char    **tokens;
+	char	**env_array;
+	int     last_status;
+	t_env   *env_list;
+	t_cmd	*cmd_list;
+	int		j;
+	int		i;
+	pid_t	pid;
 
-    last_status = 0;
-    env_list = create_env_list(envp);
-    update_shlvl(&env_list);
+	last_status = 0;
+	env_list = create_env_list(envp);
+	update_shlvl(&env_list);
 
-    while (1)
-    {
-        line = readline("minishell$ ");
-        if (!line)
-            break; // Ctrl+D
-        if (*line)
-        {
-            add_history(line);
-            tokens = tokenize_input(line, last_status, env_list);
-            if (tokens)
-            {
-                printf("-----------------------------------------\n");
-                int i = 0;
-                while (tokens[i])
-                {
-                    printf("Tokens[%d] = [%s]\n", i, tokens[i]);
-                    char *expanded = remove_quotes_and_expand(tokens[i], last_status, env_list);
-                    free(tokens[i]);
-                    tokens[i] = expanded;
-                    i++;
-                }
-                printf("-----------------------------------------\n");
-
-                // Si no es built-in, ejecutar como externo
-                if (execute_builtin(tokens, &env_list) == -1)
-                {
-                    char **env_array = env_list_to_array(env_list);
-                    pid_t pid = fork();
-                    if (pid == 0)
-                    {
-                        execve(tokens[0], tokens, env_array);
-                        perror("execve");
-                        free_env_array(env_array);
-                        exit(127);
-                    }
-                    else
-                    {
-                        int status;
-                        waitpid(pid, &status, 0);
-                        last_status = WIFEXITED(status) ? WEXITSTATUS(status) : 1;
-                    }
-                    free_env_array(env_array);
-                }
-            }
-            int j = 0;
-            while (tokens && tokens[j])
-            {
-                free(tokens[j]);
-                j++;
-            }
-            free(tokens);
-        }
-        free(line);
-    }
-    return (0);
+	while (1)
+	{
+		line = readline("minishell$ ");
+		if (!line)
+			break; // Ctrl+D
+		if (*line)
+		{
+			add_history(line);
+			tokens = tokenize_input(line, last_status, env_list);
+			if (tokens)
+			{
+				printf("-----------------------------------------\n");
+				i = 0;
+				while (tokens[i])
+				{
+					printf("Tokens[%d] = [%s]\n", i, tokens[i]);
+					expanded = remove_quotes_and_expand(tokens[i], last_status, env_list);
+					free(tokens[i]);
+					tokens[i] = expanded;
+					i++;
+				}
+				printf("-----------------------------------------\n");
+				if (execute_builtin(tokens, &env_list) == -1)
+				{
+					cmd_list = parse_tokens_to_cmd_list(tokens);
+					if (cmd_list)
+					{
+						executor(cmd_list, env_list);
+						free_cmd_list(cmd_list);
+					}
+				}
+			}
+			j = 0;
+			while (tokens && tokens[j])
+			{
+				free(tokens[j]);
+				j++;
+			}
+			free(tokens);
+		}
+		free(line);
+	}
+	return (0);
 }
