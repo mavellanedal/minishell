@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 16:53:45 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/05/06 18:45:48 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/15 11:08:25 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void add_or_update_env(t_env **env, const char *key, const char *value, int has_
     // Revisar si ya existe la variable
     while (curr)
     {
-        if (strcmp(curr->key, key) == 0)
+        if (ft_strcmp(curr->key, key) == 0)
         {
             // Actualizar valor existente
             free(curr->value);
@@ -116,7 +116,7 @@ void print_export_sorted(t_env *env)
     {
         for (int j = 0; j < len - i - 1; j++)
         {
-            if (strcmp(sort[j]->key, sort[j + 1]->key) > 0)
+            if (ft_strcmp(sort[j]->key, sort[j + 1]->key) > 0)
             {
                 t_env *swap = sort[j];
                 sort[j] = sort[j + 1];
@@ -179,7 +179,7 @@ int	ft_export(char **args, t_env **env)
 			int exists = 0;			
 			while (curr && !exists)
 			{
-				if (strcmp(curr->key, args[i]) == 0)
+				if (ft_strcmp(curr->key, args[i]) == 0)
 					exists = 1;
 				curr = curr->next;
 			}

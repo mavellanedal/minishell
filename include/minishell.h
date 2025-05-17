@@ -6,7 +6,7 @@
 /*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/15 12:57:59 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/05/15 16:45:20 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ typedef struct s_token_state
 	int	j;
 	int	start;
 	int	last_status;
+	t_env	*env;
 }	t_token_state;
 
 // Estado de comillas utilizado durante el tokenizado (normi)
@@ -79,6 +80,7 @@ typedef struct s_expand_state
 	char		*res;
 	int			j;
 	int			last_status;
+	t_env		*env;
 }	t_expand_state;
 
 typedef struct s_data
@@ -100,37 +102,23 @@ typedef struct s_exec_data
 
 // parse/tokenize.c
 t_quote_state	get_quote_state(const char *str, int up_to);
-void			save_token(char **tokens, t_token_state *s, \
-const char *input, int end);
-void			init_token_state(t_token_state *s, int last_status);
-char			**tokenize_input(const char *input, int last_status);
-void			save_token(char **tokens, t_token_state *s, \
-const char *input, int end);
-void			init_token_state(t_token_state *s, int last_status);
-char			**tokenize_input(const char *input, int last_status);
+void			save_token(char **tokens, t_token_state *s, const char *input, int end, t_env *env);
+void			init_token_state(t_token_state *s, int last_status, t_env *env);
+char			**tokenize_input(const char *input, int last_status, t_env *env);
 
 // parse/handle.c
-void			handle_end(char **tokens, const char *input, t_token_state *s);
-void			handle_redirection(char **tokens, const char *input, \
-t_token_state *s);
-void			handle_dollar(t_expand_state *s);
-void			handle_quote(char c, bool *in_single, bool *in_double, \
-bool *has_single);
-void			handle_end(char **tokens, const char *input, t_token_state *s);
-void			handle_redirection(char **tokens, const char *input, \
-t_token_state *s);
+void			handle_end(char **tokens, const char *input, t_token_state *s, t_env *env);
+void			handle_redirection(char **tokens, const char *input, t_token_state *s, t_env *env);
 void			handle_dollar(t_expand_state *s);
 void			handle_quote(char c, bool *in_single, bool *in_double, \
 bool *has_single);
 
 // parse/expand.c
 char			*strip_quotes(const char *token, bool *has_single);
-char			*remove_quotes_and_expand(const char *token, int last_status);
-int				expand_named_variable(const char *str, int i, \
-\
-char *result, int j);
+char			*remove_quotes_and_expand(const char *token, int last_status, t_env *env);
+int				expand_named_variable(const char *str, int i, char *result, int j, t_env *env);
 void			process_expansion_loop(t_expand_state *s);
-char			*expand_variables(const char *str, int last_status);
+char			*expand_variables(const char *str, int last_status, t_env *env);
 
 // built_ins/utils.c
 int				ft_echo(char **args);

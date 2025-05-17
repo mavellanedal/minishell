@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 12:33:10 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/05/06 18:45:26 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/14 16:33:37 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 /*
  * Crea un nodo de entorno a partir de una cadena del formato "KEY=VALUE"
  * Actualizada para manejar el campo has_value
- */
+*/
 t_env	*create_node_env(char *env_var)
 {
 	t_env	*node;
@@ -24,25 +24,21 @@ t_env	*create_node_env(char *env_var)
 	node = malloc(sizeof(t_env));
 	if (!node)
 		return (NULL);
-	
-	equal_sign = strchr(env_var, '=');
+	equal_sign = ft_strchr(env_var, '=');
 	if (equal_sign)
 	{
-		// Si hay un signo igual, separamos la clave y el valor
-		*equal_sign = '\0'; // Separamos temporalmente
+		*equal_sign = '\0';
 		node->key = ft_strdup(env_var);
 		node->value = ft_strdup(equal_sign + 1);
-		node->has_value = 1; // Si hay un '=', tiene valor asignado
-		*equal_sign = '='; // Restauramos
+		node->has_value = 1;
+		*equal_sign = '=';
 	}
 	else
 	{
-		// Si no hay signo igual, solo hay clave
 		node->key = ft_strdup(env_var);
 		node->value = ft_strdup("");
-		node->has_value = 0; // No tiene valor asignado
+		node->has_value = 0;
 	}
-	
 	node->next = NULL;
 	return (node);
 }
@@ -50,7 +46,8 @@ t_env	*create_node_env(char *env_var)
 /*
  * Crea una lista de entorno a partir de envp
  * Todas las variables del entorno del sistema tienen has_value = 1
- */
+ * porque todas tienen formato KEY=VALUE
+*/
 t_env	*create_env_list(char **envp)
 {
 	t_env	*head;
@@ -64,8 +61,6 @@ t_env	*create_env_list(char **envp)
 		node = create_node_env(envp[i]);
 		if (node)
 		{
-			// Todas las variables del entorno del sistema tienen has_value = 1
-			// porque todas tienen formato KEY=VALUE
 			node->has_value = 1;
 			node->next = head;
 			head = node;
@@ -78,12 +73,12 @@ t_env	*create_env_list(char **envp)
 /*
  * Implementación del builtin env
  * Muestra solo las variables que tienen has_value = 1
- */
+*/
 int	ft_env(t_env *env_list)
 {
 	while (env_list)
 	{
-		if (env_list->has_value) // Solo mostramos si has_value = 1
+		if (env_list->has_value)
 			printf("%s=%s\n", env_list->key, env_list->value);
 		env_list = env_list->next;
 	}
