@@ -6,7 +6,7 @@
 /*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 14:15:21 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/17 15:50:53 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/05/17 17:16:37 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,10 +117,21 @@ void	free_cmd_list(t_cmd *cmd)
 	}
 }
 
-/*int	is_builtin(char **tokens)
+int	is_builtin(char *cmd)
 {
-	if (!tokens || !tokens[0])
-		return (-1);
-	if (ft_strcmp(tokens[0], "echo"))
-		return (1)
-}*/
+	// printf("----------------- args[0]: %s ----------------- \n", cmd);
+	if (ft_strcmp(cmd, "echo") == 0)
+		return (1);
+	if (ft_strcmp(cmd, "pwd") == 0)
+		return (1);
+	if (ft_strcmp(cmd, "exit") == 0)
+		return (1);
+	if (ft_strcmp(cmd, "env") == 0)
+		return (1);
+	if (ft_strcmp(cmd, "cd") == 0)
+		return (1);
+	if (ft_strcmp(cmd, "export") == 0)
+		return (1);
+	// printf("----------------- NOT BUILT INS ----------------- \n");
+	return (0);
+}
