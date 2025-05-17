@@ -6,13 +6,13 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 18:38:07 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/05/12 15:21:36 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/15 16:40:17 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-void	handle_end(char **tokens, const char *input, t_token_state *s)
+void	handle_end(char **tokens, const char *input, t_token_state *s, t_env *env)
 {
 	t_quote_state	q;
 
@@ -20,12 +20,12 @@ void	handle_end(char **tokens, const char *input, t_token_state *s)
 	if ((input[s->i] == ' ' || input[s->i] == '\0') \
 		&& !(q.in_single || q.in_double))
 	{
-		save_token(tokens, s, input, s->i);
+		save_token(tokens, s, input, s->i, env);
 		s->start = s->i + 1;
 	}
 }
 
-void	handle_redirection(char **tokens, const char *input, t_token_state *s)
+void	handle_redirection(char **tokens, const char *input, t_token_state *s, t_env *env)
 {
 	t_quote_state	q;
 
@@ -35,7 +35,7 @@ void	handle_redirection(char **tokens, const char *input, t_token_state *s)
 	{
 		if (input[s->i] == '<' || input[s->i] == '>')
 		{
-			save_token(tokens, s, input, s->i);
+			save_token(tokens, s, input, s->i, env);
 			if (input[s->i + 1] == input[s->i])
 			{
 				tokens[s->j++] = ft_strndup(&input[s->i], 2);
@@ -46,7 +46,7 @@ void	handle_redirection(char **tokens, const char *input, t_token_state *s)
 		}
 		else
 		{
-			save_token(tokens, s, input, s->i);
+			save_token(tokens, s, input, s->i, env);
 			tokens[s->j++] = ft_strndup(&input[s->i], 1);
 		}
 		s->start = s->i + 1;
@@ -83,7 +83,7 @@ void	handle_dollar(t_expand_state *s)
 		while (ft_isalnum(s->str[*(s->i)]) || s->str[*(s->i)] == '_')
 			(*(s->i))++;
 		var = ft_substr(s->str, start, *(s->i) - start);
-		val = getenv(var);
+		val = get_env_value(s->env, var);
 		if (val)
 			s->j += sprintf(s->res + s->j, "%s", val);
 		free(var);

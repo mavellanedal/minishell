@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/06 18:46:36 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/15 16:45:20 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,16 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <sys/wait.h>
+# include <sys/types.h>
 # include <stdbool.h>
 
 # define UNCLOSED_QUOTES	"Error: Unclosed quotes\n"
 # define UNSET				"unset: `%s`: not a valid identifier\n"
 # define ENV				"env: %s: No such file or directory\n"
+#define REDIR_IN 1
+#define REDIR_OUT 2
+#define REDIR_APPEND 3
+#define REDIR_HEREDOC 4
 
 // Redirección (<, >, >>, <<) con su archivo de destino
 typedef struct s_redir
@@ -36,6 +41,8 @@ typedef struct s_cmd
 {
 	char			**args;
 	t_redir			*redirs;
+	int				fd_in;
+	int				fd_out;
 	struct s_cmd	*next;
 }	t_cmd;
 
@@ -44,7 +51,7 @@ typedef struct s_env
 {
 	char			*key;
 	char			*value;
-	int         	has_value;
+	int				has_value;
 	struct s_env	*next;
 }	t_env;
 
@@ -55,6 +62,7 @@ typedef struct s_token_state
 	int	j;
 	int	start;
 	int	last_status;
+	t_env	*env;
 }	t_token_state;
 
 // Estado de comillas utilizado durante el tokenizado (normi)
@@ -72,30 +80,45 @@ typedef struct s_expand_state
 	char		*res;
 	int			j;
 	int			last_status;
+	t_env		*env;
 }	t_expand_state;
+
+typedef struct s_data
+{
+	t_cmd	*cmds;
+	int		num_cmds;
+	char	**envp;
+}	t_data;
+
+typedef struct s_exec_data
+{
+	t_cmd	*cmd;
+	char	**envp;
+	int		prev_read;
+	int		pipe_fds[2];
+	t_env	*env_list;
+}	t_exec_data;
+
 
 // parse/tokenize.c
 t_quote_state	get_quote_state(const char *str, int up_to);
-void			save_token(char **tokens, t_token_state *s, \
-const char *input, int end);
-void			init_token_state(t_token_state *s, int last_status);
-char			**tokenize_input(const char *input, int last_status);
+void			save_token(char **tokens, t_token_state *s, const char *input, int end, t_env *env);
+void			init_token_state(t_token_state *s, int last_status, t_env *env);
+char			**tokenize_input(const char *input, int last_status, t_env *env);
 
 // parse/handle.c
-void			handle_end(char **tokens, const char *input, t_token_state *s);
-void			handle_redirection(char **tokens, const char *input, \
-t_token_state *s);
+void			handle_end(char **tokens, const char *input, t_token_state *s, t_env *env);
+void			handle_redirection(char **tokens, const char *input, t_token_state *s, t_env *env);
 void			handle_dollar(t_expand_state *s);
 void			handle_quote(char c, bool *in_single, bool *in_double, \
 bool *has_single);
 
 // parse/expand.c
 char			*strip_quotes(const char *token, bool *has_single);
-char			*remove_quotes_and_expand(const char *token, int last_status);
-int				expand_named_variable(const char *str, int i, \
-char *result, int j);
+char			*remove_quotes_and_expand(const char *token, int last_status, t_env *env);
+int				expand_named_variable(const char *str, int i, char *result, int j, t_env *env);
 void			process_expansion_loop(t_expand_state *s);
-char			*expand_variables(const char *str, int last_status);
+char			*expand_variables(const char *str, int last_status, t_env *env);
 
 // built_ins/utils.c
 int				ft_echo(char **args);
@@ -120,11 +143,31 @@ void			update_pwd_vars(t_env *env, char *oldpwd);
 int				ft_cd(char **args, t_env *env);
 
 // built_ins/export_handler.c
+int				ft_export(char **args, t_env **env);
+char			**env_list_to_array(t_env *env_list);
+void			free_env_array(char **env_array);
 
-int	ft_export(char **args, t_env **env);
+// executor/executor.c
+void			apply_redirections(t_cmd *cmd);
+void			wait_for_processes(pid_t pid);
+void			executor(t_cmd *cmd_list, t_env *env_list);
 
+// executor/envp_handler.c
+char			**convert_env_to_envp(t_env *env);
+int				fill_envp_array(t_env *env, char **envp);
+char			**free_partial_envp(char **envp, int until);
+int				count_env_vars(t_env *env);
 
-char	**env_list_to_array(t_env *env_list);
-void	free_env_array(char **env_array);
+// executor/utils.c
+int				check_redir_type(t_redir *r);
+t_cmd			*parse_tokens_to_cmd_list(char **tokens);
+void			free_cmd_list(t_cmd *cmd);
+
+// executor/child_process.c
+void			setup_child_process(t_cmd *cmd, t_exec_data *exec_data);
+pid_t			fork_and_execute_command(t_cmd *cmd, t_exec_data *exec_data);
+
+// executor/command_path.c
+char			*find_command_path(char *cmd, t_env *env_list);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 17:16:14 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/04/23 18:38:00 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/15 16:45:41 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ t_quote_state	get_quote_state(const char *str, int up_to)
 	return (state);
 }
 
-void	save_token(char **tokens, t_token_state *s, const char *input, int end)
+void	save_token(char **tokens, t_token_state *s, const char *input, int end, t_env *env)
 {
 	int		len;
 	char	*raw;
@@ -40,22 +40,23 @@ void	save_token(char **tokens, t_token_state *s, const char *input, int end)
 	len = end - s->start;
 	if (len > 0)
 	{
-		raw = strndup(&input[s->start], len);
-		final = remove_quotes_and_expand(raw, s->last_status);
+		raw = ft_strndup(&input[s->start], len);
+		final = remove_quotes_and_expand(raw, s->last_status, env);
 		tokens[s->j++] = final;
 		free(raw);
 	}
 }
 
-void	init_token_state(t_token_state *s, int last_status)
+void	init_token_state(t_token_state *s, int last_status, t_env *env)
 {
 	s->i = 0;
 	s->j = 0;
 	s->start = 0;
 	s->last_status = last_status;
+	s->env = env;
 }
 
-char	**tokenize_input(const char *input, int last_status)
+char	**tokenize_input(const char *input, int last_status, t_env *env)
 {
 	char			**tokens;
 	t_token_state	s;
@@ -70,15 +71,15 @@ char	**tokenize_input(const char *input, int last_status)
 	tokens = malloc(sizeof(char *) * 1024);
 	if (!tokens)
 		return (NULL);
-	init_token_state(&s, last_status);
+	init_token_state(&s, last_status, env);
 	while (input[s.i])
 	{
-		handle_end(tokens, input, &s);
-		handle_redirection(tokens, input, &s);
+		handle_end(tokens, input, &s, env);
+		handle_redirection(tokens, input, &s, env);
 		s.i++;
 	}
-	handle_end(tokens, input, &s);
-	handle_redirection(tokens, input, &s);
+	handle_end(tokens, input, &s, env);
+	handle_redirection(tokens, input, &s, env);
 	tokens[s.j] = NULL;
 	return (tokens);
 }

@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 16:29:28 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/04/24 15:39:14 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/15 16:47:04 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ char	*strip_quotes(const char *token, bool *has_single)
 	return (temp);
 }
 
-char	*remove_quotes_and_expand(const char *token, int last_status)
+char	*remove_quotes_and_expand(const char *token, int last_status, t_env *env)
 {
 	char	*temp;
 	char	*expanded;
@@ -47,14 +47,14 @@ char	*remove_quotes_and_expand(const char *token, int last_status)
 	temp = strip_quotes(token, &has_single);
 	if (!has_single)
 	{
-		expanded = expand_variables(temp, last_status);
+		expanded = expand_variables(temp, last_status, env);
 		free(temp);
 		return (expanded);
 	}
 	return (temp);
 }
 
-int	expand_named_variable(const char *str, int i, char *result, int j)
+int	expand_named_variable(const char *str, int i, char *result, int j, t_env *env)
 {
 	int		start;
 	int		len;
@@ -66,7 +66,7 @@ int	expand_named_variable(const char *str, int i, char *result, int j)
 		i++;
 	len = i - start;
 	var_name = ft_substr(str, start, len);
-	value = getenv(var_name);
+	value = get_env_value(env, var_name);
 	free(var_name);
 	if (value)
 		j += sprintf(result + j, "%s", value);
@@ -96,7 +96,7 @@ void	process_expansion_loop(t_expand_state *s)
 	s->res[j] = '\0';
 }
 
-char	*expand_variables(const char *str, int last_status)
+char	*expand_variables(const char *str, int last_status, t_env *env)
 {
 	char			*res;
 	int				i;
@@ -113,6 +113,7 @@ char	*expand_variables(const char *str, int last_status)
 	s.res = res;
 	s.j = j;
 	s.last_status = last_status;
+	s.env = env;
 	process_expansion_loop(&s);
 	return (res);
 }
