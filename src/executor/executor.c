@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 12:50:46 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/17 18:14:12 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/05/20 17:26:13 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,8 @@ void	apply_redirections(t_cmd *cmd)
 	}
 }
 
-int	executor(t_cmd *cmd_list, t_env *env_list, char **tokens)
-{
+int	executor(t_cmd *cmd_list, t_env **env_list, char **tokens)
+	{
 	t_exec_data	exec_data;
 	pid_t		pid;
 	t_cmd		*current_cmd;
@@ -45,7 +45,7 @@ int	executor(t_cmd *cmd_list, t_env *env_list, char **tokens)
 	bool		must_fork;
 	int			last_status;
 
-	exec_data.env_list = env_list;
+	exec_data.env_list = *env_list;
 	exec_data.prev_read = STDIN_FILENO;
 	current_cmd = cmd_list;
 	int i = 1;
@@ -53,7 +53,7 @@ int	executor(t_cmd *cmd_list, t_env *env_list, char **tokens)
 	{
 		must_fork = current_cmd->next != NULL || current_cmd->redirs != NULL;
 		if (is_builtin(current_cmd->args[0]) && !must_fork)
-			execute_builtin(current_cmd->args, &env_list);
+			execute_builtin(current_cmd->args, env_list);
 		else
 		{
 			// printf("llega executor\n");
