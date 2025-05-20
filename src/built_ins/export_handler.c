@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 16:53:45 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/05/16 16:42:15 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/20 15:42:12 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,6 +149,7 @@ int	ft_export(char **args, t_env **env)
 
 	i = 1;
 	status = 0;
+	ft_printf("------------ BUILT IN - EXPORT ------------\n");
 	// Si no hay argumentos (solo `export`), mostramos las variables de entorno
 	if (!args[1]) 
 	{

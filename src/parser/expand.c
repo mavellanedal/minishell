@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 16:29:28 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/05/17 18:50:19 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/20 14:02:21 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,21 +38,21 @@ char	*strip_quotes(const char *token, bool *has_single)
 	return (temp);
 }
 
-char	*remove_quotes_and_expand(const char *token, int last_status, t_env *env, bool should_expand)
-{
-	char	*temp;
-	char	*expanded;
-	bool	has_single;
+// char	*remove_quotes_and_expand(const char *token, int last_status, t_env *env, bool should_expand)
+// {
+// 	char	*temp;
+// 	char	*expanded;
+// 	bool	has_single;
 
-	temp = strip_quotes(token, &has_single);
-	if (should_expand && !has_single)
-	{
-		expanded = expand_variables(temp, last_status, env);
-		free(temp);
-		return (expanded);
-	}
-	return (temp);
-}
+// 	temp = strip_quotes(token, &has_single);
+// 	if (should_expand && !has_single)
+// 	{
+// 		expanded = expand_variables(temp, last_status, env);
+// 		free(temp);
+// 		return (expanded);
+// 	}
+// 	return (temp);
+// }
 
 
 char	*remove_quotes_and_expand(const char *token, int last_status, t_env *env)

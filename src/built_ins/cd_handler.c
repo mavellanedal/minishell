@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 14:52:32 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/05/06 18:09:51 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/20 15:42:16 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,7 @@ int	ft_cd(char **args, t_env *env)
 	char	*oldpwd;
 	int		count_arg;
 
+	ft_printf("------------ BUILT IN - CD ------------\n");
 	count_arg = ft_arrlen(args);
 	if (count_arg > 2)
 	{
