@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/20 17:27:12 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/21 15:01:21 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,9 @@
 # include <sys/types.h>
 # include <stdbool.h>
 # include <sys/stat.h>
+# include <signal.h>
+# include <stdio.h>
+# include <unistd.h>
 
 # define UNCLOSED_QUOTES	"Error: Unclosed quotes\n"
 # define UNSET				"unset: `%s`: not a valid identifier\n"
@@ -172,4 +175,8 @@ pid_t			fork_and_execute_command(t_cmd *cmd, t_exec_data *exec_data);
 // executor/command_path.c
 char			*find_command_path(char *cmd, t_env *env_list);
 
+// signals
+void			sigint_handler(int signum);
+int				process_all_heredocs(t_cmd *cmd, t_exec_data *exec_data);
+int				handle_heredoc(char *delimiter, int *heredoc_fd);
 #endif

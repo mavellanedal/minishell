@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   child_process.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 14:26:19 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/17 18:11:50 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/05/21 13:12:59 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,9 @@ pid_t	fork_and_execute_command(t_cmd *cmd, t_exec_data *exec_data)
 {
 	pid_t	pid;
 
-	// ft_printf("Dentro de fork_and_execute_command\n");
+	// Ignorar señales en el padre antes del fork
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
 	pid = fork();
 	if (pid < 0)
 	{
@@ -99,6 +101,11 @@ pid_t	fork_and_execute_command(t_cmd *cmd, t_exec_data *exec_data)
 		exit(1);
 	}
 	if (pid == 0)
+	{
+		// Restaurar señales a comportamiento por defecto en el hijo
+		signal(SIGINT, SIG_DFL);
+		signal(SIGQUIT, SIG_DFL);
 		setup_child_process(cmd, exec_data);
+	}
 	return (pid);
 }
