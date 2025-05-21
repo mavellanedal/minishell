@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 12:50:46 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/20 17:26:13 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/21 15:05:47 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,16 @@ int	executor(t_cmd *cmd_list, t_env **env_list, char **tokens)
 			else
 				exec_data.prev_read = -1;
 			waitpid(pid, &status, 0);
+			if (WIFSIGNALED(status))
+			{
+				int sig = WTERMSIG(status);
+				if (sig == SIGINT)
+					write(STDOUT_FILENO, "\n", 1); // Ctrl+C
+				else if (sig == SIGQUIT)
+					write(STDOUT_FILENO, "Quit (core dumped)\n", 20); // Ctrl+"\" 
+			}
+			signal(SIGINT, sigint_handler);
+			signal(SIGQUIT, SIG_IGN);
 		}
 		// printf("Bucle %d %s\n", i, current_cmd->args[0]);
 		current_cmd = current_cmd->next;
