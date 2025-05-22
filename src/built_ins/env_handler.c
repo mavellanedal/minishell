@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 12:33:10 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/05/14 16:33:37 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/20 15:41:36 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ t_env	*create_env_list(char **envp)
 */
 int	ft_env(t_env *env_list)
 {
+	ft_printf("------------ BUILT IN - ENV ------------\n");
 	while (env_list)
 	{
 		if (env_list->has_value)

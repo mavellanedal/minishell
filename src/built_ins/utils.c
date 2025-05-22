@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 16:10:41 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/05/17 16:47:39 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/05/20 15:41:46 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ int	ft_echo(char **args)
 
 	i = 1;
 	newline = 1;
+	ft_printf("------------ BUILT IN - ECHO ------------\n");
 	while (args[i] && ft_is_echo_n_flag(args[i]))
 	{
 		newline = 0;
@@ -41,6 +42,7 @@ int	ft_pwd(void)
 	char	*cwd;
 
 	cwd = getcwd(NULL, 0);
+	ft_printf("------------ BUILT IN - PWD ------------\n");
 	if (cwd != NULL)
 	{
 		printf("%s\n", cwd);
@@ -62,6 +64,7 @@ int	ft_exit(char **args)
 	arg_count = 0;
 	while (args[arg_count])
 		arg_count++;
+	ft_printf("------------ BUILT IN - EXIT ------------\n");
 	printf("exit\n");
 	if (arg_count > 1)
 	{
@@ -86,6 +89,7 @@ int	ft_unset(char **args, t_env **env_list)
 	int	i;
 
 	i = 1;
+	ft_printf("------------ BUILT IN - UNSET ------------\n");
 	while (args[i])
 	{
 		if (!is_valid_identifier(args[i]))
