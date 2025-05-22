@@ -151,7 +151,7 @@ void			free_env_array(char **env_array);
 // executor/executor.c
 void			apply_redirections(t_cmd *cmd);
 void			wait_for_processes(pid_t pid);
-int			executor(t_cmd *cmd_list, t_env *env_list, char **tokens);
+int				executor(t_cmd *cmd_list, t_env *env_list, char **tokens);
 
 // executor/envp_handler.c
 char			**convert_env_to_envp(t_env *env);
@@ -166,10 +166,14 @@ void			free_cmd_list(t_cmd *cmd);
 int				is_builtin(char *cmd);
 
 // executor/child_process.c
-void			setup_child_process(t_cmd *cmd, t_exec_data *exec_data);
+void			redirect_io(t_cmd *cmd, t_exec_data *exec_data);
+void			execute_if_builtin(t_cmd *cmd, t_exec_data *exec_data);
+void			check_executable_errors(char *path, char **envp);
+void				setup_child_process(t_cmd *cmd, t_exec_data *exec_data);
 pid_t			fork_and_execute_command(t_cmd *cmd, t_exec_data *exec_data);
 
 // executor/command_path.c
 char			*find_command_path(char *cmd, t_env *env_list);
+char			*get_full_command_path(char *cmd_name, t_env *env_list);
 
 #endif

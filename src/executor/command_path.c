@@ -54,3 +54,10 @@ char	*find_command_path(char *cmd, t_env *env_list)
 	ft_free(paths);
 	return (NULL);
 }
+
+char	*get_full_command_path(char *cmd_name, t_env *env_list)
+{
+	if (ft_strchr(cmd_name, '/'))
+		return (strdup(cmd_name));
+	return (find_command_path(cmd_name, env_list));
+}

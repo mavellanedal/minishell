@@ -118,7 +118,6 @@ int	execute_builtin(char **args, t_env **env_list)
 		return (ft_pwd());
 	if (ft_strcmp(args[0], "exit") == 0)
 		return (ft_exit(args));
-	printf("llega papi\n");
 	if (ft_strcmp(args[0], "env") == 0)
 	{
 		if (args[1] != NULL)

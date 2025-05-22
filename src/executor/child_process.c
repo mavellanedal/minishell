@@ -12,11 +12,8 @@
 
 #include "../../include/minishell.h"
 
-void	setup_child_process(t_cmd *cmd, t_exec_data *exec_data)
+void	redirect_io(t_cmd *cmd, t_exec_data *exec_data)
 {
-	char	**envp_array;
-	char	*full_path;
-
 	if (exec_data->prev_read != STDIN_FILENO)
 	{
 		dup2(exec_data->prev_read, STDIN_FILENO);
@@ -28,22 +25,58 @@ void	setup_child_process(t_cmd *cmd, t_exec_data *exec_data)
 		close(exec_data->pipe_fds[0]);
 		close(exec_data->pipe_fds[1]);
 	}
+}
 
-	apply_redirections(cmd);
+void	execute_if_builtin(t_cmd *cmd, t_exec_data *exec_data)
+{
+	int	status;
 
 	if (is_builtin(cmd->args[0]))
 	{
-		int status = execute_builtin(cmd->args, &(exec_data->env_list));
+		status = execute_builtin(cmd->args, &(exec_data->env_list));
 		exit(status);
 	}
+}
 
+void	check_executable_errors(char *path, char **envp)
+{
+	struct stat	path_stat;
+
+	if (access(path, F_OK) != 0)
+	{
+		ft_putstr_fd("minishell: no such file or directory\n", 2);
+		free(path);
+		ft_free(envp);
+		exit(127);
+	}
+	if (access(path, X_OK) != 0)
+	{
+		ft_putstr_fd("minishell: permission denied\n", 2);
+		free(path);
+		ft_free(envp);
+		exit(126);
+	}
+	if (stat(path, &path_stat) == 0 && S_ISDIR(path_stat.st_mode))
+	{
+		ft_putstr_fd("minishell: ", 2);
+		ft_putstr_fd(path, 2);
+		ft_putstr_fd(": Is a directory\n", 2);
+		free(path);
+		ft_free(envp);
+		exit(126);
+	}
+}
+
+void	setup_child_process(t_cmd *cmd, t_exec_data *exec_data)
+{
+	char	**envp_array;
+	char	*full_path;
+
+	redirect_io(cmd, exec_data);
+	apply_redirections(cmd);
+	execute_if_builtin(cmd, exec_data);
 	envp_array = convert_env_to_envp(exec_data->env_list);
-
-	if (ft_strchr(cmd->args[0], '/'))
-		full_path = strdup(cmd->args[0]);
-	else
-		full_path = find_command_path(cmd->args[0], exec_data->env_list);
-
+	full_path = get_full_command_path(cmd->args[0], exec_data->env_list);
 	if (!full_path)
 	{
 		ft_putstr_fd("minishell: ", 2);
@@ -52,32 +85,7 @@ void	setup_child_process(t_cmd *cmd, t_exec_data *exec_data)
 		ft_free(envp_array);
 		exit(127);
 	}
-
-	if (access(full_path, F_OK) != 0)
-	{
-		ft_putstr_fd("minishell: no such file or directory\n", 2);
-		free(full_path);
-		ft_free(envp_array);
-		exit(127);
-	}
-	if (access(full_path, X_OK) != 0)
-	{
-		ft_putstr_fd("minishell: permission denied\n", 2);
-		free(full_path);
-		ft_free(envp_array);
-		exit(126);
-	}
-
-	struct stat path_stat;
-	if (stat(full_path, &path_stat) == 0 && S_ISDIR(path_stat.st_mode))
-	{
-		ft_putstr_fd("minishell: ", 2);
-		ft_putstr_fd(full_path, 2);
-		ft_putstr_fd(": Is a directory\n", 2);
-		free(full_path);
-		ft_free(envp_array);
-		exit(126);
-	}
+	check_executable_errors(full_path, envp_array);
 	execve(full_path, cmd->args, envp_array);
 	ft_putstr_fd("minishell: execution error\n", 2);
 	free(full_path);
@@ -85,13 +93,10 @@ void	setup_child_process(t_cmd *cmd, t_exec_data *exec_data)
 	exit(127);
 }
 
-
-
 pid_t	fork_and_execute_command(t_cmd *cmd, t_exec_data *exec_data)
 {
 	pid_t	pid;
 
-	// ft_printf("Dentro de fork_and_execute_command\n");
 	pid = fork();
 	if (pid < 0)
 	{
