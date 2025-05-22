@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+         #
+#    By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/10 13:29:38 by mavellan          #+#    #+#              #
-#    Updated: 2025/05/15 12:57:28 by mavellan         ###   ########.fr        #
+#    Updated: 2025/05/21 13:14:46 by ebalana-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,7 +20,7 @@ RED = \033[0;91m
 
 NAME = minishell
 CC = cc
-FLAGS = -Werror -Wall -Wextra -g
+FLAGS = -Werror -Wall -Wextra -g -fsanitize=address
 LIBFTDIR = lib/
 LIBFT_LIB = $(LIBFTDIR)/ultimate_libft.a
 RM = rm -f
@@ -39,6 +39,7 @@ SRCS = 	src/main.c \
 		src/executor/child_process.c \
 		src/executor/envp_handler.c \
 		src/executor/command_path.c \
+		src/signals.c \
 
 OBJS = $(SRCS:.c=.o)
 

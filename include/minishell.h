@@ -6,7 +6,7 @@
 /*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/17 18:14:43 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/05/22 13:19:19 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,9 @@
 # include <sys/types.h>
 # include <stdbool.h>
 # include <sys/stat.h>
+# include <signal.h>
+# include <stdio.h>
+# include <unistd.h>
 
 # define UNCLOSED_QUOTES	"Error: Unclosed quotes\n"
 # define UNSET				"unset: `%s`: not a valid identifier\n"
@@ -150,8 +153,8 @@ void			free_env_array(char **env_array);
 
 // executor/executor.c
 void			apply_redirections(t_cmd *cmd);
-void			wait_for_processes(pid_t pid);
-int				executor(t_cmd *cmd_list, t_env *env_list, char **tokens);
+// void			wait_for_processes(pid_t pid);
+int					executor(t_cmd *cmd_list, t_env **env_list, char **tokens);
 
 // executor/envp_handler.c
 char			**convert_env_to_envp(t_env *env);
@@ -176,4 +179,8 @@ pid_t			fork_and_execute_command(t_cmd *cmd, t_exec_data *exec_data);
 char			*find_command_path(char *cmd, t_env *env_list);
 char			*get_full_command_path(char *cmd_name, t_env *env_list);
 
+// signals
+void			sigint_handler(int signum);
+int				process_all_heredocs(t_cmd *cmd, t_exec_data *exec_data);
+int				handle_heredoc(char *delimiter, int *heredoc_fd);
 #endif

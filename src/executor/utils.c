@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 14:15:21 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/17 17:43:37 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/05/20 15:52:47 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,6 +132,8 @@ int	is_builtin(char *cmd)
 		return (1);
 	if (ft_strcmp(cmd, "export") == 0)
 		return (1);
+	if (ft_strcmp(cmd, "unset") == 0)
+        return (1);
 	// printf("----------------- NOT BUILT INS ----------------- \n");
 	return (0);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:40:15 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/17 18:25:48 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/05/21 14:37:43 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,6 +110,20 @@ void	update_shlvl(t_env **env_list)
 	*env_list = new_node;
 }
 
+void	free_env_list(t_env *env)
+{
+	t_env *tmp;
+
+	while (env)
+	{
+		tmp = env->next;
+		free(env->key);
+		free(env->value);
+		free(env);
+		env = tmp;
+	}
+}
+
 int main(int argc, char **argv, char **envp)
 {
 	char    *line;
@@ -127,11 +141,18 @@ int main(int argc, char **argv, char **envp)
 	env_list = create_env_list(envp);
 	update_shlvl(&env_list);
 
+	signal(SIGINT, sigint_handler);    // Ctrl + C
+	signal(SIGQUIT, SIG_IGN);          // Ignorar Ctrl + \
+
 	while (1)
 	{
 		line = readline("minishell$ ");
 		if (!line)
+		{
+			write(1, "exit\n", 5);
+			free_env_list(env_list);
 			break; // Ctrl+D
+		}
 		if (*line)
 		{
 			add_history(line);
@@ -152,7 +173,7 @@ int main(int argc, char **argv, char **envp)
 				cmd_list = parse_tokens_to_cmd_list(tokens);
 				if (cmd_list)
 				{
-					last_status = executor(cmd_list, env_list, tokens);
+					last_status = executor(cmd_list, &env_list, tokens);
 					free_cmd_list(cmd_list);
 				}
 			}
