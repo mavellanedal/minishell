@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/21 15:01:21 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/22 13:19:19 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,7 +154,7 @@ void			free_env_array(char **env_array);
 // executor/executor.c
 void			apply_redirections(t_cmd *cmd);
 // void			wait_for_processes(pid_t pid);
-int				executor(t_cmd *cmd_list, t_env **env_list, char **tokens);
+int					executor(t_cmd *cmd_list, t_env **env_list, char **tokens);
 
 // executor/envp_handler.c
 char			**convert_env_to_envp(t_env *env);
