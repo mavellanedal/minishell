@@ -71,6 +71,7 @@ void	setup_child_process(t_cmd *cmd, t_exec_data *exec_data)
 {
 	char	**envp_array;
 	char	*full_path;
+	char	*new_argv[3];
 
 	redirect_io(cmd, exec_data);
 	apply_redirections(cmd);
@@ -87,6 +88,13 @@ void	setup_child_process(t_cmd *cmd, t_exec_data *exec_data)
 	}
 	check_executable_errors(full_path, envp_array);
 	execve(full_path, cmd->args, envp_array);
+	if (errno == ENOEXEC)
+	{
+		new_argv[0] = "/bin/sh";
+		new_argv[1] = full_path;
+		new_argv[2] = NULL;
+		execve("/bin/sh", new_argv, envp_array);
+	}
 	ft_putstr_fd("minishell: execution error\n", 2);
 	free(full_path);
 	ft_free(envp_array);
@@ -97,7 +105,6 @@ pid_t	fork_and_execute_command(t_cmd *cmd, t_exec_data *exec_data)
 {
 	pid_t	pid;
 
-	// Ignorar señales en el padre antes del fork
 	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
 	pid = fork();
@@ -108,7 +115,6 @@ pid_t	fork_and_execute_command(t_cmd *cmd, t_exec_data *exec_data)
 	}
 	if (pid == 0)
 	{
-		// Restaurar señales a comportamiento por defecto en el hijo
 		signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_DFL);
 		setup_child_process(cmd, exec_data);

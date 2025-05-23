@@ -28,7 +28,7 @@ int	check_redir_type(t_redir *r)
 	return (fd);
 }
 
-t_cmd	*parse_tokens_to_cmd_list(char **tokens)
+t_cmd	*parse_tokens_to_cmd_list(char **tokens, int *last_status)
 {
 	t_cmd	*head = NULL;
 	t_cmd	*current = NULL;
@@ -50,6 +50,12 @@ t_cmd	*parse_tokens_to_cmd_list(char **tokens)
 			if (ft_strcmp(tokens[i], "<") == 0 || ft_strcmp(tokens[i], ">") == 0 ||
 				ft_strcmp(tokens[i], ">>") == 0 || ft_strcmp(tokens[i], "<<") == 0)
 			{
+				if (!tokens[i + 1])
+				{
+					ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n", STDERR_FILENO);
+					*last_status = 258;
+					return (NULL);
+				}
 				int redir_type;
 				if (!tokens[i + 1])
 					return (NULL); // error de sintaxis

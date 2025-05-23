@@ -27,7 +27,6 @@ char	**convert_env_to_envp(t_env *env)
 	if (result == -1)
 		return (NULL);
 	envp[result] = NULL;
-	t_env *tmp = env;
 	return (envp);
 }
 

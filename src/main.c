@@ -81,11 +81,9 @@ void	update_shlvl(t_env **env_list)
 {
 	t_env	*new_node;
 	t_env	*current;
-	char	*shlvl_value;
 	int		new_level;
 
 	current = *env_list;
-	shlvl_value = NULL;
 	new_level = 1;
 	while (current)
 	{
@@ -129,21 +127,20 @@ int main(int argc, char **argv, char **envp)
 	char    *line;
 	char	*expanded;
 	char    **tokens;
-	char	**env_array;
 	int     last_status;
 	t_env   *env_list;
 	t_cmd	*cmd_list;
 	int		j;
 	int		i;
-	pid_t	pid;
 
 	last_status = 0;
 	env_list = create_env_list(envp);
 	update_shlvl(&env_list);
 
-	signal(SIGINT, sigint_handler);    // Ctrl + C
-	signal(SIGQUIT, SIG_IGN);          // Ignorar Ctrl + \
-
+	signal(SIGINT, sigint_handler);
+	signal(SIGQUIT, SIG_IGN);
+	(void)argc;
+	(void)argv;
 	while (1)
 	{
 		line = readline("minishell$ ");
@@ -170,10 +167,10 @@ int main(int argc, char **argv, char **envp)
 					i++;
 				}
 				//printf("-----------------------------------------\n");
-				cmd_list = parse_tokens_to_cmd_list(tokens);
+				cmd_list = parse_tokens_to_cmd_list(tokens, &last_status);
 				if (cmd_list)
 				{
-					last_status = executor(cmd_list, &env_list, tokens);
+					last_status = executor(cmd_list, &env_list);
 					free_cmd_list(cmd_list);
 				}
 			}

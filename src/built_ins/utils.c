@@ -19,7 +19,7 @@ int	ft_echo(char **args)
 
 	i = 1;
 	newline = 1;
-	ft_printf("------------ BUILT IN - ECHO ------------\n");
+	// ft_printf("------------ BUILT IN - ECHO ------------\n");
 	while (args[i] && ft_is_echo_n_flag(args[i]))
 	{
 		newline = 0;

@@ -23,6 +23,7 @@
 # include <signal.h>
 # include <stdio.h>
 # include <unistd.h>
+#include <errno.h>
 
 # define UNCLOSED_QUOTES	"Error: Unclosed quotes\n"
 # define UNSET				"unset: `%s`: not a valid identifier\n"
@@ -101,6 +102,7 @@ typedef struct s_exec_data
 	int		prev_read;
 	int		pipe_fds[2];
 	t_env	*env_list;
+	int		exit_status;
 }	t_exec_data;
 
 
@@ -154,7 +156,7 @@ void			free_env_array(char **env_array);
 // executor/executor.c
 void			apply_redirections(t_cmd *cmd);
 // void			wait_for_processes(pid_t pid);
-int					executor(t_cmd *cmd_list, t_env **env_list, char **tokens);
+int				executor(t_cmd *cmd_list, t_env **env_list);
 
 // executor/envp_handler.c
 char			**convert_env_to_envp(t_env *env);
@@ -164,7 +166,7 @@ int				count_env_vars(t_env *env);
 
 // executor/utils.c
 int				check_redir_type(t_redir *r);
-t_cmd			*parse_tokens_to_cmd_list(char **tokens);
+t_cmd			*parse_tokens_to_cmd_list(char **tokens, int *last_status);
 void			free_cmd_list(t_cmd *cmd);
 int				is_builtin(char *cmd);
 
@@ -172,7 +174,7 @@ int				is_builtin(char *cmd);
 void			redirect_io(t_cmd *cmd, t_exec_data *exec_data);
 void			execute_if_builtin(t_cmd *cmd, t_exec_data *exec_data);
 void			check_executable_errors(char *path, char **envp);
-void				setup_child_process(t_cmd *cmd, t_exec_data *exec_data);
+void			setup_child_process(t_cmd *cmd, t_exec_data *exec_data);
 pid_t			fork_and_execute_command(t_cmd *cmd, t_exec_data *exec_data);
 
 // executor/command_path.c

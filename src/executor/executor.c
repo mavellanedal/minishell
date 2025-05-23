@@ -36,7 +36,7 @@ void	apply_redirections(t_cmd *cmd)
 	}
 }
 
-int	executor(t_cmd *cmd_list, t_env **env_list, char **tokens)
+int	executor(t_cmd *cmd_list, t_env **env_list)
 	{
 	t_exec_data	exec_data;
 	pid_t		pid;
@@ -48,13 +48,29 @@ int	executor(t_cmd *cmd_list, t_env **env_list, char **tokens)
 	exec_data.env_list = *env_list;
 	exec_data.prev_read = STDIN_FILENO;
 	current_cmd = cmd_list;
-	int i = 1;
+	t_cmd *tmp = cmd_list;
+	while (tmp)
+	{
+		if (!tmp->args || !tmp->args[0])
+		{
+			ft_putstr_fd("minishell: syntax error near unexpected token `|'\n", STDERR_FILENO);
+			last_status = 258;
+			return (last_status);
+		}
+		tmp = tmp->next;
+	}
 	while (current_cmd)
 	{
 		must_fork = current_cmd->next != NULL || current_cmd->redirs != NULL;
-		if (is_builtin(current_cmd->args[0]) && !must_fork)
-		{
+		if (current_cmd->args && current_cmd->args[0] &&
+			is_builtin(current_cmd->args[0]) && !must_fork)
 			last_status = execute_builtin(current_cmd->args, env_list);
+		else if (!current_cmd->args || !current_cmd->args[0])
+		{
+			ft_putstr_fd("minishell: command not found\n", STDERR_FILENO);
+			last_status = 258;
+			current_cmd = current_cmd->next;
+			exit(last_status);
 		}
 		else
 		{

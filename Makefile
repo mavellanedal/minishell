@@ -1,15 +1,3 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2025/04/10 13:29:38 by mavellan          #+#    #+#              #
-#    Updated: 2025/05/21 13:14:46 by ebalana-         ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
-
 # Colors
 DEF_COLOR = \033[0;39m
 YELLOW = \033[0;93m
@@ -20,7 +8,8 @@ RED = \033[0;91m
 
 NAME = minishell
 CC = cc
-FLAGS = -Werror -Wall -Wextra -g -fsanitize=address
+FLAGS = -Werror -Wall -Wextra -g -fsanitize=address -Wno-deprecated-declarations
+
 LIBFTDIR = lib/
 LIBFT_LIB = $(LIBFTDIR)/ultimate_libft.a
 RM = rm -f
@@ -43,19 +32,28 @@ SRCS = 	src/main.c \
 
 OBJS = $(SRCS:.c=.o)
 
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Darwin)
+	READLINE_INCLUDE = -I$(shell brew --prefix readline)/include
+	READLINE_LIB = -L$(shell brew --prefix readline)/lib
+else
+	READLINE_INCLUDE =
+	READLINE_LIB =
+endif
+
 all: make_libft $(NAME)
 
-%.o: %.c Makefile pipex.h
-	$(CC) $(FLAGS) -Ilib -c $< -o $@
+%.o: %.c Makefile $(HEADER)
+	$(CC) $(FLAGS) $(READLINE_INCLUDE) -Ilib -c $< -o $@
 	@echo "$(YELLOW)Compiling: $< $(DEF_COLOR)"
 
-$(NAME): $(LIBFTDIR_LIB) $(OBJS)
+$(NAME): $(LIBFT_LIB) $(OBJS)
 	@echo "$(GREEN)Compiling minishell!$(DEF_COLOR)"
-	$(CC) $(FLAGS) $(OBJS) $(LIBFT_LIB) -o $(NAME) -lreadline
+	$(CC) $(FLAGS) $(OBJS) $(LIBFT_LIB) $(READLINE_LIB) -lreadline -o $(NAME)
 	@echo "$(GREEN)Minishell compiled!$(DEF_COLOR)"
 
 make_libft:
-	make -C $(LIBFTDIR)
+	@make -C $(LIBFTDIR)
 
 clean:
 	@$(MAKE) clean -C $(LIBFTDIR)
