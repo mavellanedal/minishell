@@ -34,9 +34,7 @@ void execute_if_builtin(t_cmd *cmd, t_exec_data *exec_data)
 	if (!is_builtin(cmd->args[0]))
 		return;
 
-	if (ft_strcmp(cmd->args[0], "exit") == 0) {
-		printf("Es exit, no se ejecuta\n");
-	}
+	if (ft_strcmp(cmd->args[0], "exit") == 0)
 		return;
 
 	status = execute_builtin(cmd->args, &(exec_data->env_list));

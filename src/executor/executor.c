@@ -73,16 +73,10 @@ int executor(t_cmd *cmd_list, t_env **env_list)
 						exit(last_status);
 				}
 				else
-				{
 					last_status = 0;
-				}
 			}
 			else
-			{
 				last_status = execute_builtin(current_cmd->args, &exec_data.env_list);
-				if (last_status != 1)
-					exit(last_status);
-			}
 		}
 		else if (!current_cmd->args || !current_cmd->args[0])
 		{
