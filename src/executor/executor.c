@@ -50,7 +50,7 @@ int executor(t_cmd *cmd_list, t_env **env_list)
 	t_cmd *tmp = cmd_list;
 	while (tmp)
 	{
-		if (!tmp->args || !tmp->args[0])
+		if ((!tmp->args || !tmp->args[0]) && !tmp->redirs)
 		{
 			ft_putstr_fd("minishell: syntax error near unexpected token `|'\n", STDERR_FILENO);
 			last_status = 258;
@@ -78,12 +78,49 @@ int executor(t_cmd *cmd_list, t_env **env_list)
 			else
 				last_status = execute_builtin(current_cmd->args, &exec_data.env_list);
 		}
+		else if ((!current_cmd->args || !current_cmd->args[0]) && current_cmd->redirs)
+		{
+			if (current_cmd->next)
+				pipe(exec_data.pipe_fds);
+			else
+			{
+				exec_data.pipe_fds[0] = -1;
+				exec_data.pipe_fds[1] = -1;
+			}
+			exec_data.cmd = current_cmd;
+			pid = fork_and_execute_command(current_cmd, &exec_data);
+			if (exec_data.prev_read != STDIN_FILENO)
+				close(exec_data.prev_read);
+			if (current_cmd->next != NULL)
+			{
+				close(exec_data.pipe_fds[1]);
+				exec_data.prev_read = exec_data.pipe_fds[0];
+			}
+			else
+				exec_data.prev_read = -1;
+
+			waitpid(pid, &status, 0);
+			if (WIFSIGNALED(status))
+			{
+				int sig = WTERMSIG(status);
+				if (sig == SIGINT)
+					write(STDOUT_FILENO, "\n", 1);
+				else if (sig == SIGQUIT)
+					write(STDOUT_FILENO, "Quit (core dumped)\n", 20);
+				last_status = 128 + sig;
+			}
+			else if (WIFEXITED(status))
+				last_status = WEXITSTATUS(status);
+			else
+				last_status = 1;
+
+			signal(SIGINT, sigint_handler);
+			signal(SIGQUIT, SIG_IGN);
+		}
 		else if (!current_cmd->args || !current_cmd->args[0])
 		{
 			ft_putstr_fd("minishell: command not found\n", STDERR_FILENO);
-			last_status = 258;
-			current_cmd = current_cmd->next;
-			exit(last_status);
+			last_status = 127;
 		}
 		else
 		{

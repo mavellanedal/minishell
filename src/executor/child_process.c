@@ -78,6 +78,9 @@ void	setup_child_process(t_cmd *cmd, t_exec_data *exec_data)
 
 	redirect_io(cmd, exec_data);
 	apply_redirections(cmd);
+	apply_redirections(cmd);
+	if (!cmd->args || !cmd->args[0])
+		exit(0);
 	execute_if_builtin(cmd, exec_data);
 	envp_array = convert_env_to_envp(exec_data->env_list);
 	full_path = get_full_command_path(cmd->args[0], exec_data->env_list);
