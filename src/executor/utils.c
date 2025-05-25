@@ -16,7 +16,6 @@ int	check_redir_type(t_redir *r)
 {
 	int	fd;
 
-	// ft_printf("Dentro de check_redir_type\n");
 	if (r->type == REDIR_OUT)
 		fd = open(r->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	else if (r->type == REDIR_APPEND)
@@ -38,10 +37,8 @@ t_cmd	*parse_tokens_to_cmd_list(char **tokens, int *last_status)
 	{
 		t_cmd *new_cmd = calloc(1, sizeof(t_cmd));
 		if (!new_cmd)
-			return (NULL); // Error malloc
-
-		// Crear listas dinámicas temporales
-		char **args = calloc(100, sizeof(char *)); // puedes hacer realloc más adelante
+			return (NULL);
+		char **args = calloc(100, sizeof(char *));
 		t_redir *redir_head = NULL;
 		int arg_index = 0;
 
@@ -58,7 +55,7 @@ t_cmd	*parse_tokens_to_cmd_list(char **tokens, int *last_status)
 				}
 				int redir_type;
 				if (!tokens[i + 1])
-					return (NULL); // error de sintaxis
+					return (NULL);
 				if (ft_strcmp(tokens[i], "<") == 0)
 					redir_type = REDIR_IN;
 				else if (ft_strcmp(tokens[i], ">") == 0)
@@ -125,7 +122,6 @@ void	free_cmd_list(t_cmd *cmd)
 
 int	is_builtin(char *cmd)
 {
-	// printf("----------------- args[0]: %s ----------------- \n", cmd);
 	if (ft_strcmp(cmd, "echo") == 0)
 		return (1);
 	if (ft_strcmp(cmd, "pwd") == 0)
@@ -139,7 +135,6 @@ int	is_builtin(char *cmd)
 	if (ft_strcmp(cmd, "export") == 0)
 		return (1);
 	if (ft_strcmp(cmd, "unset") == 0)
-        return (1);
-	// printf("----------------- NOT BUILT INS ----------------- \n");
+		return (1);
 	return (0);
 }

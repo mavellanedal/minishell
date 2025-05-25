@@ -17,7 +17,6 @@ void	apply_redirections(t_cmd *cmd)
 	t_redir	*r;
 	int		fd;
 
-	// ft_printf("Dentro de apply_redirections\n");
 	r = cmd->redirs;
 	while (r)
 	{
@@ -36,8 +35,8 @@ void	apply_redirections(t_cmd *cmd)
 	}
 }
 
-int	executor(t_cmd *cmd_list, t_env **env_list)
-	{
+int executor(t_cmd *cmd_list, t_env **env_list)
+{
 	t_exec_data	exec_data;
 	pid_t		pid;
 	t_cmd		*current_cmd;
@@ -64,7 +63,27 @@ int	executor(t_cmd *cmd_list, t_env **env_list)
 		must_fork = current_cmd->next != NULL || current_cmd->redirs != NULL;
 		if (current_cmd->args && current_cmd->args[0] &&
 			is_builtin(current_cmd->args[0]) && !must_fork)
-			last_status = execute_builtin(current_cmd->args, env_list);
+		{
+			if (ft_strcmp(current_cmd->args[0], "exit") == 0)
+			{
+				if (!current_cmd->next && exec_data.prev_read == STDIN_FILENO)
+				{
+					last_status = execute_builtin(current_cmd->args, env_list);
+					if (last_status != 1)
+						exit(last_status);
+				}
+				else
+				{
+					last_status = 0;
+				}
+			}
+			else
+			{
+				last_status = execute_builtin(current_cmd->args, &exec_data.env_list);
+				if (last_status != 1)
+					exit(last_status);
+			}
+		}
 		else if (!current_cmd->args || !current_cmd->args[0])
 		{
 			ft_putstr_fd("minishell: command not found\n", STDERR_FILENO);
@@ -115,4 +134,3 @@ int	executor(t_cmd *cmd_list, t_env **env_list)
 	}
 	return (last_status);
 }
-

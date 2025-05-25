@@ -27,15 +27,20 @@ void	redirect_io(t_cmd *cmd, t_exec_data *exec_data)
 	}
 }
 
-void	execute_if_builtin(t_cmd *cmd, t_exec_data *exec_data)
+void execute_if_builtin(t_cmd *cmd, t_exec_data *exec_data)
 {
-	int	status;
+	int status;
 
-	if (is_builtin(cmd->args[0]))
-	{
-		status = execute_builtin(cmd->args, &(exec_data->env_list));
-		exit(status);
+	if (!is_builtin(cmd->args[0]))
+		return;
+
+	if (ft_strcmp(cmd->args[0], "exit") == 0) {
+		printf("Es exit, no se ejecuta\n");
 	}
+		return;
+
+	status = execute_builtin(cmd->args, &(exec_data->env_list));
+	exit(status);
 }
 
 void	check_executable_errors(char *path, char **envp)
