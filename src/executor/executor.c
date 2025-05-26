@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 12:50:46 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/26 15:46:02 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/26 17:30:47 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,7 @@ int executor(t_cmd *cmd_list, t_env **env_list)
 					last_status = 0;
 			}
 			else
-				last_status = execute_builtin(current_cmd->args, &exec_data.env_list);
+				last_status = execute_builtin(current_cmd->args, env_list);
 		}
 		else if ((!current_cmd->args || !current_cmd->args[0]) && current_cmd->redirs)
 		{

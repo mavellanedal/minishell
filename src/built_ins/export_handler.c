@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 16:53:45 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/05/20 15:42:12 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/26 17:39:43 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,7 +164,7 @@ int	ft_export(char **args, t_env **env)
 			fprintf(stderr, "export: `%s`: not a valid identifier\n", args[i]);
 			status = 1;
 			i++;
-			continue;
+			continue ;
 		}
 		char *eq = strchr(args[i], '=');
 		if (eq)
