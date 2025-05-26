@@ -8,7 +8,8 @@ RED = \033[0;91m
 
 NAME = minishell
 CC = cc
-FLAGS = -Werror -Wall -Wextra -g -fsanitize=address -Wno-deprecated-declarations
+# FLAGS = -Werror -Wall -Wextra -g -fsanitize=address -Wno-deprecated-declarations
+FLAGS = -Werror -Wall -Wextra -g -fsanitize=address
 
 LIBFTDIR = lib/
 LIBFT_LIB = $(LIBFTDIR)/ultimate_libft.a
@@ -29,17 +30,18 @@ SRCS = 	src/main.c \
 		src/executor/envp_handler.c \
 		src/executor/command_path.c \
 		src/signals.c \
+		src/heredoc.c \
 
 OBJS = $(SRCS:.c=.o)
 
-UNAME_S := $(shell uname -s)
-ifeq ($(UNAME_S),Darwin)
-	READLINE_INCLUDE = -I$(shell brew --prefix readline)/include
-	READLINE_LIB = -L$(shell brew --prefix readline)/lib
-else
-	READLINE_INCLUDE =
-	READLINE_LIB =
-endif
+# UNAME_S := $(shell uname -s)
+# ifeq ($(UNAME_S),Darwin)
+# 	READLINE_INCLUDE = -I$(shell brew --prefix readline)/include
+# 	READLINE_LIB = -L$(shell brew --prefix readline)/lib
+# else
+# 	READLINE_INCLUDE =
+# 	READLINE_LIB =
+# endif
 
 all: make_libft $(NAME)
 

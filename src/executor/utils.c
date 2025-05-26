@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 14:15:21 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/20 15:52:47 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/26 15:14:13 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,8 @@ t_cmd	*parse_tokens_to_cmd_list(char **tokens, int *last_status)
 				if (!tokens[i + 1])
 				{
 					ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n", STDERR_FILENO);
-					*last_status = 258;
+					// *last_status = 258;
+					*last_status = 2; //es error de manipulacion
 					return (NULL);
 				}
 				int redir_type;
@@ -84,6 +85,8 @@ t_cmd	*parse_tokens_to_cmd_list(char **tokens, int *last_status)
 		new_cmd->args = args;
 		new_cmd->redirs = redir_head;
 		new_cmd->next = NULL;
+		new_cmd->fd_in = -1;
+		new_cmd->fd_out = -1;
 
 		if (!head)
 			head = new_cmd;

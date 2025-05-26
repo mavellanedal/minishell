@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 12:50:46 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/22 13:48:40 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/05/26 15:46:02 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,24 +14,54 @@
 
 void	apply_redirections(t_cmd *cmd)
 {
-	t_redir	*r;
+	t_redir	*redir;
 	int		fd;
 
-	r = cmd->redirs;
-	while (r)
+	redir = cmd->redirs;
+	while (redir)
 	{
-		fd = check_redir_type(r);
-		if (fd < 0)
+		if (redir->type == REDIR_IN)
 		{
-			perror("Error of redirection");
-			exit(0);
-		}
-		if (r->type == REDIR_OUT || r->type == REDIR_APPEND)
-			dup2(fd, STDOUT_FILENO);
-		else if (r->type == REDIR_IN)
+			fd = open(redir->file, O_RDONLY);
+			if (fd == -1)
+			{
+				perror(redir->file);
+				exit(1);
+			}
 			dup2(fd, STDIN_FILENO);
-		close(fd);
-		r = r->next;
+			close(fd);
+		}
+		else if (redir->type == REDIR_OUT)
+		{
+			fd = open(redir->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+			if (fd == -1)
+			{
+				perror(redir->file);
+				exit(1);
+			}
+			dup2(fd, STDOUT_FILENO);
+			close(fd);
+		}
+		else if (redir->type == REDIR_APPEND)
+		{
+			fd = open(redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
+			if (fd == -1)
+			{
+				perror(redir->file);
+				exit(1);
+			}
+			dup2(fd, STDOUT_FILENO);
+			close(fd);
+		}
+		else if (redir->type == REDIR_HEREDOC)
+		{
+			if (cmd->fd_in != -1)
+			{
+				dup2(cmd->fd_in, STDIN_FILENO);
+				close(cmd->fd_in);
+			}
+		}
+		redir = redir->next;
 	}
 }
 

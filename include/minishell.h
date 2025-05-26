@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/22 13:19:19 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/05/26 15:37:39 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,10 @@
 # define UNCLOSED_QUOTES	"Error: Unclosed quotes\n"
 # define UNSET				"unset: `%s`: not a valid identifier\n"
 # define ENV				"env: %s: No such file or directory\n"
-#define REDIR_IN 1
-#define REDIR_OUT 2
-#define REDIR_APPEND 3
-#define REDIR_HEREDOC 4
+# define REDIR_IN 1
+# define REDIR_OUT 2
+# define REDIR_APPEND 3
+# define REDIR_HEREDOC 4
 
 // Redirección (<, >, >>, <<) con su archivo de destino
 typedef struct s_redir
@@ -183,6 +183,15 @@ char			*get_full_command_path(char *cmd_name, t_env *env_list);
 
 // signals
 void			sigint_handler(int signum);
-int				process_all_heredocs(t_cmd *cmd, t_exec_data *exec_data);
-int				handle_heredoc(char *delimiter, int *heredoc_fd);
+
+
+//heredoc.c
+
+extern volatile sig_atomic_t g_heredoc_interrupted;
+
+void	heredoc_sigint_handler(int signum);
+int		handle_heredoc(char *delimiter, int *heredoc_fd);
+int		process_all_heredocs(t_cmd *cmd);
+void	cleanup_heredoc_fds(t_cmd *cmd_list);
+
 #endif

@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:40:15 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/21 14:37:43 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/26 15:35:48 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,16 +122,17 @@ void	free_env_list(t_env *env)
 	}
 }
 
-int main(int argc, char **argv, char **envp)
+int	main(int argc, char **argv, char **envp)
 {
-	char    *line;
+	char	*line;
 	char	*expanded;
-	char    **tokens;
-	int     last_status;
-	t_env   *env_list;
+	char	**tokens;
+	int		last_status;
+	t_env	*env_list;
 	t_cmd	*cmd_list;
 	int		j;
 	int		i;
+	int		heredoc_result;
 
 	last_status = 0;
 	env_list = create_env_list(envp);
@@ -141,8 +142,11 @@ int main(int argc, char **argv, char **envp)
 	signal(SIGQUIT, SIG_IGN);
 	(void)argc;
 	(void)argv;
+
 	while (1)
 	{
+		// Reset de la variable global
+		g_heredoc_interrupted = 0;
 		line = readline("minishell$ ");
 		if (!line)
 		{
@@ -156,21 +160,33 @@ int main(int argc, char **argv, char **envp)
 			tokens = tokenize_input(line, last_status, env_list);
 			if (tokens)
 			{
-				//printf("-----------------------------------------\n");
 				i = 0;
 				while (tokens[i])
 				{
-					//printf("Tokens[%d] = [%s]\n", i, tokens[i]);
 					expanded = remove_quotes_and_expand(tokens[i], last_status, env_list);
 					free(tokens[i]);
 					tokens[i] = expanded;
 					i++;
-				}
-				//printf("-----------------------------------------\n");
+				}				
 				cmd_list = parse_tokens_to_cmd_list(tokens, &last_status);
 				if (cmd_list)
 				{
-					last_status = executor(cmd_list, &env_list);
+					// Procesar todos los heredocs ANTES de la ejecución
+					heredoc_result = process_all_heredocs(cmd_list);					
+					if (heredoc_result == 130) // SIGINT durante heredoc
+					{
+						last_status = 130;
+						printf("\n"); // Nueva línea después de ^C
+					}
+					else if (heredoc_result == 0)
+					{
+						last_status = executor(cmd_list, &env_list);
+					}
+					else
+					{
+						last_status = heredoc_result;
+					}
+					
 					free_cmd_list(cmd_list);
 				}
 			}

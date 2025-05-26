@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 16:10:41 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/05/20 15:41:46 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/26 12:45:08 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	ft_echo(char **args)
 
 	i = 1;
 	newline = 1;
-	// ft_printf("------------ BUILT IN - ECHO ------------\n");
+	ft_printf("------------ BUILT IN - ECHO ------------\n");
 	while (args[i] && ft_is_echo_n_flag(args[i]))
 	{
 		newline = 0;
