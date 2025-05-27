@@ -6,58 +6,11 @@
 /*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 12:50:46 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/27 13:43:07 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/05/27 17:50:05 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
-
-void	apply_redirections(t_cmd *cmd)
-{
-	t_redir	*r;
-	int		fd;
-	int		last_out_fd;
-	int		last_in_fd;
-
-	r = cmd->redirs;
-	last_out_fd = -1;
-	last_in_fd = -1;
-
-	while (r)
-	{
-		fd = check_redir_type(r);
-		if (fd < 0)
-		{
-			perror("Error of redirection");
-			exit(1);
-		}
-		if (r->type == REDIR_OUT || r->type == REDIR_APPEND)
-		{
-			if (last_out_fd != -1)
-				close(last_out_fd);
-			last_out_fd = fd;
-		}
-		else if (r->type == REDIR_IN)
-		{
-			if (last_in_fd != -1)
-				close(last_in_fd);
-			last_in_fd = fd;
-		}
-		else
-			close(fd);
-		r = r->next;
-	}
-	if (last_out_fd != -1)
-	{
-		dup2(last_out_fd, STDOUT_FILENO);
-		close(last_out_fd);
-	}
-	if (last_in_fd != -1)
-	{
-		dup2(last_in_fd, STDIN_FILENO);
-		close(last_in_fd);
-	}
-}
 
 void	wait_and_get_status(pid_t pid, int *last_status)
 {

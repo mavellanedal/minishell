@@ -6,7 +6,7 @@
 /*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/27 17:46:26 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/05/27 17:50:43 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,7 +154,6 @@ char			**env_list_to_array(t_env *env_list);
 void			free_env_array(char **env_array);
 
 // executor/executor.c
-void			apply_redirections(t_cmd *cmd);
 void			wait_and_get_status(pid_t pid, int *last_status);
 void			setup_pipe(t_cmd *cmd, t_exec_data *exec_data);
 int				check_pipe_syntax(t_cmd *cmd);
@@ -192,6 +191,12 @@ int				handle_builtin(t_cmd *cmd, t_env **env_list);
 int				handle_redirection_only(t_cmd *cmd, t_exec_data *exec_data);
 int				handle_full_command(t_cmd *cmd, t_exec_data *exec_data);
 void			handle_pipe_end(t_cmd *cmd, t_exec_data *exec_data);
+
+// executor/redirections.c
+void			handle_output_redirection(t_redir *r, int *last_out_fd, int fd);
+void			handle_input_redirection(t_redir *r, int *last_in_fd, int fd);
+void			apply_all_redirs(t_redir *r, int *last_out_fd, int *last_in_fd);
+void			apply_redirections(t_cmd *cmd);
 
 // signals
 void			sigint_handler(int signum);
