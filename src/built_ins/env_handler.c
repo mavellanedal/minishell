@@ -76,7 +76,7 @@ t_env	*create_env_list(char **envp)
 */
 int	ft_env(t_env *env_list)
 {
-	ft_printf("------------ BUILT IN - ENV ------------\n");
+	// ft_printf("------------ BUILT IN - ENV ------------\n");
 	while (env_list)
 	{
 		if (env_list->has_value)

@@ -6,7 +6,7 @@
 /*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/22 13:19:19 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/05/27 13:33:57 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,7 +155,9 @@ void			free_env_array(char **env_array);
 
 // executor/executor.c
 void			apply_redirections(t_cmd *cmd);
-// void			wait_for_processes(pid_t pid);
+void			wait_and_get_status(pid_t pid, int *last_status);
+void			setup_pipe(t_cmd *cmd, t_exec_data *exec_data);
+int				check_pipe_syntax(t_cmd *cmd);
 int				executor(t_cmd *cmd_list, t_env **env_list);
 
 // executor/envp_handler.c
@@ -180,6 +182,13 @@ pid_t			fork_and_execute_command(t_cmd *cmd, t_exec_data *exec_data);
 // executor/command_path.c
 char			*find_command_path(char *cmd, t_env *env_list);
 char			*get_full_command_path(char *cmd_name, t_env *env_list);
+
+// executor/handlers.c
+int				handle_command(t_cmd *cmd, t_exec_data *exec_data, t_env **env_list);
+int				handle_builtin(t_cmd *cmd, t_env **env_list);
+int				handle_redirection_only(t_cmd *cmd, t_exec_data *exec_data);
+int				handle_full_command(t_cmd *cmd, t_exec_data *exec_data);
+void			handle_pipe_end(t_cmd *cmd, t_exec_data *exec_data);
 
 // signals
 void			sigint_handler(int signum);

@@ -6,7 +6,7 @@
 /*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 14:26:19 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/22 13:19:08 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/05/27 17:34:07 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,6 @@ void	setup_child_process(t_cmd *cmd, t_exec_data *exec_data)
 	char	*new_argv[3];
 
 	redirect_io(cmd, exec_data);
-	apply_redirections(cmd);
 	apply_redirections(cmd);
 	if (!cmd->args || !cmd->args[0])
 		exit(0);

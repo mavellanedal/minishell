@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 14:15:21 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/20 15:52:47 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/27 17:39:08 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,9 +68,16 @@ t_cmd	*parse_tokens_to_cmd_list(char **tokens, int *last_status)
 				t_redir *new_redir = calloc(1, sizeof(t_redir));
 				new_redir->type = redir_type;
 				new_redir->file = ft_strdup(tokens[i + 1]);
-				new_redir->next = redir_head;
-				redir_head = new_redir;
-
+				new_redir->next = NULL;
+				if (!redir_head)
+					redir_head = new_redir;
+				else
+				{
+					t_redir *last = redir_head;
+					while (last->next)
+						last = last->next;
+					last->next = new_redir;
+				}
 				i += 2;
 			}
 			else
