@@ -6,7 +6,7 @@
 /*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/27 13:33:57 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/05/27 17:46:26 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,6 +180,9 @@ void			setup_child_process(t_cmd *cmd, t_exec_data *exec_data);
 pid_t			fork_and_execute_command(t_cmd *cmd, t_exec_data *exec_data);
 
 // executor/command_path.c
+char			*get_path_variable(t_env *env_list);
+char			*search_executable_in_paths(char **paths, char *cmd);
+char			*search_executable_in_paths(char **paths, char *cmd);
 char			*find_command_path(char *cmd, t_env *env_list);
 char			*get_full_command_path(char *cmd_name, t_env *env_list);
 
