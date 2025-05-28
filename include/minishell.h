@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/28 14:14:48 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/28 17:17:33 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,6 +173,7 @@ int				count_env_vars(t_env *env);
 int				check_redir_type(t_redir *r);
 t_cmd			*parse_tokens_to_cmd_list(char **tokens, int *last_status);
 void			free_cmd_list(t_cmd *cmd);
+void			free_redir_list(t_redir *redir_list);
 int				is_builtin(char *cmd);
 
 // executor/child_process.c

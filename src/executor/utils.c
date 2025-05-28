@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 14:15:21 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/28 12:08:33 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/28 17:20:32 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,17 @@ t_cmd	*parse_tokens_to_cmd_list(char **tokens, int *last_status)
 	{
 		t_cmd *new_cmd = calloc(1, sizeof(t_cmd));
 		if (!new_cmd)
+		{
+			free_cmd_list(head);
 			return (NULL);
+		}
 		char **args = calloc(100, sizeof(char *));
+		if (!args)
+		{
+			free(new_cmd);
+			free_cmd_list(head);
+			return (NULL);
+		}
 		t_redir *redir_head = NULL;
 		int arg_index = 0;
 
@@ -50,13 +59,19 @@ t_cmd	*parse_tokens_to_cmd_list(char **tokens, int *last_status)
 				if (!tokens[i + 1])
 				{
 					ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n", STDERR_FILENO);
-					// *last_status = 258;
-					*last_status = 2; //es error de manipulacion
+					*last_status = 2;
+
+					int j = 0;
+					while (j < arg_index)
+						free(args[j++]);
+					free(args);
+					free_redir_list(redir_head);
+					free(new_cmd);
+					free_cmd_list(head);
 					return (NULL);
 				}
+
 				int redir_type;
-				if (!tokens[i + 1])
-					return (NULL);
 				if (ft_strcmp(tokens[i], "<") == 0)
 					redir_type = REDIR_IN;
 				else if (ft_strcmp(tokens[i], ">") == 0)
@@ -67,9 +82,33 @@ t_cmd	*parse_tokens_to_cmd_list(char **tokens, int *last_status)
 					redir_type = REDIR_HEREDOC;
 
 				t_redir *new_redir = calloc(1, sizeof(t_redir));
+				if (!new_redir)
+				{
+					int j = 0;
+					while (j < arg_index)
+						free(args[j++]);
+					free(args);
+					free_redir_list(redir_head);
+					free(new_cmd);
+					free_cmd_list(head);
+					return (NULL);
+				}
 				new_redir->type = redir_type;
 				new_redir->file = ft_strdup(tokens[i + 1]);
+				if (!new_redir->file)
+				{
+					free(new_redir);
+					int j = 0;
+					while (j < arg_index)
+						free(args[j++]);
+					free(args);
+					free_redir_list(redir_head);
+					free(new_cmd);
+					free_cmd_list(head);
+					return (NULL);
+				}
 				new_redir->next = NULL;
+
 				if (!redir_head)
 					redir_head = new_redir;
 				else
@@ -83,7 +122,19 @@ t_cmd	*parse_tokens_to_cmd_list(char **tokens, int *last_status)
 			}
 			else
 			{
-				args[arg_index++] = ft_strdup(tokens[i]);
+				char *arg_dup = ft_strdup(tokens[i]);
+				if (!arg_dup)
+				{
+					int j = 0;
+					while (j < arg_index)
+						free(args[j++]);
+					free(args);
+					free_redir_list(redir_head);
+					free(new_cmd);
+					free_cmd_list(head);
+					return (NULL);
+				}
+				args[arg_index++] = arg_dup;
 				i++;
 			}
 		}
@@ -127,6 +178,22 @@ void	free_cmd_list(t_cmd *cmd)
 		}
 		cmd = cmd->next;
 		free(tmp);
+	}
+}
+
+void	free_redir_list(t_redir *redir_list)
+{
+	t_redir	*current;
+	t_redir	*next;
+
+	current = redir_list;
+	while (current)
+	{
+		next = current->next;
+		if (current->file)
+			free(current->file);
+		free(current);
+		current = next;
 	}
 }
 
