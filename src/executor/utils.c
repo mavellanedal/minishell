@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 14:15:21 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/28 12:08:33 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/28 17:07:42 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,7 @@ t_cmd	*parse_tokens_to_cmd_list(char **tokens, int *last_status)
 				if (!tokens[i + 1])
 				{
 					ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n", STDERR_FILENO);
-					// *last_status = 258;
-					*last_status = 2; //es error de manipulacion
+					*last_status = 2;
 					return (NULL);
 				}
 				int redir_type;
