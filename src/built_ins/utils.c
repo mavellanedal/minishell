@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 16:10:41 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/05/26 12:45:08 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/28 15:44:42 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,6 +108,7 @@ int	ft_unset(char **args, t_env **env_list)
 /*
 127 → comando no encontrado.
 126 → comando encontrado pero no ejecutable (por ejemplo, sin permisos).
+2 → error sintaxis.
 1 → error genérico.
 0 → todo OK.
 */

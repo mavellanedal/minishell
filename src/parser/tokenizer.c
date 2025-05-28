@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 17:16:14 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/05/15 16:45:41 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/28 16:03:10 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,17 +35,31 @@ void	save_token(char **tokens, t_token_state *s, const char *input, int end, t_e
 {
 	int		len;
 	char	*raw;
-	char	*final;
+	(void)env;
 
 	len = end - s->start;
 	if (len > 0)
 	{
 		raw = ft_strndup(&input[s->start], len);
-		final = remove_quotes_and_expand(raw, s->last_status, env);
-		tokens[s->j++] = final;
-		free(raw);
+		tokens[s->j++] = raw;
 	}
 }
+
+// void	save_token(char **tokens, t_token_state *s, const char *input, int end, t_env *env)
+// {
+// 	int		len;
+// 	char	*raw;
+// 	char	*final;
+
+// 	len = end - s->start;
+// 	if (len > 0)
+// 	{
+// 		raw = ft_strndup(&input[s->start], len);
+// 		final = remove_quotes_and_expand(raw, s->last_status, env);
+// 		tokens[s->j++] = final;
+// 		free(raw);
+// 	}
+// }
 
 void	init_token_state(t_token_state *s, int last_status, t_env *env)
 {
