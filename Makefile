@@ -8,8 +8,9 @@ RED = \033[0;91m
 
 NAME = minishell
 CC = cc
-# FLAGS = -Werror -Wall -Wextra -g -fsanitize=address -Wno-deprecated-declarations
+MAC_FLAGS = -Werror -Wall -Wextra -g -fsanitize=address -Wno-deprecated-declarations
 FLAGS = -Werror -Wall -Wextra -g -fsanitize=address
+CFLAGS = $(FLAGS)
 
 LIBFTDIR = lib/
 LIBFT_LIB = $(LIBFTDIR)/ultimate_libft.a
@@ -36,25 +37,27 @@ SRCS = 	src/main.c \
 
 OBJS = $(SRCS:.c=.o)
 
-# UNAME_S := $(shell uname -s)
-# ifeq ($(UNAME_S),Darwin)
-# 	READLINE_INCLUDE = -I$(shell brew --prefix readline)/include
-# 	READLINE_LIB = -L$(shell brew --prefix readline)/lib
-# else
-# 	READLINE_INCLUDE =
-# 	READLINE_LIB =
-# endif
-
 all: make_libft $(NAME)
 
 %.o: %.c Makefile $(HEADER)
-	$(CC) $(FLAGS) $(READLINE_INCLUDE) -Ilib -c $< -o $@
+	$(CC) $(CFLAGS) $(READLINE_INCLUDE) -Ilib -c $< -o $@
 	@echo "$(YELLOW)Compiling: $< $(DEF_COLOR)"
 
 $(NAME): $(LIBFT_LIB) $(OBJS)
 	@echo "$(GREEN)Compiling minishell!$(DEF_COLOR)"
-	$(CC) $(FLAGS) $(OBJS) $(LIBFT_LIB) $(READLINE_LIB) -lreadline -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJS) $(LIBFT_LIB) $(READLINE_LIB) -lreadline -o $(NAME)
 	@echo "$(GREEN)Minishell compiled!$(DEF_COLOR)"
+
+mac:
+	@UNAME_S=$$(uname -s); \
+	if [ $$UNAME_S = "Darwin" ]; then \
+		READLINE_INCLUDE="-I$$(brew --prefix readline)/include"; \
+		READLINE_LIB="-L$$(brew --prefix readline)/lib"; \
+	else \
+		READLINE_INCLUDE=""; \
+		READLINE_LIB=""; \
+	fi; \
+	$(MAKE) CFLAGS="$(MAC_FLAGS)" READLINE_INCLUDE="$$READLINE_INCLUDE" READLINE_LIB="$$READLINE_LIB"
 
 make_libft:
 	@make -C $(LIBFTDIR)
@@ -71,4 +74,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re make_libft
+.PHONY: all clean fclean re make_libft mac
