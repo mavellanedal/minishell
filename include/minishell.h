@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/28 12:07:09 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/28 17:17:33 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,16 +115,20 @@ char			**tokenize_input(const char *input, int last_status, t_env *env);
 // parse/handle.c
 void			handle_end(char **tokens, const char *input, t_token_state *s, t_env *env);
 void			handle_redirection(char **tokens, const char *input, t_token_state *s, t_env *env);
-void			handle_dollar(t_expand_state *s);
+// =void			handle_dollar(t_expand_state *s);
 void			handle_quote(char c, bool *in_single, bool *in_double, \
 bool *has_single);
 
 // parse/expand.c
-char			*strip_quotes(const char *token, bool *has_single);
-char			*remove_quotes_and_expand(const char *token, int last_status, t_env *env);
-int				expand_named_variable(const char *str, int i, char *result, int j, t_env *env);
-void			process_expansion_loop(t_expand_state *s);
-char			*expand_variables(const char *str, int last_status, t_env *env);
+//char			*strip_quotes(const char *token, bool *has_single);
+//char			*remove_quotes_and_expand(const char *token, int last_status, t_env *env);
+int				expand_named_variable(const char *str, int i, char *result, int j, t_env *env); // No te utilitat
+//void			process_expansion_loop(t_expand_state *s);
+//char			*expand_variables(const char *str, int last_status, t_env *env);
+
+char	*process_token_properly(const char *token, int last_status, t_env *env);
+int	expand_variable_here(const char *str, int *i, char *result, int last_status, t_env *env);
+
 
 // built_ins/utils.c
 int				ft_echo(char **args);
@@ -169,6 +173,7 @@ int				count_env_vars(t_env *env);
 int				check_redir_type(t_redir *r);
 t_cmd			*parse_tokens_to_cmd_list(char **tokens, int *last_status);
 void			free_cmd_list(t_cmd *cmd);
+void			free_redir_list(t_redir *redir_list);
 int				is_builtin(char *cmd);
 
 // executor/child_process.c

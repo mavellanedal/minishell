@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 16:53:45 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/05/26 17:39:43 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/28 12:16:08 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ void	add_or_update_env(t_env **env, const char *key, const char *value, int has_
  * Imprime las variables de entorno ordenadas alfabéticamente
  * Las variables se imprimen en el formato "declare -x KEY="VALUE""
  * Si has_value = 0, no se muestra el valor
- */
+*/
 void	print_export_sorted(t_env *env)
 {
 	int		i;
