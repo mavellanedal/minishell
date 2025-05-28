@@ -149,9 +149,9 @@ int	ft_export(char **args, t_env **env)
 
 	i = 1;
 	status = 0;
-	ft_printf("------------ BUILT IN - EXPORT ------------\n");
+	// ft_printf("------------ BUILT IN - EXPORT ------------\n");
 	// Si no hay argumentos (solo `export`), mostramos las variables de entorno
-	if (!args[1]) 
+	if (!args[1])
 	{
 		print_export_sorted(*env);
 		return (0);
@@ -179,7 +179,7 @@ int	ft_export(char **args, t_env **env)
 			// Si no hay un `=`, solo añadimos la clave sin valor si no existe
 			// Si ya existe, mantenemos su valor actual y su estado has_value
 			t_env *curr = *env;
-			int exists = 0;			
+			int exists = 0;
 			while (curr && !exists)
 			{
 				if (ft_strcmp(curr->key, args[i]) == 0)

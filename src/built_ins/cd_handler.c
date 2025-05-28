@@ -94,7 +94,7 @@ int	ft_cd(char **args, t_env *env)
 	char	*oldpwd;
 	int		count_arg;
 
-	ft_printf("------------ BUILT IN - CD ------------\n");
+	// ft_printf("------------ BUILT IN - CD ------------\n");
 	count_arg = ft_arrlen(args);
 	if (count_arg > 2)
 	{

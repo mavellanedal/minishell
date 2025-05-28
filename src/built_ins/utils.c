@@ -64,7 +64,7 @@ int	ft_exit(char **args)
 	arg_count = 0;
 	while (args[arg_count])
 		arg_count++;
-	ft_printf("------------ BUILT IN - EXIT ------------\n");
+	// ft_printf("------------ BUILT IN - EXIT ------------\n");
 	printf("exit\n");
 	if (arg_count > 1)
 	{

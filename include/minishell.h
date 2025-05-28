@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/26 15:37:39 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/28 12:07:09 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,8 +154,9 @@ char			**env_list_to_array(t_env *env_list);
 void			free_env_array(char **env_array);
 
 // executor/executor.c
-void			apply_redirections(t_cmd *cmd);
-// void			wait_for_processes(pid_t pid);
+void			wait_and_get_status(pid_t pid, int *last_status);
+void			setup_pipe(t_cmd *cmd, t_exec_data *exec_data);
+int				check_pipe_syntax(t_cmd *cmd);
 int				executor(t_cmd *cmd_list, t_env **env_list);
 
 // executor/envp_handler.c
@@ -178,8 +179,24 @@ void			setup_child_process(t_cmd *cmd, t_exec_data *exec_data);
 pid_t			fork_and_execute_command(t_cmd *cmd, t_exec_data *exec_data);
 
 // executor/command_path.c
+char			*get_path_variable(t_env *env_list);
+char			*search_executable_in_paths(char **paths, char *cmd);
+char			*search_executable_in_paths(char **paths, char *cmd);
 char			*find_command_path(char *cmd, t_env *env_list);
 char			*get_full_command_path(char *cmd_name, t_env *env_list);
+
+// executor/handlers.c
+int				handle_command(t_cmd *cmd, t_exec_data *exec_data, t_env **env_list);
+int				handle_builtin(t_cmd *cmd, t_env **env_list);
+int				handle_redirection_only(t_cmd *cmd, t_exec_data *exec_data);
+int				handle_full_command(t_cmd *cmd, t_exec_data *exec_data);
+void			handle_pipe_end(t_cmd *cmd, t_exec_data *exec_data);
+
+// executor/redirections.c
+void			handle_output_redirection(t_redir *r, int *last_out_fd, int fd);
+void			handle_input_redirection(t_redir *r, int *last_in_fd, int fd);
+void			apply_all_redirs(t_redir *r, int *last_out_fd, int *last_in_fd);
+void			apply_redirections(t_cmd *cmd);
 
 // signals
 void			sigint_handler(int signum);

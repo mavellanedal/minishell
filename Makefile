@@ -29,6 +29,8 @@ SRCS = 	src/main.c \
 		src/executor/child_process.c \
 		src/executor/envp_handler.c \
 		src/executor/command_path.c \
+		src/executor/handlers.c \
+		src/executor/redirections.c \
 		src/signals.c \
 		src/heredoc.c \
 

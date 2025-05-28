@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 14:15:21 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/26 15:14:13 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/28 12:08:33 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,9 +69,16 @@ t_cmd	*parse_tokens_to_cmd_list(char **tokens, int *last_status)
 				t_redir *new_redir = calloc(1, sizeof(t_redir));
 				new_redir->type = redir_type;
 				new_redir->file = ft_strdup(tokens[i + 1]);
-				new_redir->next = redir_head;
-				redir_head = new_redir;
-
+				new_redir->next = NULL;
+				if (!redir_head)
+					redir_head = new_redir;
+				else
+				{
+					t_redir *last = redir_head;
+					while (last->next)
+						last = last->next;
+					last->next = new_redir;
+				}
 				i += 2;
 			}
 			else
