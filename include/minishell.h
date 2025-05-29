@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/29 12:28:32 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/29 18:16:42 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,9 @@ typedef struct s_redir
 {
 	int				type;
 	char			*file;
+	int				heredoc_fd;  // Add this field
 	struct s_redir	*next;
-}	t_redir;
+} t_redir;
 
 // Comando con sus argumentos y redirecciones
 typedef struct s_cmd
@@ -115,9 +116,6 @@ char			**tokenize_input(const char *input, int last_status, t_env *env);
 // parse/handle.c
 void			handle_end(char **tokens, const char *input, t_token_state *s, t_env *env);
 void			handle_redirection(char **tokens, const char *input, t_token_state *s, t_env *env);
-// =void			handle_dollar(t_expand_state *s);
-void			handle_quote(char c, bool *in_single, bool *in_double, \
-bool *has_single);
 
 // parse/expand.c
 char			*process_token_properly(const char *token, int last_status, t_env *env);
@@ -208,6 +206,6 @@ extern volatile sig_atomic_t g_heredoc_interrupted;
 void	heredoc_sigint_handler(int signum);
 int		handle_heredoc(char *delimiter, int *heredoc_fd);
 int		process_all_heredocs(t_cmd *cmd);
-void	cleanup_heredoc_fds(t_cmd *cmd_list);
+// void	cleanup_heredoc_fds(t_cmd *cmd_list);
 
 #endif

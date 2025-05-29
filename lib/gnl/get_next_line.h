@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 15:59:59 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/01/16 14:18:50 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/29 18:10:33 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,5 @@ char	*newline(char *box);
 char	*update_box(char *box);
 
 char	*ft_strjoin_gnl(char *box, char *buffer);
-char	*ft_strchr(const char *s, int c );
-size_t	ft_strlen(const char *s);
 
 #endif

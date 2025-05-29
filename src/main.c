@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:40:15 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/29 12:48:43 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/29 18:18:43 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,85 +124,89 @@ void	free_env_list(t_env *env)
 
 int	main(int argc, char **argv, char **envp)
 {
-	char	*line;
-	char	*expanded;
-	char	**tokens;
-	int		last_status;
-	t_env	*env_list;
-	t_cmd	*cmd_list;
-	int		j;
-	int		i;
-	int		heredoc_result;
+    char	*line;
+    char	*expanded;
+    char	**tokens;
+    int		last_status;
+    t_env	*env_list;
+    t_cmd	*cmd_list;
+    int		j;
+    int		i;
+    int		heredoc_result;
 
-	last_status = 0;
-	env_list = create_env_list(envp);
-	update_shlvl(&env_list);
+    last_status = 0;
+    env_list = create_env_list(envp);
+    update_shlvl(&env_list);
 
-	signal(SIGINT, sigint_handler);
-	signal(SIGQUIT, SIG_IGN);
-	(void)argc;
-	(void)argv;
+    signal(SIGINT, sigint_handler);
+    signal(SIGQUIT, SIG_IGN);
+    (void)argc;
+    (void)argv;
 
-	while (1)
-	{
-		// Reset de la variable global
-		g_heredoc_interrupted = 0;
-		line = readline("minishell$ ");
-		if (!line)
-		{
-			write(1, "exit\n", 5);
-			free_env_list(env_list);
-			break; // Ctrl+D
-		}
-		if (*line)
-		{
-			add_history(line);
-			tokens = tokenize_input(line, last_status, env_list);
-			if (tokens)
-			{
-				printf("-----------------------------------------\n");
-				i = 0;
-				while (tokens[i])
-				{
-					printf("Token ANTES[%d] = [%s]\n", i, tokens[i]);
-					expanded = process_token_properly(tokens[i], last_status, env_list);
-					free(tokens[i]);
-					tokens[i] = expanded;
-					printf("Token DESPUES[%d] = [%s]\n", i, tokens[i]);
-					i++;
-				}
-				printf("-----------------------------------------\n");
-				cmd_list = parse_tokens_to_cmd_list(tokens, &last_status);
-				if (cmd_list)
-				{
-					// Procesar todos los heredocs ANTES de la ejecución
-					heredoc_result = process_all_heredocs(cmd_list);					
-					if (heredoc_result == 130) // SIGINT durante heredoc
-					{
-						last_status = 130;
-						printf("\n"); // Nueva línea después de ^C
-					}
-					else if (heredoc_result == 0)
-					{
-						last_status = executor(cmd_list, &env_list);
-					}
-					else
-					{
-						last_status = heredoc_result;
-					}
-					
-					free_cmd_list(cmd_list);
-				}
-			}
-			j = 0;
-			while (tokens && tokens[j])
-			{
-				free(tokens[j]);
-				j++;
-			}
-			free(tokens);
-		}
-		free(line);
-	}
-	return (0);
+    while (1)
+    {
+        // Reset de la variable global
+        g_heredoc_interrupted = 0;
+        line = readline("minishell$ ");
+        if (!line)
+        {
+            write(1, "exit\n", 5);
+            free_env_list(env_list);
+            break; // Ctrl+D
+        }
+        if (*line)
+        {
+            add_history(line);
+            tokens = tokenize_input(line, last_status, env_list);
+            if (tokens)
+            {
+                printf("-----------------------------------------\n");
+                i = 0;
+                while (tokens[i])
+                {
+                    printf("Token ANTES[%d] = [%s]\n", i, tokens[i]);
+                    expanded = process_token_properly(tokens[i], last_status, env_list);
+                    free(tokens[i]);
+                    tokens[i] = expanded;
+                    printf("Token DESPUES[%d] = [%s]\n", i, tokens[i]);
+                    i++;
+                }
+                printf("-----------------------------------------\n");
+                cmd_list = parse_tokens_to_cmd_list(tokens, &last_status);
+                if (cmd_list)
+                {
+                    // Procesar todos los heredocs ANTES de la ejecución
+                    heredoc_result = process_all_heredocs(cmd_list);
+                    if (heredoc_result == 130) // SIGINT durante heredoc
+                    {
+                        last_status = 130;
+                        printf("\n"); // Nueva línea después de ^C
+                    }
+                    else if (heredoc_result == 0)
+                    {
+                        // EJECUTAR el comando solo si los heredocs fueron exitosos
+                        last_status = executor(cmd_list, &env_list);
+                    }
+                    else
+                    {
+                        // Error en heredocs
+                        last_status = heredoc_result;
+                    }
+                    
+                    free_cmd_list(cmd_list);
+                }
+                
+                // Liberar tokens después de usar cmd_list
+                j = 0;
+                while (tokens[j])
+                {
+                    free(tokens[j]);
+                    j++;
+                }
+                free(tokens);
+            }
+        }
+        free(line);
+    }
+    return (0);
 }
