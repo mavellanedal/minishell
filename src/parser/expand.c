@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 16:29:28 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/05/29 12:52:36 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/29 13:00:08 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ char	*process_token_properly(const char *token, int last_status, t_env *env)
 	if (!result)
 		return (NULL);
 
-	// Check if token had quotes at the beginning
+	// Check if token starts with quotes
 	if (token[0] == '\'' || token[0] == '\"')
 		had_quotes = true;
 
@@ -34,7 +34,6 @@ char	*process_token_properly(const char *token, int last_status, t_env *env)
 	{
 		if (escaped)
 		{
-			// Carácter escapado
 			if (in_double && (token[i] == '$' || token[i] == '\"' || token[i] == '\\' || token[i] == '\n'))
 				result[j++] = token[i];
 			else if (!in_single && !in_double)
@@ -55,16 +54,15 @@ char	*process_token_properly(const char *token, int last_status, t_env *env)
 		else if (token[i] == '\'' && !in_double)
 		{
 			in_single = !in_single;
-			i++; // Skip quote - ESTO ES CLAVE: eliminar las comillas
+			i++;
 		}
 		else if (token[i] == '\"' && !in_single)
 		{
 			in_double = !in_double;
-			i++; // Skip quote - ESTO ES CLAVE: eliminar las comillas
+			i++;
 		}
 		else if (token[i] == '$' && !in_single)
 		{
-			// Expandir variable
 			i++;
 			j += expand_variable_here(token, &i, result + j, last_status, env);
 		}
@@ -74,12 +72,11 @@ char	*process_token_properly(const char *token, int last_status, t_env *env)
 		}
 	}
 	
-	// If token had quotes and result is a special char, prefix with \0 to mark as literal
+	// Mark special chars that came from quotes as literals
 	if (had_quotes && j == 1 && (result[0] == '<' || result[0] == '>' || result[0] == '|'))
 	{
-		// Move content and add marker
 		result[j+1] = result[0];
-		result[0] = '\1'; // Marker for "literal token"
+		result[0] = '\1';
 		result[j+2] = '\0';
 		return (result);
 	}

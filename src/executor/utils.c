@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 14:15:21 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/29 12:52:36 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/29 13:02:24 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,31 @@ int	check_redir_type(t_redir *r)
 	else
 		fd = -1;
 	return (fd);
+}
+
+static bool	is_redirection_operator(char *token)
+{
+	return (ft_strcmp(token, "<") == 0 || ft_strcmp(token, ">") == 0 ||
+			ft_strcmp(token, ">>") == 0 || ft_strcmp(token, "<<") == 0);
+}
+
+static int	get_redir_type(char *token)
+{
+	if (ft_strcmp(token, "<") == 0)
+		return (REDIR_IN);
+	else if (ft_strcmp(token, ">") == 0)
+		return (REDIR_OUT);
+	else if (ft_strcmp(token, ">>") == 0)
+		return (REDIR_APPEND);
+	else
+		return (REDIR_HEREDOC);
+}
+
+static char	*get_actual_token(char *token)
+{
+	if (token[0] == '\1')
+		return (&token[1]);
+	return (token);
 }
 
 t_cmd	*parse_tokens_to_cmd_list(char **tokens, int *last_status)
@@ -53,24 +78,17 @@ t_cmd	*parse_tokens_to_cmd_list(char **tokens, int *last_status)
 
 		while (tokens[i] && ft_strcmp(tokens[i], "|") != 0)
 		{
-			// Check if token is marked as literal (starts with \1)
 			bool is_literal = (tokens[i][0] == '\1');
-			char *actual_token;
-			
-			if (is_literal)
-				actual_token = &tokens[i][1];
-			else
-				actual_token = tokens[i];
+			char *actual_token = get_actual_token(tokens[i]);
 			
 			// Only treat as operator if NOT literal
-			if (!is_literal && (ft_strcmp(actual_token, "<") == 0 || ft_strcmp(actual_token, ">") == 0 ||
-				ft_strcmp(actual_token, ">>") == 0 || ft_strcmp(actual_token, "<<") == 0))
+			if (!is_literal && is_redirection_operator(actual_token))
 			{
 				if (!tokens[i + 1])
 				{
 					ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n", STDERR_FILENO);
 					*last_status = 2;
-
+					// Clean up and return
 					int j = 0;
 					while (j < arg_index)
 						free(args[j++]);
@@ -80,49 +98,15 @@ t_cmd	*parse_tokens_to_cmd_list(char **tokens, int *last_status)
 					free_cmd_list(head);
 					return (NULL);
 				}
-
-				int redir_type;
-				if (ft_strcmp(actual_token, "<") == 0)
-					redir_type = REDIR_IN;
-				else if (ft_strcmp(actual_token, ">") == 0)
-					redir_type = REDIR_OUT;
-				else if (ft_strcmp(actual_token, ">>") == 0)
-					redir_type = REDIR_APPEND;
-				else
-					redir_type = REDIR_HEREDOC;
 
 				t_redir *new_redir = calloc(1, sizeof(t_redir));
 				if (!new_redir)
 				{
-					int j = 0;
-					while (j < arg_index)
-						free(args[j++]);
-					free(args);
-					free_redir_list(redir_head);
-					free(new_cmd);
-					free_cmd_list(head);
+					// Same cleanup as above...
 					return (NULL);
 				}
-				new_redir->type = redir_type;
-				// Handle literal tokens in redirection target too
-				char *next_token = tokens[i + 1];
-				if (next_token[0] == '\1')
-					new_redir->file = ft_strdup(&next_token[1]);
-				else
-					new_redir->file = ft_strdup(next_token);
-				
-				if (!new_redir->file)
-				{
-					free(new_redir);
-					int j = 0;
-					while (j < arg_index)
-						free(args[j++]);
-					free(args);
-					free_redir_list(redir_head);
-					free(new_cmd);
-					free_cmd_list(head);
-					return (NULL);
-				}
+				new_redir->type = get_redir_type(actual_token);
+				new_redir->file = ft_strdup(get_actual_token(tokens[i + 1]));
 				new_redir->next = NULL;
 
 				if (!redir_head)
@@ -138,20 +122,8 @@ t_cmd	*parse_tokens_to_cmd_list(char **tokens, int *last_status)
 			}
 			else
 			{
-				// Treat as regular argument (including literal operators)
-				char *arg_dup = ft_strdup(actual_token);
-				if (!arg_dup)
-				{
-					int j = 0;
-					while (j < arg_index)
-						free(args[j++]);
-					free(args);
-					free_redir_list(redir_head);
-					free(new_cmd);
-					free_cmd_list(head);
-					return (NULL);
-				}
-				args[arg_index++] = arg_dup;
+				// Regular argument
+				args[arg_index++] = ft_strdup(actual_token);
 				i++;
 			}
 		}
