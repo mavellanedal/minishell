@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 14:15:21 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/28 17:20:32 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/29 12:52:36 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,18 @@ t_cmd	*parse_tokens_to_cmd_list(char **tokens, int *last_status)
 
 		while (tokens[i] && ft_strcmp(tokens[i], "|") != 0)
 		{
-			if (ft_strcmp(tokens[i], "<") == 0 || ft_strcmp(tokens[i], ">") == 0 ||
-				ft_strcmp(tokens[i], ">>") == 0 || ft_strcmp(tokens[i], "<<") == 0)
+			// Check if token is marked as literal (starts with \1)
+			bool is_literal = (tokens[i][0] == '\1');
+			char *actual_token;
+			
+			if (is_literal)
+				actual_token = &tokens[i][1];
+			else
+				actual_token = tokens[i];
+			
+			// Only treat as operator if NOT literal
+			if (!is_literal && (ft_strcmp(actual_token, "<") == 0 || ft_strcmp(actual_token, ">") == 0 ||
+				ft_strcmp(actual_token, ">>") == 0 || ft_strcmp(actual_token, "<<") == 0))
 			{
 				if (!tokens[i + 1])
 				{
@@ -72,11 +82,11 @@ t_cmd	*parse_tokens_to_cmd_list(char **tokens, int *last_status)
 				}
 
 				int redir_type;
-				if (ft_strcmp(tokens[i], "<") == 0)
+				if (ft_strcmp(actual_token, "<") == 0)
 					redir_type = REDIR_IN;
-				else if (ft_strcmp(tokens[i], ">") == 0)
+				else if (ft_strcmp(actual_token, ">") == 0)
 					redir_type = REDIR_OUT;
-				else if (ft_strcmp(tokens[i], ">>") == 0)
+				else if (ft_strcmp(actual_token, ">>") == 0)
 					redir_type = REDIR_APPEND;
 				else
 					redir_type = REDIR_HEREDOC;
@@ -94,7 +104,13 @@ t_cmd	*parse_tokens_to_cmd_list(char **tokens, int *last_status)
 					return (NULL);
 				}
 				new_redir->type = redir_type;
-				new_redir->file = ft_strdup(tokens[i + 1]);
+				// Handle literal tokens in redirection target too
+				char *next_token = tokens[i + 1];
+				if (next_token[0] == '\1')
+					new_redir->file = ft_strdup(&next_token[1]);
+				else
+					new_redir->file = ft_strdup(next_token);
+				
 				if (!new_redir->file)
 				{
 					free(new_redir);
@@ -122,7 +138,8 @@ t_cmd	*parse_tokens_to_cmd_list(char **tokens, int *last_status)
 			}
 			else
 			{
-				char *arg_dup = ft_strdup(tokens[i]);
+				// Treat as regular argument (including literal operators)
+				char *arg_dup = ft_strdup(actual_token);
 				if (!arg_dup)
 				{
 					int j = 0;

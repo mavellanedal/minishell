@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/28 17:17:33 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/29 12:28:32 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,14 +120,8 @@ void			handle_quote(char c, bool *in_single, bool *in_double, \
 bool *has_single);
 
 // parse/expand.c
-//char			*strip_quotes(const char *token, bool *has_single);
-//char			*remove_quotes_and_expand(const char *token, int last_status, t_env *env);
-int				expand_named_variable(const char *str, int i, char *result, int j, t_env *env); // No te utilitat
-//void			process_expansion_loop(t_expand_state *s);
-//char			*expand_variables(const char *str, int last_status, t_env *env);
-
-char	*process_token_properly(const char *token, int last_status, t_env *env);
-int	expand_variable_here(const char *str, int *i, char *result, int last_status, t_env *env);
+char			*process_token_properly(const char *token, int last_status, t_env *env);
+int				expand_variable_here(const char *str, int *i, char *result, int last_status, t_env *env);
 
 
 // built_ins/utils.c
