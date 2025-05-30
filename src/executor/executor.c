@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 12:50:46 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/28 12:08:14 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/30 13:36:55 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ int	executor(t_cmd *cmd_list, t_env **env_list)
 	tmp = cmd_list;
 	last_status = 0;
 	if (check_pipe_syntax(tmp))
-		return (258);
+		return (2);
 	current_cmd = cmd_list;
 	while (current_cmd)
 	{

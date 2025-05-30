@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/27 17:49:11 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/29 18:26:42 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/29 18:31:37 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void	apply_all_redirs(t_redir *r, int *last_out_fd, int *last_in_fd)
 
 	while (r)
 	{
-		printf("DEBUG: redir type=%d, file=%s\n", r->type, r->file);
+		// printf("DEBUG: redir type=%d, file=%s\n", r->type, r->file);
 		fd = check_redir_type(r);
 		if (fd < 0)
 		{

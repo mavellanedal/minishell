@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 15:15:33 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/05/29 18:16:20 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/30 17:34:07 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	heredoc_sigint_handler(int sig)
 {
 	(void)sig;
 	g_heredoc_interrupted = 1;
-	write(STDOUT_FILENO, "\n", 1);
+	// write(STDOUT_FILENO, "\n", 1);
 	exit(130);
 }
 
@@ -36,12 +36,16 @@ char	*read_line_from_stdin(void)
 
 	while (read(STDIN_FILENO, buffer, 1) > 0)
 	{
+		if (g_heredoc_interrupted)
+		{
+			free(line);
+			return NULL;
+		}
 		if (buffer[0] == '\n')
 		{
 			line[i] = '\0';
 			return line;
-		}
-		
+		}		
 		if (i >= capacity - 1)
 		{
 			capacity *= 2;
@@ -52,18 +56,15 @@ char	*read_line_from_stdin(void)
 				return NULL;
 			}
 			line = temp;
-		}
-		
+		}		
 		line[i++] = buffer[0];
 	}
-
 	// EOF reached
 	if (i == 0)
 	{
 		free(line);
 		return NULL;
 	}
-
 	line[i] = '\0';
 	return line;
 }
@@ -75,14 +76,13 @@ int	handle_heredoc(char *delimiter, int *fd)
 	char *line;
 	int status;
 	
-	printf("DEBUG: delimiter=[%s]\n", delimiter); // Debug
+	// printf("DEBUG: delimiter=[%s]\n", delimiter); // Debug
 	
 	if (pipe(pipefd) == -1)
 	{
 		perror("pipe");
 		return -1;
-	}
-	
+	}	
 	pid = fork();
 	if (pid == -1)
 	{
@@ -90,36 +90,38 @@ int	handle_heredoc(char *delimiter, int *fd)
 		close(pipefd[1]);
 		return -1;
 	}
-	
 	if (pid == 0) // Child process
 	{
 		signal(SIGINT, heredoc_sigint_handler);
 		signal(SIGQUIT, SIG_IGN);
 		close(pipefd[0]);
 		
-		while (1)
+		while (!g_heredoc_interrupted)
 		{
 			write(STDOUT_FILENO, "> ", 2);
 			line = read_line_from_stdin();
 			
-			if (!line) // EOF (Ctrl+D)
+			if (!line || g_heredoc_interrupted) // EOF o SIGINT
 			{
-				printf("DEBUG: EOF reached\n");
+				if (line)
+					free(line);
 				break;
 			}
 			
-			printf("DEBUG: line=[%s], delimiter=[%s]\n", line, delimiter); // Debug
-			printf("DEBUG: strcmp result=%d\n", ft_strcmp(line, delimiter)); // Debug
+			// printf("DEBUG: line=[%s], delimiter=[%s]\n", line, delimiter); // Debug
+			// printf("DEBUG: strcmp result=%d\n", ft_strcmp(line, delimiter)); // Debug
 			
 			if (ft_strcmp(line, delimiter) == 0)
 			{
-				printf("DEBUG: Match found, breaking\n"); // Debug
+				// printf("DEBUG: Match found, breaking\n"); // Debug
 				free(line);
 				break;
+			}			
+			if (!g_heredoc_interrupted)
+			{
+				write(pipefd[1], line, ft_strlen(line));
+				write(pipefd[1], "\n", 1);
 			}
-			
-			write(pipefd[1], line, ft_strlen(line));
-			write(pipefd[1], "\n", 1);
 			free(line);
 		}
 		close(pipefd[1]);
@@ -127,15 +129,25 @@ int	handle_heredoc(char *delimiter, int *fd)
 	}
 	else // Parent process
 	{
+		signal(SIGINT, SIG_IGN);
 		close(pipefd[1]);
 		waitpid(pid, &status, 0);
-		
+		signal(SIGINT, sigint_handler);
 		if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
 		{
 			close(pipefd[0]);
+			write(STDOUT_FILENO, "\n", 1);
+			rl_replace_line("", 0);
+			rl_on_new_line();
+			rl_redisplay();
 			return 130;
 		}
-		
+		// Verificar si el pipe tiene contenido
+        if (WEXITSTATUS(status) == 130) // Child cancelado
+        {
+            close(pipefd[0]);
+            return 130;
+        }
 		*fd = pipefd[0];
 		return 0;
 	}
@@ -149,7 +161,6 @@ int	process_all_heredocs(t_cmd *cmd_list)
 	int result;
 
 	g_heredoc_interrupted = 0;
-
 	while (cmd)
 	{
 		redir = cmd->redirs;
@@ -158,12 +169,15 @@ int	process_all_heredocs(t_cmd *cmd_list)
 			if (redir->type == REDIR_HEREDOC)
 			{
 				result = handle_heredoc(redir->file, &fd);
-				if (result == 130) // SIGINT
+				if (result == 130)
+				{
+					// Asegurar que las señales están restauradas
+					signal(SIGINT, sigint_handler);
+					signal(SIGQUIT, SIG_IGN);
 					return 130;
+				}
 				if (result != 0)
 					return result;
-					
-				// Store the fd for later use
 				redir->heredoc_fd = fd;
 			}
 			redir = redir->next;
