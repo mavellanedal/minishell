@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 16:10:41 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/05/28 15:44:42 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/29 18:11:34 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	ft_echo(char **args)
 
 	i = 1;
 	newline = 1;
-	ft_printf("------------ BUILT IN - ECHO ------------\n");
+	// ft_printf("------------ BUILT IN - ECHO ------------\n");
 	while (args[i] && ft_is_echo_n_flag(args[i]))
 	{
 		newline = 0;
@@ -42,7 +42,7 @@ int	ft_pwd(void)
 	char	*cwd;
 
 	cwd = getcwd(NULL, 0);
-	ft_printf("------------ BUILT IN - PWD ------------\n");
+	// ft_printf("------------ BUILT IN - PWD ------------\n");
 	if (cwd != NULL)
 	{
 		printf("%s\n", cwd);
@@ -89,7 +89,7 @@ int	ft_unset(char **args, t_env **env_list)
 	int	i;
 
 	i = 1;
-	ft_printf("------------ BUILT IN - UNSET ------------\n");
+	// ft_printf("------------ BUILT IN - UNSET ------------\n");
 	while (args[i])
 	{
 		if (!is_valid_identifier(args[i]))

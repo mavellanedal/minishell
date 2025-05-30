@@ -6,13 +6,13 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 18:38:07 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/05/29 12:42:36 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/29 15:42:09 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-void	handle_end(char **tokens, const char *input, t_token_state *s, t_env *env)
+void handle_end(char **tokens, const char *input, t_token_state *s, t_env *env)
 {
 	if (input[s->i] == ' ' || input[s->i] == '\0')
 	{
@@ -23,7 +23,7 @@ void	handle_end(char **tokens, const char *input, t_token_state *s, t_env *env)
 	}
 }
 
-void	handle_redirection(char **tokens, const char *input, t_token_state *s, t_env *env)
+void handle_redirection(char **tokens, const char *input, t_token_state *s, t_env *env)
 {
 	if (input[s->i] == '|' || input[s->i] == '<' || input[s->i] == '>')
 	{
@@ -39,18 +39,5 @@ void	handle_redirection(char **tokens, const char *input, t_token_state *s, t_en
 		while (input[s->i] == ' ')
 			s->i++;
 		s->start = s->i;
-	}
-}
-
-void	handle_quote(char c, bool *in_single, bool *in_double, bool *has_single)
-{
-	if (c == '\'' && !(*in_double))
-	{
-		*in_single = !(*in_single);
-		*has_single = true;
-	}
-	else if (c == '\"' && !(*in_single))
-	{
-		*in_double = !(*in_double);
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 17:16:14 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/05/29 12:59:56 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/29 17:58:18 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,6 +125,31 @@ char	**tokenize_input(const char *input, int last_status, t_env *env)
 		}
 		
 		save_token(tokens, &s, input, s.i, env);
+
+		// After saving a token, check if it's a heredoc operator
+		if (s.j > 0 && ft_strcmp(tokens[s.j-1], "<<") == 0)
+		{
+			// Mark the next token as literal (don't expand)
+			// Skip spaces
+			while (input[s.i] == ' ')
+				s.i++;
+			if (!input[s.i])
+				break;
+				
+			s.start = s.i;
+			// Read the delimiter without any special processing
+			while (input[s.i] && input[s.i] != ' ' && input[s.i] != '|' && 
+				   input[s.i] != '<' && input[s.i] != '>')
+				s.i++;
+			
+			// Mark as literal by prepending \1
+			int len = s.i - s.start;
+			char *literal_token = malloc(len + 2);
+			literal_token[0] = '\1';
+			strncpy(&literal_token[1], &input[s.start], len);
+			literal_token[len + 1] = '\0';
+			tokens[s.j++] = literal_token;
+		}
 	}
 	
 	tokens[s.j] = NULL;
