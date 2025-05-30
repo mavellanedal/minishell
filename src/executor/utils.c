@@ -6,22 +6,28 @@
 /*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 14:15:21 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/30 08:41:26 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/05/30 21:58:40 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-int	check_redir_type(t_redir *r)
+int check_redir_type(t_redir *r)
 {
-	int	fd;
+	int fd;
 
 	if (r->type == REDIR_OUT)
 		fd = open(r->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	else if (r->type == REDIR_APPEND)
 		fd = open(r->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	else if (r->type == REDIR_IN)
-		fd = open (r->file, O_RDONLY);
+		fd = open(r->file, O_RDONLY);
+	else if (r->type == REDIR_HEREDOC)
+	{
+		// Use the pre-processed heredoc fd
+		fd = r->heredoc_fd;
+		r->heredoc_fd = -1; // Reset to avoid double close
+	}
 	else
 		fd = -1;
 	return (fd);
@@ -107,6 +113,7 @@ t_cmd	*parse_tokens_to_cmd_list(char **tokens, int *last_status)
 				}
 				new_redir->type = get_redir_type(actual_token);
 				new_redir->file = ft_strdup(get_actual_token(tokens[i + 1]));
+				new_redir->heredoc_fd = -1;  // AÑADIR ESTA LÍNEA
 				new_redir->next = NULL;
 
 				if (!redir_head)

@@ -6,11 +6,12 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 15:45:12 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/01/16 14:19:14 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/29 18:09:29 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#include "../libft/libft.h"
 
 char	*newline(char *box)
 {
