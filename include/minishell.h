@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/29 12:28:32 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/30 21:48:37 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,6 +150,26 @@ int				ft_cd(char **args, t_env *env);
 int				ft_export(char **args, t_env **env);
 char			**env_list_to_array(t_env *env_list);
 void			free_env_array(char **env_array);
+
+// built_ins/envp_utils.c
+void			update_existing_env(t_env *curr, const char *value, int has_value);
+void			create_new_env_node(t_env **env, const char *key,
+	const char *value, int has_value);
+void			add_or_update_env(t_env **env, const char *key,
+	const char *value, int has_value);
+
+// built_ins/export_utils.c
+int				get_env_list_len(t_env *env);
+t_env			**copy_env_to_array(t_env *env, int len);
+void			sort_env_array(t_env **arr, int len);
+void			print_sorted_env(t_env **arr, int len);
+
+// built_ins/export_main_function_utils.c
+int				handle_no_assignment(char *arg, t_env **env);
+int				handle_assignment(char *arg, t_env **env);
+int				handle_invalid_identifier(char *arg);
+int				print_and_return(t_env **env);
+int				handle_export_argument(char *arg, t_env **env);
 
 // executor/executor.c
 void			wait_and_get_status(pid_t pid, int *last_status);
