@@ -6,7 +6,7 @@
 /*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/30 21:57:33 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/05/30 22:36:22 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,8 +145,9 @@ void			update_pwd_vars(t_env *env, char *oldpwd);
 int				ft_cd(char **args, t_env *env);
 
 // built_ins/export_handler.c
+int				is_valid_identifier_export(const char *str);
+void			print_export_sorted(t_env *env);
 int				ft_export(char **args, t_env **env);
-char			**env_list_to_array(t_env *env_list);
 void			free_env_array(char **env_array);
 
 // built_ins/envp_utils.c

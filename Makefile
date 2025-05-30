@@ -27,7 +27,7 @@ SRCS = 	src/main.c \
 		src/built_ins/export_handler.c \
 		src/built_ins/envp_handler.c \
 		src/built_ins/export_utils.c \
-		src/built_ins/export_main_funcition_utils.c \
+		src/built_ins/export_main_function_utils.c \
 		src/executor/executor.c \
 		src/executor/utils.c \
 		src/executor/child_process.c \
