@@ -6,7 +6,7 @@
 /*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 14:15:21 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/28 17:07:42 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/05/30 08:41:26 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,31 @@ int	check_redir_type(t_redir *r)
 	return (fd);
 }
 
+static bool	is_redirection_operator(char *token)
+{
+	return (ft_strcmp(token, "<") == 0 || ft_strcmp(token, ">") == 0 ||
+			ft_strcmp(token, ">>") == 0 || ft_strcmp(token, "<<") == 0);
+}
+
+static int	get_redir_type(char *token)
+{
+	if (ft_strcmp(token, "<") == 0)
+		return (REDIR_IN);
+	else if (ft_strcmp(token, ">") == 0)
+		return (REDIR_OUT);
+	else if (ft_strcmp(token, ">>") == 0)
+		return (REDIR_APPEND);
+	else
+		return (REDIR_HEREDOC);
+}
+
+static char	*get_actual_token(char *token)
+{
+	if (token[0] == '\1')
+		return (&token[1]);
+	return (token);
+}
+
 t_cmd	*parse_tokens_to_cmd_list(char **tokens, int *last_status)
 {
 	t_cmd	*head = NULL;
@@ -37,38 +62,53 @@ t_cmd	*parse_tokens_to_cmd_list(char **tokens, int *last_status)
 	{
 		t_cmd *new_cmd = calloc(1, sizeof(t_cmd));
 		if (!new_cmd)
+		{
+			free_cmd_list(head);
 			return (NULL);
+		}
 		char **args = calloc(100, sizeof(char *));
+		if (!args)
+		{
+			free(new_cmd);
+			free_cmd_list(head);
+			return (NULL);
+		}
 		t_redir *redir_head = NULL;
 		int arg_index = 0;
 
 		while (tokens[i] && ft_strcmp(tokens[i], "|") != 0)
 		{
-			if (ft_strcmp(tokens[i], "<") == 0 || ft_strcmp(tokens[i], ">") == 0 ||
-				ft_strcmp(tokens[i], ">>") == 0 || ft_strcmp(tokens[i], "<<") == 0)
+			bool is_literal = (tokens[i][0] == '\1');
+			char *actual_token = get_actual_token(tokens[i]);
+
+			// Only treat as operator if NOT literal
+			if (!is_literal && is_redirection_operator(actual_token))
 			{
 				if (!tokens[i + 1])
 				{
 					ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n", STDERR_FILENO);
 					*last_status = 2;
+					// Clean up and return
+					int j = 0;
+					while (j < arg_index)
+						free(args[j++]);
+					free(args);
+					free_redir_list(redir_head);
+					free(new_cmd);
+					free_cmd_list(head);
 					return (NULL);
 				}
-				int redir_type;
-				if (!tokens[i + 1])
-					return (NULL);
-				if (ft_strcmp(tokens[i], "<") == 0)
-					redir_type = REDIR_IN;
-				else if (ft_strcmp(tokens[i], ">") == 0)
-					redir_type = REDIR_OUT;
-				else if (ft_strcmp(tokens[i], ">>") == 0)
-					redir_type = REDIR_APPEND;
-				else
-					redir_type = REDIR_HEREDOC;
 
 				t_redir *new_redir = calloc(1, sizeof(t_redir));
-				new_redir->type = redir_type;
-				new_redir->file = ft_strdup(tokens[i + 1]);
+				if (!new_redir)
+				{
+					// Same cleanup as above...
+					return (NULL);
+				}
+				new_redir->type = get_redir_type(actual_token);
+				new_redir->file = ft_strdup(get_actual_token(tokens[i + 1]));
 				new_redir->next = NULL;
+
 				if (!redir_head)
 					redir_head = new_redir;
 				else
@@ -82,7 +122,8 @@ t_cmd	*parse_tokens_to_cmd_list(char **tokens, int *last_status)
 			}
 			else
 			{
-				args[arg_index++] = ft_strdup(tokens[i]);
+				// Regular argument
+				args[arg_index++] = ft_strdup(actual_token);
 				i++;
 			}
 		}
@@ -126,6 +167,22 @@ void	free_cmd_list(t_cmd *cmd)
 		}
 		cmd = cmd->next;
 		free(tmp);
+	}
+}
+
+void	free_redir_list(t_redir *redir_list)
+{
+	t_redir	*current;
+	t_redir	*next;
+
+	current = redir_list;
+	while (current)
+	{
+		next = current->next;
+		if (current->file)
+			free(current->file);
+		free(current);
+		current = next;
 	}
 }
 

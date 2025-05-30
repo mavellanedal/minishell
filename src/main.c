@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:40:15 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/26 15:35:48 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/05/29 12:48:43 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,14 +160,18 @@ int	main(int argc, char **argv, char **envp)
 			tokens = tokenize_input(line, last_status, env_list);
 			if (tokens)
 			{
+				printf("-----------------------------------------\n");
 				i = 0;
 				while (tokens[i])
 				{
-					expanded = remove_quotes_and_expand(tokens[i], last_status, env_list);
+					printf("Token ANTES[%d] = [%s]\n", i, tokens[i]);
+					expanded = process_token_properly(tokens[i], last_status, env_list);
 					free(tokens[i]);
 					tokens[i] = expanded;
+					printf("Token DESPUES[%d] = [%s]\n", i, tokens[i]);
 					i++;
-				}				
+				}
+				printf("-----------------------------------------\n");
 				cmd_list = parse_tokens_to_cmd_list(tokens, &last_status);
 				if (cmd_list)
 				{
