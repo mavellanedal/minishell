@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
 /*   Updated: 2025/05/31 08:34:22 by mavellan         ###   ########.fr       */
@@ -61,6 +61,30 @@ typedef struct s_env
 	struct s_env	*next;
 }	t_env;
 
+typedef struct s_processing_state
+{
+	const char	*token;
+	char		*result;
+	int			i;
+	int			j;
+	bool		in_single;
+	bool		in_double;
+	bool		escaped;
+	bool		had_quotes;
+	int			last_status;
+	t_env		*env;
+}	t_processing_state;
+
+typedef struct s_expand_params
+{
+	const char	*str;
+	int			*i;
+	int 		len;
+	char		*result;
+	int			last_status;
+	t_env		*env;
+}	t_expand_params;
+
 // Estado interno usado para separar tokens (normi)
 typedef struct s_token_state
 {
@@ -78,24 +102,6 @@ typedef struct s_quote_state
 	bool	in_double;
 }	t_quote_state;
 
-// Estado interno usado durante la expansión de variables (normi)
-typedef struct s_expand_state
-{
-	const char	*str;
-	int			*i;
-	char		*res;
-	int			j;
-	int			last_status;
-	t_env		*env;
-}	t_expand_state;
-
-typedef struct s_data
-{
-	t_cmd	*cmds;
-	int		num_cmds;
-	char	**envp;
-}	t_data;
-
 typedef struct s_exec_data
 {
 	t_cmd	*cmd;
@@ -107,19 +113,31 @@ typedef struct s_exec_data
 }	t_exec_data;
 
 
-// parse/tokenize.c
+// parser/handle_expand_heredoc.c
+void			handle_escape(t_processing_state *state);
+void			handle_variable(t_processing_state *state);
+void			handle_exit_status(t_expand_params *params);
+void			handle_named_variable(t_expand_params *params);
+
+// parser/process_expand.c
+int				expand_variable(t_expand_params *params);
+void			finalize_result(t_processing_state *state);
+void			toggle_quotes(t_processing_state *state);
+void			process_loop(t_processing_state *state);
+char			*process_token_properly(const char *token, int last_status, t_env *env);
+
+// parser/read_token.c
+bool			handle_quotes(const char *input, int *i, bool *inside_quotes, char *quote_char);
+bool			handle_operator(const char *input, int *i, int start, bool inside_quote);
+void			read_token(const char *input, int *i, int *start);
+void			process_heredoc(const char *input, t_token_state *s, char **tokens);
+
+// parser/tokenize.c
+void			skip_spaces(const char *input, int *i);
+void			save_token(char **tokens, t_token_state *s, const char *input, int end);
 t_quote_state	get_quote_state(const char *str, int up_to);
-void			save_token(char **tokens, t_token_state *s, const char *input, int end, t_env *env);
 void			init_token_state(t_token_state *s, int last_status, t_env *env);
 char			**tokenize_input(const char *input, int last_status, t_env *env);
-
-// parse/handle.c
-void			handle_end(char **tokens, const char *input, t_token_state *s, t_env *env);
-void			handle_redirection(char **tokens, const char *input, t_token_state *s, t_env *env);
-
-// parse/expand.c
-char			*process_token_properly(const char *token, int last_status, t_env *env);
-int				expand_variable_here(const char *str, int *i, char *result, int last_status, t_env *env);
 
 
 // built_ins/utils.c
