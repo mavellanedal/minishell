@@ -6,38 +6,40 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 18:38:07 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/05/29 15:42:09 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/02 13:00:00 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-void handle_end(char **tokens, const char *input, t_token_state *s, t_env *env)
+void	handle_escape(t_processing_state *state)
 {
-	if (input[s->i] == ' ' || input[s->i] == '\0')
+	char	c;
+
+	c = state->token[state->i];
+	if (state->in_double && (c == '$' || c == '\"' || c == '\\' || c == '\n'))
+		state->result[state->j++] = c;
+	else if (!state->in_single && !state->in_double)
+		state->result[state->j++] = c;
+	else
 	{
-		save_token(tokens, s, input, s->i, env);
-		while (input[s->i] == ' ')
-			s->i++;
-		s->start = s->i;
+		state->result[state->j++] = '\\';
+		state->result[state->j++] = c;
 	}
+	state->escaped = false;
+	state->i++;
 }
 
-void handle_redirection(char **tokens, const char *input, t_token_state *s, t_env *env)
+void	handle_variable(t_processing_state *state)
 {
-	if (input[s->i] == '|' || input[s->i] == '<' || input[s->i] == '>')
-	{
-		save_token(tokens, s, input, s->i, env);
-		if ((input[s->i] == '<' || input[s->i] == '>') && input[s->i + 1] == input[s->i])
-		{
-			tokens[s->j++] = ft_strndup(&input[s->i], 2);
-			s->i++;
-		}
-		else
-			tokens[s->j++] = ft_strndup(&input[s->i], 1);
-		s->i++;
-		while (input[s->i] == ' ')
-			s->i++;
-		s->start = s->i;
-	}
+	t_expand_params	params;
+
+	params.str = state->token;
+	params.i = &state->i;
+	params.result = state->result + state->j;
+	params.last_status = state->last_status;
+	params.env = state->env;
+	params.len = 0;
+	state->i++;
+	state->j += expand_variable_here(&params);
 }

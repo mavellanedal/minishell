@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export_main_function_utils.c                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 09:17:22 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/30 21:46:21 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/06/02 11:55:45 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
