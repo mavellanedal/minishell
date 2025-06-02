@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   envp_handler.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 12:41:34 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/17 17:42:17 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/06/02 15:18:28 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,8 +74,9 @@ char	**free_partial_envp(char **envp, int until)
 
 int	count_env_vars(t_env *env)
 {
-	int	count = 0;
+	int	count;
 
+	count = 0;
 	while (env)
 	{
 		if (env->value)

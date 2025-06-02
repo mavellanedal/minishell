@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 12:50:46 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/30 13:36:55 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/02 15:37:02 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,8 @@ int	check_pipe_syntax(t_cmd *cmd)
 	{
 		if ((!cmd->args || !cmd->args[0]) && !cmd->redirs)
 		{
-			ft_putstr_fd("minishell: syntax error near unexpected token `|'\n", STDERR_FILENO);
+			ft_putstr_fd("minishell: syntax error near unexpected token `|'\n", \
+				STDERR_FILENO);
 			return (1);
 		}
 		cmd = cmd->next;

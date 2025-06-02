@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_free.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 12:56:11 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/02 12:59:03 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/06/02 17:59:01 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@ void	ft_free(char **str)
 
 	if (!str)
 		return ;
-
 	i = 0;
 	while (str[i])
 	{

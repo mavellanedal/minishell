@@ -29,13 +29,16 @@ SRCS = 	src/main.c \
 		src/built_ins/envp_handler.c \
 		src/built_ins/export_utils.c \
 		src/built_ins/export_main_function_utils.c \
-		src/executor/executor.c \
-		src/executor/utils.c \
 		src/executor/child_process.c \
-		src/executor/envp_handler.c \
 		src/executor/command_path.c \
+		src/executor/envp_handler.c \
+		src/executor/executor.c \
+		src/executor/free.c \
+		src/executor/handle_child_process.c \
 		src/executor/handlers.c \
 		src/executor/redirections.c \
+		src/executor/tokens_to_cmd.c \
+		src/executor/utils.c \
 		src/signals.c \
 		src/heredoc.c \
 
