@@ -36,7 +36,8 @@ SRCS = 	src/main.c \
 		src/executor/handlers.c \
 		src/executor/redirections.c \
 		src/signals.c \
-		src/heredoc.c \
+		src/heredoc/heredoc.c \
+		src/heredoc/utils.c \
 
 OBJS = $(SRCS:.c=.o)
 

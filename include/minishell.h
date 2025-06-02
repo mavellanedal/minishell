@@ -6,7 +6,7 @@
 /*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/30 22:36:22 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/05/31 08:34:22 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -219,14 +219,18 @@ void			apply_redirections(t_cmd *cmd);
 // signals
 void			sigint_handler(int signum);
 
-
-//heredoc.c
-
+//heredoc/heredoc.c
 extern volatile sig_atomic_t g_heredoc_interrupted;
+void			heredoc_sigint_handler(int signum);
+char			*read_line_from_stdin();
+int				handle_heredoc(char *delimiter, int *fd);
+int				process_all_heredocs(t_cmd *cmd);
 
-void	heredoc_sigint_handler(int signum);
-int		handle_heredoc(char *delimiter, int *heredoc_fd);
-int		process_all_heredocs(t_cmd *cmd);
-// void	cleanup_heredoc_fds(t_cmd *cmd_list);
+// heredoc/utils.c
+char			*expand_line_capacity(char *line, int *capacity);
+int				handle_interrupt_or_newline(char *buffer, char *line, int i);
+char			*finalize_line(char *line, int i);
+void			child_heredoc_process(int pipefd[2], char *delimiter);
+int				parent_heredoc_process(int pipefd[2], int *fd, pid_t pid, int *status);
 
 #endif
