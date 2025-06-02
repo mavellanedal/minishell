@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   handle.c                                           :+:      :+:    :+:   */
+/*   handle_expand_heredoc.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 18:38:07 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/06/02 13:00:00 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/02 14:07:15 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,5 +41,42 @@ void	handle_variable(t_processing_state *state)
 	params.env = state->env;
 	params.len = 0;
 	state->i++;
-	state->j += expand_variable_here(&params);
+	state->j += expand_variable(&params);
+}
+
+// Manejar $?
+void	handle_exit_status(t_expand_params *params)
+{
+	char	*status_str;
+
+	status_str = ft_itoa(params->last_status);
+	if (!status_str)
+		return ;
+	ft_strcpy(params->result, status_str);
+	params->len = ft_strlen(status_str);
+	free(status_str);
+	(*params->i)++;
+}
+
+// Manejar $VAR
+void	handle_named_variable(t_expand_params *params)
+{
+	int		start;
+	char	*var_name;
+	char	*var_value;
+
+	start = *(params->i);
+	while (ft_isalnum(params->str[*(params->i)]) || \
+		params->str[*(params->i)] == '_')
+		(*params->i)++;
+	var_name = ft_substr(params->str, start, *(params->i) - start);
+	if (!var_name)
+		return ;
+	var_value = get_env_value(params->env, var_name);
+	if (var_value)
+	{
+		ft_strcpy(params->result, var_value);
+		params->len = ft_strlen(var_value);
+	}
+	free(var_name);
 }

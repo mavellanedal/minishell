@@ -1,24 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   process.c                                          :+:      :+:    :+:   */
+/*   process_expand.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 13:00:57 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/06/02 13:04:31 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/02 14:06:53 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-void	toggle_quotes(t_processing_state *state)
+int	expand_variable(t_expand_params *params)
 {
-	if (state->token[state->i] == '\'')
-		state->in_single = !state->in_single;
-	else if (state->token[state->i] == '\"')
-		state->in_double = !state->in_double;
-	state->i++;
+	params->len = 0;
+	if (params->str[*(params->i)] == '?')
+		handle_exit_status(params);
+	else if (ft_isalpha(params->str[*(params->i)]) || \
+		params->str[*(params->i)] == '_')
+		handle_named_variable(params);
+	else
+	{
+		params->result[0] = '$';
+		params->len = 1;
+	}
+	return (params->len);
 }
 
 void	finalize_result(t_processing_state *state)
@@ -32,6 +39,15 @@ void	finalize_result(t_processing_state *state)
 		state->result[0] = '\1';
 		state->result[state->j + 2] = '\0';
 	}
+}
+
+void	toggle_quotes(t_processing_state *state)
+{
+	if (state->token[state->i] == '\'')
+		state->in_single = !state->in_single;
+	else if (state->token[state->i] == '\"')
+		state->in_double = !state->in_double;
+	state->i++;
 }
 
 void	process_loop(t_processing_state *state)

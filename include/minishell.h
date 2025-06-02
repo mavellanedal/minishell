@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/06/02 13:03:32 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/02 14:08:32 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,26 +113,31 @@ typedef struct s_exec_data
 }	t_exec_data;
 
 
-// parse/tokenize.c
-t_quote_state	get_quote_state(const char *str, int up_to);
-void			save_token(char **tokens, t_token_state *s, const char *input, int end, t_env *env);
-void			init_token_state(t_token_state *s, int last_status, t_env *env);
-char			**tokenize_input(const char *input, int last_status, t_env *env);
-
-// parse/handle.c
+// parser/handle_expand_heredoc.c
 void			handle_escape(t_processing_state *state);
 void			handle_variable(t_processing_state *state);
+void			handle_exit_status(t_expand_params *params);
+void			handle_named_variable(t_expand_params *params);
 
-// parse/process.c
-void			toggle_quotes(t_processing_state *state);
+// parser/process_expand.c
+int				expand_variable(t_expand_params *params);
 void			finalize_result(t_processing_state *state);
+void			toggle_quotes(t_processing_state *state);
 void			process_loop(t_processing_state *state);
 char			*process_token_properly(const char *token, int last_status, t_env *env);
 
-// parse/expand.c
-void			handle_exit_status(t_expand_params *params);
-void			handle_named_variable(t_expand_params *params);
-int				expand_variable_here(t_expand_params *params);
+// parser/read_token.c
+bool			handle_quotes(const char *input, int *i, bool *inside_quotes, char *quote_char);
+bool			handle_operator(const char *input, int *i, int start, bool inside_quote);
+void			read_token(const char *input, int *i, int *start);
+void			process_heredoc(const char *input, t_token_state *s, char **tokens);
+
+// parser/tokenize.c
+void			skip_spaces(const char *input, int *i);
+void			save_token(char **tokens, t_token_state *s, const char *input, int end);
+t_quote_state	get_quote_state(const char *str, int up_to);
+void			init_token_state(t_token_state *s, int last_status, t_env *env);
+char			**tokenize_input(const char *input, int last_status, t_env *env);
 
 
 // built_ins/utils.c
