@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/06/03 13:16:58 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/03 17:19:43 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,6 +124,14 @@ typedef struct s_exec_data
 	t_env	*env_list;
 	int		exit_status;
 }	t_exec_data;
+
+// main.c
+int				execute_with_heredocs(t_cmd *cmd_list, t_env **env_list);
+void			expand_all_tokens(char **tokens, int status, t_env *env_list);
+int				handle_input_line(char *line, int last_status, \
+	t_env **env_list);
+void			shell_loop(t_env *env_list, int last_status);
+int				main(int argc, char **argv, char **envp);
 
 // parser/handle_expand_heredoc.c
 void			handle_escape(t_processing_state *state);
@@ -275,22 +283,30 @@ int				is_builtin(char *cmd);
 void			free_args(char **args);
 void			free_cmd_list(t_cmd *cmd);
 void			free_redir_list(t_redir *redir_list);
+void			free_tokens(char **tokens);
 
 extern volatile sig_atomic_t	g_heredoc_interrupted;
 
-// heredoc.c
+// heredoc/heredoc.c
 int				run_heredoc_parent(pid_t pid, int *fd, int pipefd[2]);
 void			run_heredoc_child(char *delimiter, int pipefd[2]);
 int				handle_heredoc(char *delimiter, int *fd);
 int				process_cmd_heredocs(t_redir *redir);
-int				process_all_heredocs(t_cmd *cmd_list);
+int				process_heredocs(t_cmd *cmd_list);
 
-//heredoc_utils.c
+// heredoc/utils.c
 void			sigint_handler(int signum);
 int				handle_char_input(char c, char **line, int *i, int *capacity);
 char			*heredoc_readline(void);
 void			heredoc_sigint_handler(int sig);
 
-// volatile sig_atomic_t	g_heredoc_interrupted;
+// shlvl.c
+int				increment_shlvl_if_exists(t_env *env);
+void			add_shlvl_node(t_env **env_list);
+void			update_shlvl(t_env **env_list);
+
+// free_env.c
+void			free_env_array(char **env_array);
+void			free_env_list(t_env *env);
 
 #endif

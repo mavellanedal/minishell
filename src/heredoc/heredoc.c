@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 15:15:33 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/06/03 13:18:19 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/03 15:18:09 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ int	process_cmd_heredocs(t_redir *redir)
 	return (0);
 }
 
-int	process_all_heredocs(t_cmd *cmd_list)
+int	process_heredocs(t_cmd *cmd_list)
 {
 	int	result;
 
