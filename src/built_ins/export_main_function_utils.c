@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 09:17:22 by mavellan          #+#    #+#             */
-/*   Updated: 2025/06/02 11:55:45 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/03 18:09:55 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ int	handle_assignment(char *arg, t_env **env)
 	char	*eq;
 	char	*key;
 
-	eq = strchr(arg, '=');
+	eq = ft_strchr(arg, '=');
 	if (!eq)
 		return (0);
 	*eq = '\0';
@@ -48,7 +48,7 @@ int	handle_assignment(char *arg, t_env **env)
 
 int	handle_invalid_identifier(char *arg)
 {
-	fprintf(stderr, "export: `%s`: not a valid identifier\n", arg);
+	printf("minishell: export: `%s`: not a valid identifier\n", arg);
 	return (1);
 }
 
@@ -60,7 +60,7 @@ int	print_and_return(t_env **env)
 
 int	handle_export_argument(char *arg, t_env **env)
 {
-	if (strchr(arg, '='))
+	if (ft_strchr(arg, '='))
 		return (handle_assignment(arg, env));
 	return (handle_no_assignment(arg, env));
 }

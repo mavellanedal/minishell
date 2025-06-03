@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 14:15:21 by mavellan          #+#    #+#             */
-/*   Updated: 2025/06/02 17:41:26 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/03 16:17:38 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,8 @@ int	print_newline_error(t_cmd_parse_data *ctx)
 
 int	is_builtin(char *cmd)
 {
+	if (!cmd)
+		return (1);
 	if (ft_strcmp(cmd, "echo") == 0)
 		return (1);
 	if (ft_strcmp(cmd, "pwd") == 0)

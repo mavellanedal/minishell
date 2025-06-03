@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd_handler.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 14:52:32 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/05/30 21:52:25 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/06/03 17:57:26 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,13 +58,13 @@ char	*get_cd_target(char **args, t_env *env)
 	{
 		target = get_env_value(env, "HOME");
 		if (!target)
-			fprintf(stderr, "cd: HOME not set\n");
+			printf("minishell: cd: HOME not set\n");
 	}
 	else if (ft_strcmp(args[1], "-") == 0)
 	{
 		target = get_env_value(env, "OLDPWD");
 		if (!target)
-			fprintf(stderr, "cd: OLDPWD not set\n");
+			printf("minishell: cd: OLDPWD not set\n");
 		else
 			printf("%s\n", target);
 	}

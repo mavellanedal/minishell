@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 17:34:56 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/06/02 17:50:21 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/03 15:22:08 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,4 +61,14 @@ void	free_redir_list(t_redir *redir_list)
 		free(current);
 		current = next;
 	}
+}
+
+void	free_tokens(char **tokens)
+{
+	int	i;
+
+	i = 0;
+	while (tokens[i])
+		free(tokens[i++]);
+	free(tokens);
 }
