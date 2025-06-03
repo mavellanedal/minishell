@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/06/02 17:57:55 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/03 13:16:58 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,25 +214,25 @@ void			execute_command(t_cmd *cmd, char **envp_array, \
 	char *full_path);
 void			setup_child_process(t_cmd *cmd, t_exec_data *exec_data);
 
-// executor/command_path.c ---4---
+// executor/command_path.c
 char			*get_path_variable(t_env *env_list);
 char			*search_executable_in_paths(char **paths, char *cmd);
 char			*find_command_path(char *cmd, t_env *env_list);
 char			*get_full_command_path(char *cmd_name, t_env *env_list);
 
-// executor/envp_handler.c ---4---
+// executor/envp_handler.c
 char			**convert_env_to_envp(t_env *env);
 int				fill_envp_array(t_env *env, char **envp);
 char			**free_partial_envp(char **envp, int until);
 int				count_env_vars(t_env *env);
 
-// executor/executor.c ---4---
+// executor/executor.c
 void			wait_and_get_status(pid_t pid, int *last_status);
 void			setup_pipe(t_cmd *cmd, t_exec_data *exec_data);
 int				check_pipe_syntax(t_cmd *cmd);
 int				executor(t_cmd *cmd_list, t_env **env_list);
 
-// executor/handle_child_process.c ---3---
+// executor/handle_child_process.c
 void			handle_command_not_found(t_cmd *cmd, char **envp_array);
 void			handle_execve_sh_fallback(char *full_path, \
 	char **envp_array);
@@ -276,16 +276,21 @@ void			free_args(char **args);
 void			free_cmd_list(t_cmd *cmd);
 void			free_redir_list(t_redir *redir_list);
 
-/* NO ESTA CHEQUEAT ENCARA */
-
-// signals
-void			sigint_handler(int signum);
-
-//heredoc.c
 extern volatile sig_atomic_t	g_heredoc_interrupted;
-void			heredoc_sigint_handler(int signum);
-int				handle_heredoc(char *delimiter, int *heredoc_fd);
-int				process_all_heredocs(t_cmd *cmd);
-// void	cleanup_heredoc_fds(t_cmd *cmd_list);
+
+// heredoc.c
+int				run_heredoc_parent(pid_t pid, int *fd, int pipefd[2]);
+void			run_heredoc_child(char *delimiter, int pipefd[2]);
+int				handle_heredoc(char *delimiter, int *fd);
+int				process_cmd_heredocs(t_redir *redir);
+int				process_all_heredocs(t_cmd *cmd_list);
+
+//heredoc_utils.c
+void			sigint_handler(int signum);
+int				handle_char_input(char c, char **line, int *i, int *capacity);
+char			*heredoc_readline(void);
+void			heredoc_sigint_handler(int sig);
+
+// volatile sig_atomic_t	g_heredoc_interrupted;
 
 #endif
