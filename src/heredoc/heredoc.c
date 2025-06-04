@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 15:15:33 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/06/04 17:02:44 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/04 18:43:58 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,12 +54,7 @@ void	run_heredoc_child(char *delimiter, int pipefd[2])
 		write(STDOUT_FILENO, "> ", 2);
 		line = heredoc_readline();
 		if (!line || ft_strcmp(line, delimiter) == 0)
-		{
-			printf("\n");
-			printf("bash: warning: here-document delimited by end-of-file");
-			printf("(wanted `%s')\n", delimiter);
 			break ;
-		}
 		write(pipefd[1], line, ft_strlen(line));
 		write(pipefd[1], "\n", 1);
 		free(line);
