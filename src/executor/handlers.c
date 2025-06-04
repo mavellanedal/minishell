@@ -6,12 +6,16 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/27 13:29:46 by mavellan          #+#    #+#             */
-/*   Updated: 2025/06/02 15:43:51 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/04 16:57:24 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
+/*
+ * Ejecuta builtin directamente en el proceso principal.
+ * Solo para builtins sin pipes ni redirecciones.
+*/
 int	handle_builtin(t_cmd *cmd, t_env **env_list)
 {
 	int		status;
@@ -24,6 +28,10 @@ int	handle_builtin(t_cmd *cmd, t_env **env_list)
 	return (status);
 }
 
+/*
+ * Maneja la ejecución de un comando según su tipo.
+ * Decide entre builtin directo, redirección sola o comando completo.
+*/
 int	handle_command(t_cmd *cmd, t_exec_data *exec_data, t_env **env_list)
 {
 	char	*first_arg;
@@ -49,6 +57,10 @@ int	handle_command(t_cmd *cmd, t_exec_data *exec_data, t_env **env_list)
 	return (handle_full_command(cmd, exec_data));
 }
 
+/*
+ * Gestiona el cierre de pipes después de ejecutar comando.
+ * Cierra descriptores y actualiza prev_read para siguiente comando.
+*/
 void	handle_pipe_end(t_cmd *cmd, t_exec_data *exec_data)
 {
 	if (exec_data->prev_read != STDIN_FILENO)
@@ -62,6 +74,10 @@ void	handle_pipe_end(t_cmd *cmd, t_exec_data *exec_data)
 		exec_data->prev_read = -1;
 }
 
+/*
+ * Maneja comandos que solo tienen redirecciones.
+ * Ejecuta en proceso hijo para aplicar redirecciones.
+*/
 int	handle_redirection_only(t_cmd *cmd, t_exec_data *exec_data)
 {
 	pid_t	pid;
@@ -75,6 +91,10 @@ int	handle_redirection_only(t_cmd *cmd, t_exec_data *exec_data)
 	return (status);
 }
 
+/*
+ * Maneja comandos completos con argumentos.
+ * Ejecuta en proceso hijo con pipes y redirecciones.
+*/
 int	handle_full_command(t_cmd *cmd, t_exec_data *exec_data)
 {
 	pid_t	pid;

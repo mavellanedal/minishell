@@ -6,12 +6,16 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 17:34:56 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/06/03 15:22:08 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/04 16:55:13 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
+/*
+ * Libera un array de argumentos.
+ * Libera cada string y luego el array principal.
+*/
 void	free_args(char **args)
 {
 	int	i;
@@ -24,6 +28,10 @@ void	free_args(char **args)
 	free(args);
 }
 
+/*
+ * Libera toda la lista enlazada de comandos.
+ * Incluye argumentos, redirecciones y estructuras de comando.
+*/
 void	free_cmd_list(t_cmd *cmd)
 {
 	t_cmd	*tmp;
@@ -47,6 +55,10 @@ void	free_cmd_list(t_cmd *cmd)
 	}
 }
 
+/*
+ * Libera una lista enlazada de redirecciones.
+ * Libera archivos y estructuras de redirección.
+*/
 void	free_redir_list(t_redir *redir_list)
 {
 	t_redir	*current;
@@ -63,6 +75,10 @@ void	free_redir_list(t_redir *redir_list)
 	}
 }
 
+/*
+ * Libera un array de tokens.
+ * Libera cada token y luego el array principal.
+*/
 void	free_tokens(char **tokens)
 {
 	int	i;

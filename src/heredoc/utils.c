@@ -6,12 +6,16 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/03 12:53:32 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/06/04 12:23:32 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/04 17:04:01 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/minishell.h"
+#include "../../include/minishell.h"
 
+/*
+ * Maneja señal SIGINT en el shell principal.
+ * Muestra nueva línea y redibuja prompt de readline.
+*/
 void	sigint_handler(int signum)
 {
 	(void)signum;
@@ -21,6 +25,10 @@ void	sigint_handler(int signum)
 	rl_redisplay();
 }
 
+/*
+ * Maneja entrada de caracteres expandiendo buffer si es necesario.
+ * Duplica capacidad cuando se alcanza el límite.
+*/
 int	handle_char_input(char c, char **line, int *i, int *capacity)
 {
 	char	*temp;
@@ -40,6 +48,9 @@ int	handle_char_input(char c, char **line, int *i, int *capacity)
 	return (1);
 }
 
+/*
+ * Lee línea para heredoc usando read() carácter por carácter.
+*/
 char	*heredoc_readline(void)
 {
 	char	buffer[1];
@@ -65,6 +76,10 @@ char	*heredoc_readline(void)
 	return (line);
 }
 
+/*
+ * Maneja señal SIGINT en proceso hijo de heredoc.
+ * Establece flag global y termina proceso.
+*/
 void	heredoc_sigint_handler(int sig)
 {
 	(void)sig;

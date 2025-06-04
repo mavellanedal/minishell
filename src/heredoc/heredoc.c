@@ -6,14 +6,18 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 15:15:33 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/06/03 15:18:09 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/04 17:02:44 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/minishell.h"
+#include "../../include/minishell.h"
 
 volatile sig_atomic_t	g_heredoc_interrupted = 0;
 
+/*
+ * Maneja proceso padre durante heredoc.
+ * Espera al hijo y gestiona señales e interrupciones.
+*/
 int	run_heredoc_parent(pid_t pid, int *fd, int pipefd[2])
 {
 	int	status;
@@ -34,6 +38,10 @@ int	run_heredoc_parent(pid_t pid, int *fd, int pipefd[2])
 	return (0);
 }
 
+/*
+ * Ejecuta proceso hijo para capturar entrada de heredoc.
+ * Lee líneas hasta delimiter y las escribe al pipe.
+*/
 void	run_heredoc_child(char *delimiter, int pipefd[2])
 {
 	char	*line;
@@ -46,7 +54,12 @@ void	run_heredoc_child(char *delimiter, int pipefd[2])
 		write(STDOUT_FILENO, "> ", 2);
 		line = heredoc_readline();
 		if (!line || ft_strcmp(line, delimiter) == 0)
+		{
+			printf("\n");
+			printf("bash: warning: here-document delimited by end-of-file");
+			printf("(wanted `%s')\n", delimiter);
 			break ;
+		}
 		write(pipefd[1], line, ft_strlen(line));
 		write(pipefd[1], "\n", 1);
 		free(line);
@@ -56,6 +69,10 @@ void	run_heredoc_child(char *delimiter, int pipefd[2])
 	exit(0);
 }
 
+/*
+ * Maneja la lógica completa de heredoc.
+ * Crea pipe, fork y procesa entrada hasta delimiter.
+*/
 int	handle_heredoc(char *delimiter, int *fd)
 {
 	pid_t	pid;
@@ -71,6 +88,10 @@ int	handle_heredoc(char *delimiter, int *fd)
 	return (run_heredoc_parent(pid, fd, pipefd));
 }
 
+/*
+ * Procesa heredocs de un comando específico.
+ * Ejecuta todos los heredocs encontrados en las redirecciones.
+*/
 int	process_cmd_heredocs(t_redir *redir)
 {
 	int	fd;
@@ -96,6 +117,10 @@ int	process_cmd_heredocs(t_redir *redir)
 	return (0);
 }
 
+/*
+ * Procesa todos los heredocs de la lista de comandos.
+ * Los ejecuta antes del pipeline principal.
+*/
 int	process_heredocs(t_cmd *cmd_list)
 {
 	int	result;

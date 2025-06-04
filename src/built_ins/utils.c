@@ -6,12 +6,16 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 16:10:41 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/06/03 16:16:24 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/04 17:15:02 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
+/*
+ * Implementación del builtin echo.
+ * Imprime argumentos con opción -n para suprimir newline.
+*/
 int	ft_echo(char **args)
 {
 	int	i;
@@ -36,6 +40,10 @@ int	ft_echo(char **args)
 	return (0);
 }
 
+/*
+ * Implementación del builtin pwd.
+ * Muestra el directorio de trabajo actual.
+*/
 int	ft_pwd(void)
 {
 	char	*cwd;
@@ -54,6 +62,10 @@ int	ft_pwd(void)
 	}
 }
 
+/*
+ * Implementación del builtin exit.
+ * Termina el shell con código de salida opcional.
+*/
 int	ft_exit(char **args)
 {
 	int		arg_count;
@@ -81,6 +93,10 @@ int	ft_exit(char **args)
 	exit(0);
 }
 
+/*
+ * Implementación del builtin unset.
+ * Elimina variables de entorno validando identificadores.
+*/
 int	ft_unset(char **args, t_env **env_list)
 {
 	int	i;
@@ -90,7 +106,7 @@ int	ft_unset(char **args, t_env **env_list)
 	{
 		if (!is_valid_identifier(args[i]))
 		{
-			fprintf(stderr, UNSET, args[i]);
+			printf(UNSET, args[i]);
 		}
 		else
 		{
@@ -102,11 +118,8 @@ int	ft_unset(char **args, t_env **env_list)
 }
 
 /*
-127 → comando no encontrado.
-126 → comando encontrado pero no ejecutable (por ejemplo, sin permisos).
-2 → error sintaxis.
-1 → error genérico.
-0 → todo OK.
+ * Ejecuta el builtin correspondiente según el comando.
+ * Dispatcher principal para todos los builtins del shell.
 */
 int	execute_builtin(char **args, t_env **env_list)
 {
@@ -122,7 +135,7 @@ int	execute_builtin(char **args, t_env **env_list)
 	{
 		if (args[1] != NULL)
 		{
-			fprintf(stderr, ENV, args[1]);
+			printf(ENV, args[1]);
 			return (127);
 		}
 		return (ft_env(*env_list));

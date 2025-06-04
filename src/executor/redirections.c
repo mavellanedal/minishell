@@ -6,12 +6,16 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/27 17:49:11 by mavellan          #+#    #+#             */
-/*   Updated: 2025/06/02 17:33:08 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/04 16:58:06 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
+/*
+ * Maneja redirecciones de salida (>, >>).
+ * Cierra descriptor anterior y actualiza last_out_fd.
+*/
 void	handle_output_redirection(t_redir *r, int *last_out_fd, int fd)
 {
 	if (r->type == REDIR_OUT || r->type == REDIR_APPEND)
@@ -22,6 +26,10 @@ void	handle_output_redirection(t_redir *r, int *last_out_fd, int fd)
 	}
 }
 
+/*
+ * Maneja redirecciones de entrada (<, <<).
+ * Cierra descriptor anterior y actualiza last_in_fd.
+*/
 void	handle_input_redirection(t_redir *r, int *last_in_fd, int fd)
 {
 	if (r->type == REDIR_IN || r->type == REDIR_HEREDOC)
@@ -32,6 +40,10 @@ void	handle_input_redirection(t_redir *r, int *last_in_fd, int fd)
 	}
 }
 
+/*
+ * Aplica todas las redirecciones de un comando.
+ * Procesa entrada y salida, maneja múltiples redirecciones.
+*/
 void	apply_all_redirs(t_redir *r, int *last_out_fd, int *last_in_fd)
 {
 	int	fd;
@@ -56,6 +68,10 @@ void	apply_all_redirs(t_redir *r, int *last_out_fd, int *last_in_fd)
 	}
 }
 
+/*
+ * Aplica redirecciones y actualiza stdin/stdout.
+ * Función principal para configurar redirecciones.
+*/
 void	apply_redirections(t_cmd *cmd)
 {
 	t_redir	*r;
@@ -78,6 +94,10 @@ void	apply_redirections(t_cmd *cmd)
 	}
 }
 
+/*
+ * Verifica si un token es un operador de redirección.
+ * Detecta <, >, >>, <<.
+*/
 bool	is_redirection_operator(char *token)
 {
 	return (ft_strcmp(token, "<") == 0 || ft_strcmp(token, ">") == 0 || \

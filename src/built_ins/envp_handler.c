@@ -3,15 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   envp_handler.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 09:04:48 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/30 09:05:28 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/06/04 16:44:34 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
+/*
+ * Actualiza el valor de una variable de entorno existente.
+ * Libera el valor anterior y asigna el nuevo.
+*/
 void	update_existing_env(t_env *curr, const char *value, int has_value)
 {
 	if (value)
@@ -25,6 +29,10 @@ void	update_existing_env(t_env *curr, const char *value, int has_value)
 	curr->has_value = has_value;
 }
 
+/*
+ * Crea un nuevo nodo de variable de entorno.
+ * Lo añade al inicio de la lista enlazada.
+*/
 void	create_new_env_node(t_env **env, const char *key,
 	const char *value, int has_value)
 {

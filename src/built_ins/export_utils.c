@@ -3,15 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   export_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 09:12:35 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/30 22:33:35 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/06/04 16:47:15 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
+/*
+ * Cuenta el número de variables en la lista de entorno.
+ * Retorna la longitud total de la lista.
+*/
 int	get_env_list_len(t_env *env)
 {
 	int		len;
@@ -27,6 +31,10 @@ int	get_env_list_len(t_env *env)
 	return (len);
 }
 
+/*
+ * Copia la lista enlazada de entorno a un array de punteros.
+ * Facilita el ordenamiento posterior.
+*/
 t_env	**copy_env_to_array(t_env *env, int len)
 {
 	t_env	**arr;
@@ -50,6 +58,10 @@ t_env	**copy_env_to_array(t_env *env, int len)
 	return (arr);
 }
 
+/*
+ * Ordena el array de variables de entorno alfabéticamente por clave.
+ * Utiliza algoritmo de burbuja.
+*/
 void	sort_env_array(t_env **arr, int len)
 {
 	int		i;
@@ -74,6 +86,10 @@ void	sort_env_array(t_env **arr, int len)
 	}
 }
 
+/*
+ * Imprime las variables ordenadas en formato export.
+ * Formato: "declare -x KEY="VALUE"" o "declare -x KEY" sin valor.
+*/
 void	print_sorted_env(t_env **arr, int len)
 {
 	int	i;

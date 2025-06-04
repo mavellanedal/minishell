@@ -6,12 +6,16 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 13:00:57 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/06/02 14:06:53 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/04 17:06:46 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
+/*
+ * Expande una variable según su tipo ($?, $VAR o $ solo).
+ * Retorna la longitud del texto expandido.
+*/
 int	expand_variable(t_expand_params *params)
 {
 	params->len = 0;
@@ -28,6 +32,10 @@ int	expand_variable(t_expand_params *params)
 	return (params->len);
 }
 
+/*
+ * Finaliza el resultado de expansión.
+ * Añade terminador null y maneja operadores entre comillas.
+*/
 void	finalize_result(t_processing_state *state)
 {
 	state->result[state->j] = '\0';
@@ -41,6 +49,10 @@ void	finalize_result(t_processing_state *state)
 	}
 }
 
+/*
+ * Alterna el estado de comillas (simple/doble).
+ * Actualiza flags in_single e in_double.
+*/
 void	toggle_quotes(t_processing_state *state)
 {
 	if (state->token[state->i] == '\'')
@@ -50,6 +62,10 @@ void	toggle_quotes(t_processing_state *state)
 	state->i++;
 }
 
+/*
+ * Bucle principal de procesamiento de tokens.
+ * Maneja escapes, comillas, variables y caracteres normales.
+*/
 void	process_loop(t_processing_state *state)
 {
 	while (state->token[state->i])
@@ -75,6 +91,10 @@ void	process_loop(t_processing_state *state)
 	}
 }
 
+/*
+ * Procesa un token completo con expansiones.
+ * Función principal para expandir variables y manejar comillas.
+*/
 char	*process_token_properly(const char *token, int last_status, t_env *env)
 {
 	t_processing_state	state;

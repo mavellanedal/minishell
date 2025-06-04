@@ -6,12 +6,16 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 14:26:19 by mavellan          #+#    #+#             */
-/*   Updated: 2025/06/02 15:32:03 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/04 16:48:53 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
+/*
+ * Redirige entrada/salida estándar para pipes.
+ * Conecta stdin del proceso anterior y stdout al siguiente pipe.
+*/
 void	redirect_io(t_cmd *cmd, t_exec_data *exec_data)
 {
 	if (exec_data->prev_read != STDIN_FILENO)
@@ -27,6 +31,10 @@ void	redirect_io(t_cmd *cmd, t_exec_data *exec_data)
 	}
 }
 
+/*
+ * Ejecuta builtin en proceso hijo si aplica.
+ * Exit se maneja especialmente para no terminar el shell principal.
+*/
 void	execute_if_builtin(t_cmd *cmd, t_exec_data *exec_data)
 {
 	int	status;
@@ -39,6 +47,10 @@ void	execute_if_builtin(t_cmd *cmd, t_exec_data *exec_data)
 	exit(status);
 }
 
+/*
+ * Verifica errores de ejecutabilidad del archivo.
+ * Comprueba existencia, permisos y si es directorio.
+*/
 void	check_executable_errors(char *path, char **envp)
 {
 	struct stat	path_stat;
@@ -68,6 +80,10 @@ void	check_executable_errors(char *path, char **envp)
 	}
 }
 
+/*
+ * Maneja comando no encontrado.
+ * Muestra error y termina proceso hijo con código 127.
+*/
 void	execute_command(t_cmd *cmd, char **envp_array, char *full_path)
 {
 	check_executable_errors(full_path, envp_array);
@@ -80,6 +96,10 @@ void	execute_command(t_cmd *cmd, char **envp_array, char *full_path)
 	exit(127);
 }
 
+/*
+ * Maneja fallback con /bin/sh cuando execve falla.
+ * Intenta ejecutar como script de shell.
+*/
 void	setup_child_process(t_cmd *cmd, t_exec_data *exec_data)
 {
 	char	**envp_array;

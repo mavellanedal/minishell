@@ -6,12 +6,16 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 18:38:07 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/06/02 14:07:15 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/04 17:05:40 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
+/*
+ * Maneja caracteres escapados en expansión de tokens.
+ * Procesa escapes según el contexto de comillas.
+*/
 void	handle_escape(t_processing_state *state)
 {
 	char	c;
@@ -30,6 +34,10 @@ void	handle_escape(t_processing_state *state)
 	state->i++;
 }
 
+/*
+ * Maneja expansión de variables ($VAR, $?).
+ * Configura parámetros y llama a expand_variable.
+*/
 void	handle_variable(t_processing_state *state)
 {
 	t_expand_params	params;
@@ -44,7 +52,10 @@ void	handle_variable(t_processing_state *state)
 	state->j += expand_variable(&params);
 }
 
-// Manejar $?
+/*
+ * Maneja expansión de código de salida ($?).
+ * Convierte last_status a string y lo copia al resultado.
+*/
 void	handle_exit_status(t_expand_params *params)
 {
 	char	*status_str;
@@ -58,7 +69,10 @@ void	handle_exit_status(t_expand_params *params)
 	(*params->i)++;
 }
 
-// Manejar $VAR
+/*
+ * Maneja expansión de variables de entorno ($VAR).
+ * Busca la variable en env y copia su valor.
+*/
 void	handle_named_variable(t_expand_params *params)
 {
 	int		start;
