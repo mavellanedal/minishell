@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/27 17:49:11 by mavellan          #+#    #+#             */
-/*   Updated: 2025/06/04 16:58:06 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/04 18:13:50 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,11 +59,10 @@ void	apply_all_redirs(t_redir *r, int *last_out_fd, int *last_in_fd)
 				ft_putstr_fd("minishell: redirection error\n", STDERR_FILENO);
 			exit(1);
 		}
-		handle_output_redirection(r, last_out_fd, fd);
-		handle_input_redirection(r, last_in_fd, fd);
-		if (r->type != REDIR_OUT && r->type != REDIR_APPEND && \
-			r->type != REDIR_IN && r->type != REDIR_HEREDOC)
-			close(fd);
+		if (r->type == REDIR_OUT || r->type == REDIR_APPEND)
+			handle_output_redirection(r, last_out_fd, fd);
+		else if (r->type == REDIR_IN || r->type == REDIR_HEREDOC)
+			handle_input_redirection(r, last_in_fd, fd);
 		r = r->next;
 	}
 }
