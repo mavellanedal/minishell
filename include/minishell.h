@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/06/03 17:54:26 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/04 13:40:06 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,6 +133,13 @@ int				handle_input_line(char *line, int last_status, \
 void			shell_loop(t_env *env_list, int last_status);
 int				main(int argc, char **argv, char **envp);
 
+// parser/check_pipes_redirections.c
+bool			operator_check(char *token);
+int				validate_invalid_operators(char *token);
+int				validate_redirection_syntax(char **tokens, int i);
+int				validate_pipe_syntax(char **tokens, int i);
+int				validate_syntax(char **tokens);
+
 // parser/handle_expand_heredoc.c
 void			handle_escape(t_processing_state *state);
 void			handle_variable(t_processing_state *state);
@@ -157,13 +164,18 @@ void			process_heredoc(const char *input, t_token_state *s, \
 	char **tokens);
 
 // parser/tokenize.c
+void			init_token_state(t_token_state *s, int last_status, t_env *env);
+void			fill_token_array(const char *input, char **tokens, \
+	t_token_state *s);
+int				validate_token_array(char **tokens);
+char			**tokenize_input(const char *input, int last_status, \
+	t_env *env);
+
+// parser/utils.c
 void			skip_spaces(const char *input, int *i);
 void			save_token(char **tokens, t_token_state *s, \
 	const char *input, int end);
 t_quote_state	get_quote_state(const char *str, int up_to);
-void			init_token_state(t_token_state *s, int last_status, t_env *env);
-char			**tokenize_input(const char *input, int last_status, \
-	t_env *env);
 
 // built_ins/utils.c
 int				ft_echo(char **args);

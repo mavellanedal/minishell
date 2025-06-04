@@ -18,10 +18,12 @@ RM = rm -f
 HEADER = include/minishell.h
 
 SRCS = 	src/main.c \
+		src/parser/check_pipes_redirecctions.c \
 		src/parser/handle_expand_heredoc.c \
 		src/parser/process_expand.c \
 		src/parser/read_token.c \
 		src/parser/tokenizer.c \
+		src/parser/utils.c \
 		src/built_ins/utils.c \
 		src/built_ins/env_handler.c \
 		src/built_ins/cd_handler.c \

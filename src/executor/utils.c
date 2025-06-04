@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 14:15:21 by mavellan          #+#    #+#             */
-/*   Updated: 2025/06/03 16:17:38 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/04 12:53:37 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,7 @@ int	print_newline_error(t_cmd_parse_data *ctx)
 	int	j;
 
 	j = 0;
-	printf("minishell: syntax error near unexpected token ");
-	ft_putstr_fd("'newline'\n", 2);
+	printf("minishell: syntax error near unexpected token 'newline'\n");
 	ctx->last_status_ptr[0] = 2;
 	while (j < ctx->arg_index)
 		free(ctx->args[j++]);
