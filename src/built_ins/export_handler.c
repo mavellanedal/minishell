@@ -3,17 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   export_handler.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 16:53:45 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/05/30 22:34:36 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/06/04 16:45:20 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
 /*
- * Comprueba si un identificador es válido para export
+ * Valida si un identificador es válido para export.
+ * Debe empezar con letra/underscore y contener solo alfanuméricos/underscore.
 */
 int	is_valid_identifier_export(const char *str)
 {

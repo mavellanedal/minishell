@@ -6,12 +6,16 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 12:56:25 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/06/04 13:26:00 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/04 17:04:46 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
+/*
+ * Verifica si un token es un operador de redirección.
+ * Detecta <, >, >>, <<.
+*/
 bool	operator_check(char *token)
 {
 	if (!token)
@@ -22,6 +26,10 @@ bool	operator_check(char *token)
 	return (false);
 }
 
+/*
+ * Valida operadores inválidos como >>>, <<<<, ><, <>.
+ * Retorna 1 si encuentra error, 0 si es válido.
+*/
 int	validate_invalid_operators(char *token)
 {
 	if (ft_strncmp(token, ">>>", 3) == 0)
@@ -42,6 +50,10 @@ int	validate_invalid_operators(char *token)
 	return (0);
 }
 
+/*
+ * Valida sintaxis de redirecciones.
+ * Verifica que después del operador haya un archivo válido.
+*/
 int	validate_redirection_syntax(char **tokens, int i)
 {
 	if (!operator_check(tokens[i]))
@@ -60,6 +72,10 @@ int	validate_redirection_syntax(char **tokens, int i)
 	return (0);
 }
 
+/*
+ * Valida sintaxis de pipes.
+ * Detecta pipes al final o consecutivos.
+*/
 int	validate_pipe_syntax(char **tokens, int i)
 {
 	if (ft_strcmp(tokens[i], "|") != 0)
@@ -72,6 +88,10 @@ int	validate_pipe_syntax(char **tokens, int i)
 	return (0);
 }
 
+/*
+ * Función principal de validación de sintaxis.
+ * Verifica pipes, redirecciones y operadores inválidos.
+*/
 int	validate_syntax(char **tokens)
 {
 	int	i;

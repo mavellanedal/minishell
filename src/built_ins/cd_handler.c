@@ -6,12 +6,16 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 14:52:32 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/06/03 17:57:26 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/04 16:42:45 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
+/*
+ * Busca el valor de una variable de entorno por su clave.
+ * Retorna el valor o NULL si no existe.
+*/
 char	*get_env_value(t_env *env, const char *key)
 {
 	while (env)
@@ -23,6 +27,10 @@ char	*get_env_value(t_env *env, const char *key)
 	return (NULL);
 }
 
+/*
+ * Actualiza el valor de una variable de entorno existente.
+ * Si no existe, no hace nada.
+*/
 void	update_env_var(t_env *env, const char *key, const char *new_value)
 {
 	t_env	*current;
@@ -50,6 +58,10 @@ void	update_env_var(t_env *env, const char *key, const char *new_value)
 	current->next = new_node;
 }
 
+/*
+ * Determina el directorio destino para el comando cd.
+ * Maneja casos: sin argumentos (HOME), "-" (OLDPWD), o directorio específico.
+*/
 char	*get_cd_target(char **args, t_env *env)
 {
 	char	*target;
@@ -73,6 +85,10 @@ char	*get_cd_target(char **args, t_env *env)
 	return (target);
 }
 
+/*
+ * Actualiza las variables PWD y OLDPWD después de cambiar directorio.
+ * OLDPWD = directorio anterior, PWD = directorio actual.
+*/
 void	update_pwd_vars(t_env *env, char *oldpwd)
 {
 	char	*cwd;
@@ -88,6 +104,10 @@ void	update_pwd_vars(t_env *env, char *oldpwd)
 	}
 }
 
+/*
+ * Implementación del builtin cd.
+ * Cambia directorio y actualiza variables de entorno.
+*/
 int	ft_cd(char **args, t_env *env)
 {
 	char	*target;

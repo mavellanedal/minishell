@@ -6,12 +6,16 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 14:15:21 by mavellan          #+#    #+#             */
-/*   Updated: 2025/06/04 12:53:37 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/04 17:00:33 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
+/*
+ * Obtiene el descriptor de archivo según tipo de redirección.
+ * Maneja entrada, salida, append y heredoc.
+*/
 int	check_redir_type(t_redir *r)
 {
 	int	fd;
@@ -32,6 +36,10 @@ int	check_redir_type(t_redir *r)
 	return (fd);
 }
 
+/*
+ * Determina el tipo de redirección según el token.
+ * Retorna constante correspondiente (REDIR_IN, REDIR_OUT, etc.).
+*/
 int	get_redir_type(char *token)
 {
 	if (ft_strcmp(token, "<") == 0)
@@ -44,6 +52,10 @@ int	get_redir_type(char *token)
 		return (REDIR_HEREDOC);
 }
 
+/*
+ * Obtiene el token real removiendo marcadores especiales.
+ * Si empieza con '\1', retorna desde la posición 1.
+*/
 char	*get_actual_token(char *token)
 {
 	if (token[0] == '\1')
@@ -51,6 +63,10 @@ char	*get_actual_token(char *token)
 	return (token);
 }
 
+/*
+ * Maneja error de sintaxis por newline inesperado.
+ * Libera memoria y establece código de error.
+*/
 int	print_newline_error(t_cmd_parse_data *ctx)
 {
 	int	j;
@@ -67,6 +83,10 @@ int	print_newline_error(t_cmd_parse_data *ctx)
 	return (0);
 }
 
+/*
+ * Verifica si un comando es un builtin.
+ * Retorna 1 si es builtin, 0 si no.
+*/
 int	is_builtin(char *cmd)
 {
 	if (!cmd)

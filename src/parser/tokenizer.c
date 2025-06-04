@@ -6,12 +6,16 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 17:16:14 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/06/04 13:38:12 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/04 17:08:54 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
+/*
+ * Inicializa estructura de estado para tokenización.
+ * Configura índices y variables de entorno.
+*/
 void	init_token_state(t_token_state *s, int last_status, t_env *env)
 {
 	s->i = 0;
@@ -21,6 +25,10 @@ void	init_token_state(t_token_state *s, int last_status, t_env *env)
 	s->env = env;
 }
 
+/*
+ * Llena el array de tokens procesando la entrada.
+ * Lee tokens secuencialmente y los almacena.
+*/
 void	fill_token_array(const char *input, char **tokens, t_token_state *s)
 {
 	while (input[s->i])
@@ -35,6 +43,10 @@ void	fill_token_array(const char *input, char **tokens, t_token_state *s)
 	tokens[s->j] = NULL;
 }
 
+/*
+ * Valida el array de tokens generado.
+ * Verifica sintaxis y libera memoria si hay errores.
+*/
 int	validate_token_array(char **tokens)
 {
 	int	syntax_error;
@@ -48,6 +60,10 @@ int	validate_token_array(char **tokens)
 	return (0);
 }
 
+/*
+ * Tokeniza entrada completa en array de strings.
+ * Función principal del tokenizador.
+*/
 char	**tokenize_input(const char *input, int last_status, t_env *env)
 {
 	char			**tokens;

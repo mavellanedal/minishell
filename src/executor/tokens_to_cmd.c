@@ -6,12 +6,16 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 17:36:52 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/06/04 13:19:49 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/04 16:58:55 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
+/*
+ * Maneja una redirección durante el parsing.
+ * Crea nodo de redirección y lo añade a la lista.
+*/
 int	handle_redirection(t_cmd_parse_data *ctx, char *actual_token)
 {
 	t_redir	*new_redir;
@@ -39,6 +43,10 @@ int	handle_redirection(t_cmd_parse_data *ctx, char *actual_token)
 	return (1);
 }
 
+/*
+ * Procesa argumentos y redirecciones hasta encontrar pipe.
+ * Llena arrays de argumentos y lista de redirecciones.
+*/
 int	fill_args_and_redirs(t_cmd_parse_data *ctx)
 {
 	char	*actual_token;
@@ -61,6 +69,10 @@ int	fill_args_and_redirs(t_cmd_parse_data *ctx)
 	return (1);
 }
 
+/*
+ * Prepara estructura para un nuevo comando.
+ * Inicializa memoria para comando y argumentos.
+*/
 bool	prepare_new_command(t_cmd_parse_data *ctx)
 {
 	ctx->new_cmd = calloc(1, sizeof(t_cmd));
@@ -81,6 +93,10 @@ bool	prepare_new_command(t_cmd_parse_data *ctx)
 	return (true);
 }
 
+/*
+ * Inicializa estructura de datos para parsing.
+ * Configura punteros y contadores iniciales.
+*/
 void	initialize_cmd_parse_data(t_cmd_parse_data *data, \
 	char **tokens, int *last_status)
 {
@@ -93,6 +109,10 @@ void	initialize_cmd_parse_data(t_cmd_parse_data *data, \
 	data->last_status_ptr = last_status;
 }
 
+/*
+ * Convierte array de tokens en lista enlazada de comandos.
+ * Función principal del parser de comandos.
+*/
 t_cmd	*parse_tokens_to_cmd_list(char **tokens, int *last_status)
 {
 	t_cmd_parse_data	ctx;
