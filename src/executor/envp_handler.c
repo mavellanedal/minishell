@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 12:41:34 by mavellan          #+#    #+#             */
-/*   Updated: 2025/06/04 16:51:49 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/05 13:29:45 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ int	fill_envp_array(t_env *env, char **envp)
 	i = 0;
 	while (env)
 	{
-		if (env->value)
+		if (env->has_value && env->key && env->value)
 		{
 			len = ft_strlen(env->key) + ft_strlen(env->value) + 2;
 			entry = malloc(len);
@@ -95,9 +95,26 @@ int	count_env_vars(t_env *env)
 	count = 0;
 	while (env)
 	{
-		if (env->value)
+		if (env->has_value && env->key && env->value)
 			count++;
 		env = env->next;
 	}
 	return (count);
+}
+
+/*
+ * Crea un nodo de entorno con key y value asignados.
+*/
+t_env	*create_env_node(const char *key, const char *value)
+{
+	t_env	*new_node;
+
+	new_node = malloc(sizeof(t_env));
+	if (!new_node)
+		return (NULL);
+	new_node->key = ft_strdup(key);
+	new_node->value = ft_strdup(value);
+	new_node->has_value = 1;
+	new_node->next = NULL;
+	return (new_node);
 }
