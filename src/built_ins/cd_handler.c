@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 14:52:32 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/06/04 16:42:45 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/05 13:27:04 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,13 +30,14 @@ char	*get_env_value(t_env *env, const char *key)
 /*
  * Actualiza el valor de una variable de entorno existente.
  * Si no existe, no hace nada.
+ * Si env no existe crea un nuevo nodo al final de la lista.
 */
-void	update_env_var(t_env *env, const char *key, const char *new_value)
+void	update_env_var(t_env **env, const char *key, const char *new_value)
 {
 	t_env	*current;
 	t_env	*new_node;
 
-	current = env;
+	current = *env;
 	while (current)
 	{
 		if (ft_strcmp(current->key, key) == 0)
@@ -49,14 +50,43 @@ void	update_env_var(t_env *env, const char *key, const char *new_value)
 			break ;
 		current = current->next;
 	}
-	new_node = malloc(sizeof(t_env));
+	new_node = create_env_node(key, new_value);
 	if (!new_node)
 		return ;
-	new_node->key = ft_strdup(key);
-	new_node->value = ft_strdup(new_value);
-	new_node->next = NULL;
-	current->next = new_node;
+	if (!*env)
+		*env = new_node;
+	else
+		current->next = new_node;
 }
+// void	update_env_var(t_env **env, const char *key, const char *new_value)
+// {
+// 	t_env	*current;
+// 	t_env	*new_node;
+
+// 	current = *env;
+// 	while (current)
+// 	{
+// 		if (ft_strcmp(current->key, key) == 0)
+// 		{
+// 			free(current->value);
+// 			current->value = ft_strdup(new_value);
+// 			return ;
+// 		}
+// 		if (!current->next)
+// 			break ;
+// 		current = current->next;
+// 	}
+// 	new_node = malloc(sizeof(t_env));
+// 	if (!new_node)
+// 		return ;
+// 	new_node->key = ft_strdup(key);
+// 	new_node->value = ft_strdup(new_value);
+// 	new_node->next = NULL;
+// 	if (!*env)
+// 		*env = new_node;
+// 	else
+// 		current->next = new_node;
+// }
 
 /*
  * Determina el directorio destino para el comando cd.
@@ -89,7 +119,7 @@ char	*get_cd_target(char **args, t_env *env)
  * Actualiza las variables PWD y OLDPWD después de cambiar directorio.
  * OLDPWD = directorio anterior, PWD = directorio actual.
 */
-void	update_pwd_vars(t_env *env, char *oldpwd)
+void	update_pwd_vars(t_env **env, char *oldpwd)
 {
 	char	*cwd;
 
@@ -108,7 +138,7 @@ void	update_pwd_vars(t_env *env, char *oldpwd)
  * Implementación del builtin cd.
  * Cambia directorio y actualiza variables de entorno.
 */
-int	ft_cd(char **args, t_env *env)
+int	ft_cd(char **args, t_env **env)
 {
 	char	*target;
 	char	*oldpwd;
@@ -121,7 +151,7 @@ int	ft_cd(char **args, t_env *env)
 		return (1);
 	}
 	oldpwd = getcwd(NULL, 0);
-	target = get_cd_target(args, env);
+	target = get_cd_target(args, *env);
 	if (!target)
 	{
 		free(oldpwd);

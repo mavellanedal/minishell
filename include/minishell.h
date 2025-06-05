@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/06/04 13:40:06 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/05 13:27:30 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,11 +193,11 @@ void			remove_env_key(t_env **env_list, const char *key);
 
 // built_ins/cd_handler.c
 char			*get_env_value(t_env *env, const char *key);
-void			update_env_var(t_env *env, const char *key, \
+void			update_env_var(t_env **env, const char *key, \
 const char *new_value);
 char			*get_cd_target(char **args, t_env *env);
-void			update_pwd_vars(t_env *env, char *oldpwd);
-int				ft_cd(char **args, t_env *env);
+void			update_pwd_vars(t_env **env, char *oldpwd);
+int				ft_cd(char **args, t_env **env);
 
 // built_ins/export_handler.c
 int				is_valid_identifier_export(const char *str);
@@ -212,6 +212,7 @@ void			create_new_env_node(t_env **env, const char *key, \
 	const char *value, int has_value);
 void			add_or_update_env(t_env **env, const char *key, \
 	const char *value, int has_value);
+t_env			*create_env_node(const char *key, const char *value);
 
 // built_ins/export_utils.c
 int				get_env_list_len(t_env *env);
