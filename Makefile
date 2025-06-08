@@ -18,10 +18,12 @@ RM = rm -f
 HEADER = include/minishell.h
 
 SRCS = 	src/main.c \
+		src/parser/check_pipes_redirecctions.c \
 		src/parser/handle_expand_heredoc.c \
 		src/parser/process_expand.c \
 		src/parser/read_token.c \
 		src/parser/tokenizer.c \
+		src/parser/utils.c \
 		src/built_ins/utils.c \
 		src/built_ins/env_handler.c \
 		src/built_ins/cd_handler.c \
@@ -29,16 +31,20 @@ SRCS = 	src/main.c \
 		src/built_ins/envp_handler.c \
 		src/built_ins/export_utils.c \
 		src/built_ins/export_main_function_utils.c \
-		src/executor/executor.c \
-		src/executor/utils.c \
 		src/executor/child_process.c \
-		src/executor/envp_handler.c \
 		src/executor/command_path.c \
+		src/executor/envp_handler.c \
+		src/executor/executor.c \
+		src/executor/free.c \
+		src/executor/handle_child_process.c \
 		src/executor/handlers.c \
 		src/executor/redirections.c \
-		src/signals.c \
+		src/executor/tokens_to_cmd.c \
+		src/executor/utils.c \
 		src/heredoc/heredoc.c \
 		src/heredoc/utils.c \
+		src/shlvl.c \
+		src/free_env.c \
 
 OBJS = $(SRCS:.c=.o)
 

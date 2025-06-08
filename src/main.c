@@ -6,141 +6,82 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:40:15 by mavellan          #+#    #+#             */
-/*   Updated: 2025/06/02 14:07:03 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/04 17:11:56 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
 /*
- * Función actualizada para convertir la lista de env a un array de strings para execve
- * Solo incluye variables que tienen has_value = 1
- */
-char **env_list_to_array(t_env *env_list)
+ * Ejecuta comandos procesando heredocs primero.
+ * Maneja interrupciones y retorna código de salida apropiado.
+*/
+int	execute_with_heredocs(t_cmd *cmd_list, t_env **env_list)
 {
-	int count;
-	int len;
-	t_env *temp;
-	char **env_array;
+	int	heredoc_result;
 
-	count = 0;
-	temp = env_list;
-	while (temp)
+	heredoc_result = process_heredocs(cmd_list);
+	if (heredoc_result == 130)
 	{
-		if (temp->has_value) // Solo contamos si has_value = 1
-			count++;
-		temp = temp->next;
+		printf("\n");
+		return (130);
 	}
-	// Asignar memoria para el array
-	env_array = malloc(sizeof(char *) * (count + 1));
-	if (!env_array)
-		return (NULL);
-	// Copiar variables al array
-	temp = env_list;
-	count = 0;
-	while (temp)
-	{
-		if (temp->has_value) // Solo añadimos si has_value = 1
-		{
-			len = ft_strlen(temp->key) + ft_strlen(temp->value) + 2; // +2 para '=' y '\0'
-			env_array[count] = malloc(len);
-			if (env_array[count])
-			{
-				snprintf(env_array[count], len, "%s=%s", temp->key, temp->value);
-				count++;
-			}
-		}
-		temp = temp->next;
-	}
-	env_array[count] = NULL;
-	return (env_array);
+	else if (heredoc_result == 0)
+		return (executor(cmd_list, env_list));
+	else
+		return (heredoc_result);
 }
 
 /*
-	Liberar memoria del array de entorno
+ * Expande variables en todos los tokens del array.
+ * Procesa $VAR, $? y maneja comillas en cada token.
 */
-void free_env_array(char **env_array)
+void	expand_all_tokens(char **tokens, int status, t_env *env_list)
 {
-	int i;
+	char	*expanded;
+	int		i;
 
 	i = 0;
-	if (!env_array)
-		return;
-	while (env_array[i])
+	while (tokens[i])
 	{
-		free(env_array[i]);
+		expanded = process_token_properly(tokens[i], status, env_list);
+		free(tokens[i]);
+		tokens[i] = expanded;
 		i++;
 	}
-	free(env_array);
 }
 
 /*
- * Actualizamos shlvl
- */
-void update_shlvl(t_env **env_list)
+ * Procesa una línea de entrada completa.
+ * Tokeniza, expande, parsea y ejecuta comandos.
+*/
+int	handle_input_line(char *line, int last_status, t_env **env_list)
 {
-	t_env *new_node;
-	t_env *current;
-	int new_level;
+	char	**tokens;
+	t_cmd	*cmd_list;
 
-	current = *env_list;
-	new_level = 1;
-	while (current)
-	{
-		if (ft_strcmp(current->key, "SHLVL") == 0)
-		{
-			if (current->value && *(current->value))
-				new_level = ft_atoi(current->value) + 1;
-			free(current->value);
-			current->value = ft_itoa(new_level);
-			current->has_value = 1;
-			return;
-		}
-		current = current->next;
-	}
-	new_node = malloc(sizeof(t_env));
-	if (!new_node)
-		return;
-	new_node->key = ft_strdup("SHLVL");
-	new_node->value = ft_strdup("1");
-	new_node->has_value = 1;
-	new_node->next = *env_list;
-	*env_list = new_node;
+	if (!*line)
+		return (last_status);
+	add_history(line);
+	tokens = tokenize_input(line, last_status, *env_list);
+	if (!tokens)
+		return (last_status);
+	expand_all_tokens(tokens, last_status, *env_list);
+	cmd_list = parse_tokens_to_cmd_list(tokens, &last_status);
+	if (cmd_list)
+		last_status = execute_with_heredocs(cmd_list, env_list);
+	free_cmd_list(cmd_list);
+	free_tokens(tokens);
+	return (last_status);
 }
 
-void free_env_list(t_env *env)
+/*
+ * Bucle principal del shell.
+ * Lee entrada, procesa comandos y maneja EOF.
+*/
+void	shell_loop(t_env *env_list, int last_status)
 {
-	t_env *tmp;
-
-	while (env)
-	{
-		tmp = env->next;
-		free(env->key);
-		free(env->value);
-		free(env);
-		env = tmp;
-	}
-}
-
-int main(int argc, char **argv, char **envp)
-{
-	char *line;
-	char *expanded;
-	char **tokens;
-	int last_status;
-	t_env *env_list;
-	t_cmd *cmd_list;
-	int j;
-	int i;
-	int heredoc_result;
-
-	last_status = 0;
-	env_list = create_env_list(envp);
-	update_shlvl(&env_list);
-	signal(SIGINT, sigint_handler);
-	signal(SIGQUIT, SIG_IGN);
-	(void)argc;
-	(void)argv;
+	char	*line;
 
 	while (1)
 	{
@@ -150,61 +91,29 @@ int main(int argc, char **argv, char **envp)
 		{
 			write(1, "exit\n", 5);
 			free_env_list(env_list);
-			break; // Ctrl+D
+			break ;
 		}
-		if (*line)
-		{
-			add_history(line);
-			tokens = tokenize_input(line, last_status, env_list);
-			if (tokens)
-			{
-				//printf("-----------------------------------------\n");
-				i = 0;
-				while (tokens[i])
-				{
-					//printf("Token ANTES[%d] = [%s]\n", i, tokens[i]);
-					expanded = process_token_properly(tokens[i], last_status, env_list);
-					free(tokens[i]);
-					tokens[i] = expanded;
-					//printf("Token DESPUES[%d] = [%s]\n", i, tokens[i]);
-					i++;
-				}
-				//printf("-----------------------------------------\n");
-				cmd_list = parse_tokens_to_cmd_list(tokens, &last_status);
-				if (cmd_list)
-				{
-					// Procesar todos los heredocs ANTES de la ejecución
-					heredoc_result = process_all_heredocs(cmd_list);
-					if (heredoc_result == 130) // SIGINT durante heredoc
-					{
-						last_status = 130;
-						printf("\n"); // Nueva línea después de ^C
-					}
-					else if (heredoc_result == 0)
-					{
-						// EJECUTAR el comando solo si los heredocs fueron exitosos
-						last_status = executor(cmd_list, &env_list);
-					}
-					else
-					{
-						// Error en heredocs
-						last_status = heredoc_result;
-					}
-
-					free_cmd_list(cmd_list);
-				}
-
-				// Liberar tokens después de usar cmd_list
-				j = 0;
-				while (tokens[j])
-				{
-					free(tokens[j]);
-					j++;
-				}
-				free(tokens);
-			}
-		}
+		last_status = handle_input_line(line, last_status, &env_list);
 		free(line);
 	}
+}
+
+/*
+ * Función principal del programa.
+ * Inicializa entorno, señales y ejecuta shell_loop.
+*/
+int	main(int argc, char **argv, char **envp)
+{
+	t_env	*env_list;
+	int		last_status;
+
+	(void)argc;
+	(void)argv;
+	last_status = 0;
+	env_list = create_env_list(envp);
+	update_shlvl(&env_list);
+	signal(SIGINT, sigint_handler);
+	signal(SIGQUIT, SIG_IGN);
+	shell_loop(env_list, last_status);
 	return (0);
 }

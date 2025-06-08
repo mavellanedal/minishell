@@ -6,12 +6,17 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 12:50:46 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/30 13:36:55 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/04 16:54:39 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
+/*
+ * Espera a que termine un proceso hijo y obtiene su estado de salida.
+ * Maneja señales SIGINT y SIGQUIT, restaura handlers.
+ * Ctrl +C y Ctrl +\ se manejan para mostrar mensajes adecuados.
+*/
 void	wait_and_get_status(pid_t pid, int *last_status)
 {
 	int	status;
@@ -35,6 +40,10 @@ void	wait_and_get_status(pid_t pid, int *last_status)
 	signal(SIGQUIT, SIG_IGN);
 }
 
+/*
+ * Configura pipes para comunicación entre comandos.
+ * Crea pipe si hay comando siguiente, sino inicializa a -1.
+*/
 void	setup_pipe(t_cmd *cmd, t_exec_data *exec_data)
 {
 	if (cmd->next)
@@ -46,13 +55,18 @@ void	setup_pipe(t_cmd *cmd, t_exec_data *exec_data)
 	}
 }
 
+/*
+ * Verifica sintaxis de pipes en la lista de comandos.
+ * Detecta comandos vacíos entre pipes.
+*/
 int	check_pipe_syntax(t_cmd *cmd)
 {
 	while (cmd)
 	{
 		if ((!cmd->args || !cmd->args[0]) && !cmd->redirs)
 		{
-			ft_putstr_fd("minishell: syntax error near unexpected token `|'\n", STDERR_FILENO);
+			ft_putstr_fd("minishell: syntax error near unexpected token `|'\n", \
+				STDERR_FILENO);
 			return (1);
 		}
 		cmd = cmd->next;
@@ -60,6 +74,10 @@ int	check_pipe_syntax(t_cmd *cmd)
 	return (0);
 }
 
+/*
+ * Función principal del executor.
+ * Ejecuta secuencialmente todos los comandos de la lista.
+*/
 int	executor(t_cmd *cmd_list, t_env **env_list)
 {
 	t_exec_data	exec_data;

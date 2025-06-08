@@ -3,110 +3,130 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 15:15:33 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/05/31 08:32:57 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/06/04 18:43:58 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-volatile sig_atomic_t g_heredoc_interrupted = 0;
+volatile sig_atomic_t	g_heredoc_interrupted = 0;
 
-void	heredoc_sigint_handler(int sig)
+/*
+ * Maneja proceso padre durante heredoc.
+ * Espera al hijo y gestiona señales e interrupciones.
+*/
+int	run_heredoc_parent(pid_t pid, int *fd, int pipefd[2])
 {
-	(void)sig;
-	g_heredoc_interrupted = 1;
-	exit(130);
-}
+	int	status;
 
-// Función simple para leer línea por línea sin get_next_line
-char	*read_line_from_stdin()
-{
-	char	buffer[1];
-	char	*line;
-	int		i;
-	int		capacity;
-	int		result;
-
-	line = NULL;
-	i = 0;
-	capacity = 100;
-	line = malloc(capacity);
-	if (!line)
-		return (NULL);
-	while (read(STDIN_FILENO, buffer, 1) > 0)
-	{
-		result = handle_interrupt_or_newline(buffer, line, i);
-		if (result == -1)
-			return (NULL);
-		if (result == 1)
-			return (line);
-		if (i >= capacity - 1)
-		{
-			line = expand_line_capacity(line, &capacity);
-			if (!line)
-				return (NULL);
-		}
-		line[i] = buffer[0];
-		i++;
-	}
-	return (finalize_line(line, i));
-}
-
-int	handle_heredoc(char *delimiter, int *fd)
-{
-	int		pipefd[2];
-	pid_t	pid;
-	int		status;
-
-	if (pipe(pipefd) == -1)
-	{
-		perror("pipe");
-		return (-1);
-	}
-	pid = fork();
-	if (pid == -1)
+	signal(SIGINT, SIG_IGN);
+	close(pipefd[1]);
+	waitpid(pid, &status, 0);
+	signal(SIGINT, sigint_handler);
+	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
 	{
 		close(pipefd[0]);
-		close(pipefd[1]);
-		return (-1);
+		sigint_handler(SIGINT);
+		return (130);
 	}
-	if (pid == 0)
-		child_heredoc_process(pipefd, delimiter);
-	return (parent_heredoc_process(pipefd, fd, pid, &status));
+	if (WEXITSTATUS(status) == 130)
+		return (close(pipefd[0]), 130);
+	*fd = pipefd[0];
+	return (0);
 }
 
-int	process_all_heredocs(t_cmd *cmd_list)
+/*
+ * Ejecuta proceso hijo para capturar entrada de heredoc.
+ * Lee líneas hasta delimiter y las escribe al pipe.
+*/
+void	run_heredoc_child(char *delimiter, int pipefd[2])
 {
-	t_cmd *cmd = cmd_list;
-	t_redir *redir;
-	int fd;
-	int result;
+	char	*line;
+
+	signal(SIGINT, heredoc_sigint_handler);
+	signal(SIGQUIT, SIG_IGN);
+	close(pipefd[0]);
+	while (!g_heredoc_interrupted)
+	{
+		write(STDOUT_FILENO, "> ", 2);
+		line = heredoc_readline();
+		if (!line || ft_strcmp(line, delimiter) == 0)
+			break ;
+		write(pipefd[1], line, ft_strlen(line));
+		write(pipefd[1], "\n", 1);
+		free(line);
+	}
+	free(line);
+	close(pipefd[1]);
+	exit(0);
+}
+
+/*
+ * Maneja la lógica completa de heredoc.
+ * Crea pipe, fork y procesa entrada hasta delimiter.
+*/
+int	handle_heredoc(char *delimiter, int *fd)
+{
+	pid_t	pid;
+	int		pipefd[2];
+
+	if (pipe(pipefd) == -1)
+		return (perror("pipe"), -1);
+	pid = fork();
+	if (pid == -1)
+		return (close(pipefd[0]), close(pipefd[1]), -1);
+	if (pid == 0)
+		run_heredoc_child(delimiter, pipefd);
+	return (run_heredoc_parent(pid, fd, pipefd));
+}
+
+/*
+ * Procesa heredocs de un comando específico.
+ * Ejecuta todos los heredocs encontrados en las redirecciones.
+*/
+int	process_cmd_heredocs(t_redir *redir)
+{
+	int	fd;
+	int	result;
+
+	while (redir)
+	{
+		if (redir->type == REDIR_HEREDOC)
+		{
+			result = handle_heredoc(redir->file, &fd);
+			if (result == 130)
+			{
+				signal(SIGINT, sigint_handler);
+				signal(SIGQUIT, SIG_IGN);
+				return (130);
+			}
+			if (result != 0)
+				return (result);
+			redir->heredoc_fd = fd;
+		}
+		redir = redir->next;
+	}
+	return (0);
+}
+
+/*
+ * Procesa todos los heredocs de la lista de comandos.
+ * Los ejecuta antes del pipeline principal.
+*/
+int	process_heredocs(t_cmd *cmd_list)
+{
+	int	result;
 
 	g_heredoc_interrupted = 0;
-	while (cmd)
+	while (cmd_list)
 	{
-		redir = cmd->redirs;
-		while (redir)
-		{
-			if (redir->type == REDIR_HEREDOC)
-			{
-				result = handle_heredoc(redir->file, &fd);
-				if (result == 130)
-				{
-					signal(SIGINT, sigint_handler);
-					signal(SIGQUIT, SIG_IGN);
-					return 130;
-				}
-				if (result != 0)
-					return result;
-				redir->heredoc_fd = fd;
-			}
-			redir = redir->next;
-		}
-		cmd = cmd->next;
+		result = process_cmd_heredocs(cmd_list->redirs);
+		if (result != 0)
+			return (result);
+		cmd_list = cmd_list->next;
 	}
-	return 0;
+	return (0);
 }

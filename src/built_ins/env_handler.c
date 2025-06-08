@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_handler.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 12:33:10 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/05/30 08:54:53 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/06/04 16:43:51 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,9 +44,8 @@ t_env	*create_node_env(char *env_var)
 }
 
 /*
- * Crea una lista de entorno a partir de envp
- * Todas las variables del entorno del sistema tienen has_value = 1
- * porque todas tienen formato KEY=VALUE
+ * Crea la lista enlazada de entorno desde el array envp del sistema.
+ * Todas las variables tienen has_value = 1 por defecto.
 */
 t_env	*create_env_list(char **envp)
 {
@@ -71,8 +70,8 @@ t_env	*create_env_list(char **envp)
 }
 
 /*
- * Implementación del builtin env
- * Muestra solo las variables que tienen has_value = 1
+ * Implementación del builtin env.
+ * Muestra solo variables con has_value = 1.
 */
 int	ft_env(t_env *env_list)
 {
@@ -85,6 +84,10 @@ int	ft_env(t_env *env_list)
 	return (0);
 }
 
+/*
+ * Valida si un identificador es válido para variables de entorno.
+ * Debe empezar con letra/underscore y contener solo alfanuméricos/underscore.
+*/
 int	is_valid_identifier(const char *str)
 {
 	int	i;
@@ -101,6 +104,10 @@ int	is_valid_identifier(const char *str)
 	return (1);
 }
 
+/*
+ * Elimina una variable de entorno por su clave.
+ * Libera memoria del nodo eliminado.
+*/
 void	remove_env_key(t_env **env_list, const char *key)
 {
 	t_env	*curr;

@@ -3,105 +3,86 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/31 08:26:04 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/31 08:33:53 by mavellan         ###   ########.fr       */
+/*   Created: 2025/06/03 12:53:32 by ebalana-          #+#    #+#             */
+/*   Updated: 2025/06/04 17:04:01 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-char	*expand_line_capacity(char *line, int *capacity)
+/*
+ * Maneja señal SIGINT en el shell principal.
+ * Muestra nueva línea y redibuja prompt de readline.
+*/
+void	sigint_handler(int signum)
+{
+	(void)signum;
+	write(1, "\n", 1);
+	rl_replace_line("", 0);
+	rl_on_new_line();
+	rl_redisplay();
+}
+
+/*
+ * Maneja entrada de caracteres expandiendo buffer si es necesario.
+ * Duplica capacidad cuando se alcanza el límite.
+*/
+int	handle_char_input(char c, char **line, int *i, int *capacity)
 {
 	char	*temp;
-	int		new_capacity;
 
-	new_capacity = (*capacity) * 2;
-	temp = realloc(line, new_capacity);
-	if (!temp)
+	if (*i >= *capacity - 1)
 	{
-		free(line);
-		return (NULL);
+		*capacity *= 2;
+		temp = realloc(*line, *capacity);
+		if (!temp)
+		{
+			free(*line);
+			return (0);
+		}
+		*line = temp;
 	}
-	*capacity = new_capacity;
-	return (temp);
+	(*line)[(*i)++] = c;
+	return (1);
 }
 
-int	handle_interrupt_or_newline(char *buffer, char *line, int i)
+/*
+ * Lee línea para heredoc usando read() carácter por carácter.
+*/
+char	*heredoc_readline(void)
 {
-	if (g_heredoc_interrupted)
-	{
-		free(line);
-		return (-1);
-	}
-	if (buffer[0] == '\n')
-	{
-		line[i] = '\0';
-		return (1);
-	}
-	return (0);
-}
+	char	buffer[1];
+	char	*line;
+	int		i;
+	int		capacity;
 
-char	*finalize_line(char *line, int i)
-{
-	if (i == 0)
-	{
-		free(line);
+	line = malloc(100);
+	if (!line)
 		return (NULL);
+	i = 0;
+	capacity = 100;
+	while (read(STDIN_FILENO, buffer, 1) > 0)
+	{
+		if (g_heredoc_interrupted || buffer[0] == '\n')
+			break ;
+		if (!handle_char_input(buffer[0], &line, &i, &capacity))
+			return (NULL);
 	}
+	if (i == 0 || g_heredoc_interrupted)
+		return (free(line), NULL);
 	line[i] = '\0';
 	return (line);
 }
 
-void	child_heredoc_process(int pipefd[2], char *delimiter)
+/*
+ * Maneja señal SIGINT en proceso hijo de heredoc.
+ * Establece flag global y termina proceso.
+*/
+void	heredoc_sigint_handler(int sig)
 {
-	char	*line;
-	int		match;
-
-	signal(SIGINT, heredoc_sigint_handler);
-	signal(SIGQUIT, SIG_IGN);
-	close(pipefd[0]);
-	while (!g_heredoc_interrupted)
-	{
-		write(STDOUT_FILENO, "> ", 2);
-		line = read_line_from_stdin(0);
-		if (!line || g_heredoc_interrupted)
-			break;
-		match = ft_strcmp(line, delimiter);
-		if (match == 0)
-		{
-			free(line);
-			break;
-		}
-		write(pipefd[1], line, ft_strlen(line));
-		write(pipefd[1], "\n", 1);
-		free(line);
-	}
-	close(pipefd[1]);
-	exit(0);
-}
-
-int	parent_heredoc_process(int pipefd[2], int *fd, pid_t pid, int *status)
-{
-	signal(SIGINT, SIG_IGN);
-	close(pipefd[1]);
-	waitpid(pid, status, 0);
-	signal(SIGINT, sigint_handler);
-	if (WIFSIGNALED(*status) && WTERMSIG(*status) == SIGINT)
-	{
-		close(pipefd[0]);
-		write(STDOUT_FILENO, "\n", 1);
-		rl_replace_line("", 0);
-		rl_on_new_line();
-		rl_redisplay();
-		return (130);
-	}
-	if (WEXITSTATUS(*status) == 130)
-	{
-		close(pipefd[0]);
-		return (130);
-	}
-	*fd = pipefd[0];
-	return (0);
+	(void)sig;
+	g_heredoc_interrupted = 1;
+	exit(130);
 }

@@ -6,12 +6,16 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 13:50:50 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/06/02 13:51:49 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/04 17:07:33 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
+/*
+ * Maneja comillas durante tokenización.
+ * Alterna estado de comillas y actualiza índice.
+*/
 bool	handle_quotes(const char *input, int *i, bool *inside_quotes, \
 	char *quote_char)
 {
@@ -32,6 +36,10 @@ bool	handle_quotes(const char *input, int *i, bool *inside_quotes, \
 	return (false);
 }
 
+/*
+ * Maneja operadores durante tokenización (<, >, |).
+ * Detecta operadores dobles (<<, >>) y simples.
+*/
 bool	handle_operator(const char *input, int *i, int start, bool inside_quote)
 {
 	if (!inside_quote && (input[*i] == '|' || input[*i] == '<' || \
@@ -52,6 +60,10 @@ bool	handle_operator(const char *input, int *i, int start, bool inside_quote)
 	return (false);
 }
 
+/*
+ * Lee un token completo desde la entrada.
+ * Maneja comillas, operadores y espacios.
+*/
 void	read_token(const char *input, int *i, int *start)
 {
 	bool	inside_quotes;
@@ -70,6 +82,10 @@ void	read_token(const char *input, int *i, int *start)
 	}
 }
 
+/*
+ * Procesa delimitador de heredoc después de <<.
+ * Marca el delimitador como literal con '\1'.
+*/
 void	process_heredoc(const char *input, t_token_state *s, char **tokens)
 {
 	char	*literal_token;

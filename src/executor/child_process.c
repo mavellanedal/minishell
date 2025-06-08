@@ -3,15 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   child_process.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 14:26:19 by mavellan          #+#    #+#             */
-/*   Updated: 2025/05/27 17:34:07 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/06/04 16:48:53 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
+/*
+ * Redirige entrada/salida estándar para pipes.
+ * Conecta stdin del proceso anterior y stdout al siguiente pipe.
+*/
 void	redirect_io(t_cmd *cmd, t_exec_data *exec_data)
 {
 	if (exec_data->prev_read != STDIN_FILENO)
@@ -27,20 +31,26 @@ void	redirect_io(t_cmd *cmd, t_exec_data *exec_data)
 	}
 }
 
-void execute_if_builtin(t_cmd *cmd, t_exec_data *exec_data)
+/*
+ * Ejecuta builtin en proceso hijo si aplica.
+ * Exit se maneja especialmente para no terminar el shell principal.
+*/
+void	execute_if_builtin(t_cmd *cmd, t_exec_data *exec_data)
 {
-	int status;
+	int	status;
 
 	if (!is_builtin(cmd->args[0]))
-		return;
-
+		return ;
 	if (ft_strcmp(cmd->args[0], "exit") == 0)
-		return;
-
+		return ;
 	status = execute_builtin(cmd->args, &(exec_data->env_list));
 	exit(status);
 }
 
+/*
+ * Verifica errores de ejecutabilidad del archivo.
+ * Comprueba existencia, permisos y si es directorio.
+*/
 void	check_executable_errors(char *path, char **envp)
 {
 	struct stat	path_stat;
@@ -70,11 +80,30 @@ void	check_executable_errors(char *path, char **envp)
 	}
 }
 
+/*
+ * Maneja comando no encontrado.
+ * Muestra error y termina proceso hijo con código 127.
+*/
+void	execute_command(t_cmd *cmd, char **envp_array, char *full_path)
+{
+	check_executable_errors(full_path, envp_array);
+	execve(full_path, cmd->args, envp_array);
+	if (errno == ENOEXEC)
+		handle_execve_sh_fallback(full_path, envp_array);
+	ft_putstr_fd("minishell: execution error\n", 2);
+	free(full_path);
+	ft_free(envp_array);
+	exit(127);
+}
+
+/*
+ * Maneja fallback con /bin/sh cuando execve falla.
+ * Intenta ejecutar como script de shell.
+*/
 void	setup_child_process(t_cmd *cmd, t_exec_data *exec_data)
 {
 	char	**envp_array;
 	char	*full_path;
-	char	*new_argv[3];
 
 	redirect_io(cmd, exec_data);
 	apply_redirections(cmd);
@@ -84,45 +113,6 @@ void	setup_child_process(t_cmd *cmd, t_exec_data *exec_data)
 	envp_array = convert_env_to_envp(exec_data->env_list);
 	full_path = get_full_command_path(cmd->args[0], exec_data->env_list);
 	if (!full_path)
-	{
-		ft_putstr_fd("minishell: ", 2);
-		ft_putstr_fd(cmd->args[0], 2);
-		ft_putstr_fd(": command not found\n", 2);
-		ft_free(envp_array);
-		exit(127);
-	}
-	check_executable_errors(full_path, envp_array);
-	execve(full_path, cmd->args, envp_array);
-	if (errno == ENOEXEC)
-	{
-		new_argv[0] = "/bin/sh";
-		new_argv[1] = full_path;
-		new_argv[2] = NULL;
-		execve("/bin/sh", new_argv, envp_array);
-	}
-	ft_putstr_fd("minishell: execution error\n", 2);
-	free(full_path);
-	ft_free(envp_array);
-	exit(127);
-}
-
-pid_t	fork_and_execute_command(t_cmd *cmd, t_exec_data *exec_data)
-{
-	pid_t	pid;
-
-	signal(SIGINT, SIG_IGN);
-	signal(SIGQUIT, SIG_IGN);
-	pid = fork();
-	if (pid < 0)
-	{
-		perror("fork");
-		exit(1);
-	}
-	if (pid == 0)
-	{
-		signal(SIGINT, SIG_DFL);
-		signal(SIGQUIT, SIG_DFL);
-		setup_child_process(cmd, exec_data);
-	}
-	return (pid);
+		handle_command_not_found(cmd, envp_array);
+	execute_command(cmd, envp_array, full_path);
 }
