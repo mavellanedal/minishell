@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 12:50:46 by mavellan          #+#    #+#             */
-/*   Updated: 2025/06/04 16:54:39 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/10 17:49:06 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,105 @@ int	check_pipe_syntax(t_cmd *cmd)
 	return (0);
 }
 
+/*----------------------------------------------------------------------------------*/
+
+/*
+ * Espera a que terminen todos los procesos del pipeline.
+ * El último comando establece el código de salida final.
+*/
+int	wait_for_all_processes(pid_t *pids, int cmd_count)
+{
+    int	i;
+    int	status;
+    int	last_status;
+
+    last_status = 0;
+    for (i = 0; i < cmd_count; i++)
+    {
+        wait_and_get_status(pids[i], &status);
+        if (i == cmd_count - 1)  // El último comando establece el exit status
+            last_status = status;
+    }
+    return (last_status);
+}
+
+/*
+ * Cuenta el número de comandos en la lista.
+ * Usado para saber cuántos procesos crear en el pipeline.
+*/
+int	count_commands(t_cmd *cmd_list)
+{
+    int		count;
+    t_cmd	*cmd;
+
+    count = 0;
+    cmd = cmd_list;
+    while (cmd)
+    {
+        count++;
+        cmd = cmd->next;
+    }
+    return (count);
+}
+
+/*
+ * Ejecuta un pipeline de comandos concurrentemente.
+ * Crea todos los procesos primero, luego espera a todos.
+*/
+int	execute_pipeline(t_cmd *cmd_list, t_env **env_list)
+{
+    t_exec_data	exec_data;
+    pid_t		*pids;
+    int			cmd_count;
+    int			last_status;
+    t_cmd		*cmd;
+    int			i;
+
+    cmd_count = count_commands(cmd_list);
+    pids = malloc(sizeof(pid_t) * cmd_count);
+    if (!pids)
+        return (1);
+    
+    exec_data.env_list = *env_list;
+    exec_data.prev_read = STDIN_FILENO;
+    
+    // Fork todos los procesos
+    cmd = cmd_list;
+    i = 0;
+    while (cmd)
+    {
+        setup_pipe(cmd, &exec_data);
+        exec_data.cmd = cmd;
+        pids[i] = fork_and_execute_command(cmd, &exec_data);
+        handle_pipe_end(cmd, &exec_data);
+        cmd = cmd->next;
+        i++;
+    }
+    
+    // Esperar a todos los procesos
+    last_status = wait_for_all_processes(pids, cmd_count);
+    free(pids);
+    return (last_status);
+}
+
+/*
+ * Maneja la ejecución de un comando único sin pipes.
+ * Usa la lógica original para comandos individuales.
+*/
+int	handle_single_command(t_cmd *cmd, t_env **env_list)
+{
+    t_exec_data	exec_data;
+
+    exec_data.env_list = *env_list;
+    exec_data.prev_read = STDIN_FILENO;
+    exec_data.pipe_fds[0] = -1;
+    exec_data.pipe_fds[1] = -1;
+
+    return (handle_command(cmd, &exec_data, env_list));
+}
+
+/*---------------------------------------------------------------*/
+
 /*
  * Función principal del executor.
  * Ejecuta secuencialmente todos los comandos de la lista.
@@ -81,7 +180,6 @@ int	check_pipe_syntax(t_cmd *cmd)
 int	executor(t_cmd *cmd_list, t_env **env_list)
 {
 	t_exec_data	exec_data;
-	t_cmd		*current_cmd;
 	t_cmd		*tmp;
 	int			last_status;
 
@@ -90,12 +188,12 @@ int	executor(t_cmd *cmd_list, t_env **env_list)
 	tmp = cmd_list;
 	last_status = 0;
 	if (check_pipe_syntax(tmp))
-		return (2);
-	current_cmd = cmd_list;
-	while (current_cmd)
-	{
-		last_status = handle_command(current_cmd, &exec_data, env_list);
-		current_cmd = current_cmd->next;
-	}
-	return (last_status);
+	return (2);
+
+	// Si es un solo comando sin pipes
+	if (!cmd_list->next)
+		return (handle_single_command(cmd_list, env_list));
+
+	// Si es un pipeline, ejecutar concurrentemente
+	return (execute_pipeline(cmd_list, env_list));
 }
