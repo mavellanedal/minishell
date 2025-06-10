@@ -12,7 +12,7 @@ MAC_FLAGS = -Werror -Wall -Wextra -g -fsanitize=address -Wno-deprecated-declarat
 FLAGS = -Werror -Wall -Wextra -g -fsanitize=address
 CFLAGS = $(FLAGS)
 
-LIBFTDIR = lib/
+LIBFTDIR = lib
 LIBFT_LIB = $(LIBFTDIR)/ultimate_libft.a
 RM = rm -f
 HEADER = include/minishell.h
@@ -48,11 +48,14 @@ SRCS = 	src/main.c \
 
 OBJS = $(SRCS:.c=.o)
 
-all: make_libft $(NAME)
+all: $(NAME)
 
 %.o: %.c Makefile $(HEADER)
 	$(CC) $(CFLAGS) $(READLINE_INCLUDE) -Ilib -c $< -o $@
 	@echo "$(YELLOW)Compiling: $< $(DEF_COLOR)"
+
+$(LIBFT_LIB):
+	@make -C $(LIBFTDIR)
 
 $(NAME): $(LIBFT_LIB) $(OBJS)
 	@echo "$(GREEN)Compiling minishell!$(DEF_COLOR)"
@@ -70,9 +73,6 @@ mac:
 	fi; \
 	$(MAKE) CFLAGS="$(MAC_FLAGS)" READLINE_INCLUDE="$$READLINE_INCLUDE" READLINE_LIB="$$READLINE_LIB"
 
-make_libft:
-	@make -C $(LIBFTDIR)
-
 clean:
 	@$(MAKE) clean -C $(LIBFTDIR)
 	@$(RM) $(OBJS)
@@ -85,4 +85,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re make_libft mac
+.PHONY: all clean fclean re mac
