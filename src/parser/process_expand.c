@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 13:00:57 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/06/04 17:06:46 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/10 15:29:19 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,9 @@ void	finalize_result(t_processing_state *state)
 		(state->result[0] == '<' || state->result[0] == '>' || \
 			state->result[0] == '|'))
 	{
-		state->result[state->j + 1] = state->result[0];
+		state->result[1] = state->result[0];
 		state->result[0] = '\1';
-		state->result[state->j + 2] = '\0';
+		state->result[2] = '\0';
 	}
 }
 
