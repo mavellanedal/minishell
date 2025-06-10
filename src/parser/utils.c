@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 13:36:32 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/06/04 17:08:34 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/10 13:05:10 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,8 @@
 */
 void	skip_spaces(const char *input, int *i)
 {
-	while (input[*i] == ' ')
+	while (input[*i] == ' ' || input[*i] == '\t' || input[*i] == '\n' \
+		||input[*i] == '\v' || input[*i] == '\f' || input[*i] == '\r')
 		(*i)++;
 }
 
