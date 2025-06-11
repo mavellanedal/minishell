@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 16:10:41 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/06/05 12:02:56 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/11 13:50:26 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,6 @@ int	ft_exit(char **args)
 	arg_count = 0;
 	while (args[arg_count])
 		arg_count++;
-	printf("exit\n");
 	if (arg_count > 1)
 	{
 		if (!ft_is_numeric(args[1]) || ft_is_too_long_numeric(args[1]))
