@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 12:50:46 by mavellan          #+#    #+#             */
-/*   Updated: 2025/06/11 13:16:45 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/11 13:59:14 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,12 +86,14 @@ int	wait_for_all_processes(pid_t *pids, int cmd_count)
 	int	status;
 	int	last_status;
 
+	i = 0;
 	last_status = 0;
-	for (i = 0; i < cmd_count; i++)
+	while (i < cmd_count)
 	{
 		wait_and_get_status(pids[i], &status);
-		if (i == cmd_count - 1)  // El último comando establece el exit status
+		if (i == cmd_count - 1)
 			last_status = status;
+		i++;
 	}
 	return (last_status);
 }
@@ -131,7 +133,7 @@ int	execute_pipeline(t_cmd *cmd_list, t_env **env_list)
 	cmd_count = count_commands(cmd_list);
 	pids = malloc(sizeof(pid_t) * cmd_count);
 	if (!pids)
-		return (1);    
+		return (1);
 	exec_data.env_list = *env_list;
 	exec_data.prev_read = STDIN_FILENO;
 	cmd = cmd_list;
@@ -182,7 +184,7 @@ int	executor(t_cmd *cmd_list, t_env **env_list)
 	tmp = cmd_list;
 	last_status = 0;
 	if (check_pipe_syntax(tmp))
-	return (2);
+		return (2);
 	if (!cmd_list->next)
 		return (handle_no_pipe(cmd_list, env_list));
 	return (execute_pipeline(cmd_list, env_list));
