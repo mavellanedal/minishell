@@ -38,6 +38,7 @@ SRCS = 	src/main.c \
 		src/executor/free.c \
 		src/executor/handle_child_process.c \
 		src/executor/handlers.c \
+		src/executor/pipeline.c \
 		src/executor/redirections.c \
 		src/executor/tokens_to_cmd.c \
 		src/executor/utils.c \
