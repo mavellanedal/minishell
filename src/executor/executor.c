@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 12:50:46 by mavellan          #+#    #+#             */
-/*   Updated: 2025/06/10 18:06:13 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/11 13:16:45 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,18 +82,18 @@ int	check_pipe_syntax(t_cmd *cmd)
 */
 int	wait_for_all_processes(pid_t *pids, int cmd_count)
 {
-    int	i;
-    int	status;
-    int	last_status;
+	int	i;
+	int	status;
+	int	last_status;
 
-    last_status = 0;
-    for (i = 0; i < cmd_count; i++)
-    {
-        wait_and_get_status(pids[i], &status);
-        if (i == cmd_count - 1)  // El último comando establece el exit status
-            last_status = status;
-    }
-    return (last_status);
+	last_status = 0;
+	for (i = 0; i < cmd_count; i++)
+	{
+		wait_and_get_status(pids[i], &status);
+		if (i == cmd_count - 1)  // El último comando establece el exit status
+			last_status = status;
+	}
+	return (last_status);
 }
 
 /*
@@ -102,17 +102,17 @@ int	wait_for_all_processes(pid_t *pids, int cmd_count)
 */
 int	count_commands(t_cmd *cmd_list)
 {
-    int		count;
-    t_cmd	*cmd;
+	int		count;
+	t_cmd	*cmd;
 
-    count = 0;
-    cmd = cmd_list;
-    while (cmd)
-    {
-        count++;
-        cmd = cmd->next;
-    }
-    return (count);
+	count = 0;
+	cmd = cmd_list;
+	while (cmd)
+	{
+		count++;
+		cmd = cmd->next;
+	}
+	return (count);
 }
 
 /*
@@ -121,54 +121,48 @@ int	count_commands(t_cmd *cmd_list)
 */
 int	execute_pipeline(t_cmd *cmd_list, t_env **env_list)
 {
-    t_exec_data	exec_data;
-    pid_t		*pids;
-    int			cmd_count;
-    int			last_status;
-    t_cmd		*cmd;
-    int			i;
+	t_exec_data	exec_data;
+	pid_t		*pids;
+	int			cmd_count;
+	int			last_status;
+	t_cmd		*cmd;
+	int			i;
 
-    cmd_count = count_commands(cmd_list);
-    pids = malloc(sizeof(pid_t) * cmd_count);
-    if (!pids)
-        return (1);
-    
-    exec_data.env_list = *env_list;
-    exec_data.prev_read = STDIN_FILENO;
-    
-    // Fork todos los procesos
-    cmd = cmd_list;
-    i = 0;
-    while (cmd)
-    {
-        setup_pipe(cmd, &exec_data);
-        exec_data.cmd = cmd;
-        pids[i] = fork_and_execute_command(cmd, &exec_data);
-        handle_pipe_end(cmd, &exec_data);
-        cmd = cmd->next;
-        i++;
-    }
-    
-    // Esperar a todos los procesos
-    last_status = wait_for_all_processes(pids, cmd_count);
-    free(pids);
-    return (last_status);
+	cmd_count = count_commands(cmd_list);
+	pids = malloc(sizeof(pid_t) * cmd_count);
+	if (!pids)
+		return (1);    
+	exec_data.env_list = *env_list;
+	exec_data.prev_read = STDIN_FILENO;
+	cmd = cmd_list;
+	i = 0;
+	while (cmd)
+	{
+		setup_pipe(cmd, &exec_data);
+		exec_data.cmd = cmd;
+		pids[i] = fork_and_execute_command(cmd, &exec_data);
+		handle_pipe_end(cmd, &exec_data);
+		cmd = cmd->next;
+		i++;
+	}
+	last_status = wait_for_all_processes(pids, cmd_count);
+	free(pids);
+	return (last_status);
 }
 
 /*
  * Maneja la ejecución de un comando único sin pipes.
  * Usa la lógica original para comandos individuales.
 */
-int	handle_single_command(t_cmd *cmd, t_env **env_list)
+int	handle_no_pipe(t_cmd *cmd, t_env **env_list)
 {
-    t_exec_data	exec_data;
+	t_exec_data	exec_data;
 
-    exec_data.env_list = *env_list;
-    exec_data.prev_read = STDIN_FILENO;
-    exec_data.pipe_fds[0] = -1;
-    exec_data.pipe_fds[1] = -1;
-
-    return (handle_command(cmd, &exec_data, env_list));
+	exec_data.env_list = *env_list;
+	exec_data.prev_read = STDIN_FILENO;
+	exec_data.pipe_fds[0] = -1;
+	exec_data.pipe_fds[1] = -1;
+	return (handle_command(cmd, &exec_data, env_list));
 }
 
 /*---------------------------------------------------------------*/
@@ -189,11 +183,7 @@ int	executor(t_cmd *cmd_list, t_env **env_list)
 	last_status = 0;
 	if (check_pipe_syntax(tmp))
 	return (2);
-
-	// Si es un solo comando sin pipes
 	if (!cmd_list->next)
-		return (handle_single_command(cmd_list, env_list));
-
-	// Si es un pipeline, ejecutar concurrentemente
+		return (handle_no_pipe(cmd_list, env_list));
 	return (execute_pipeline(cmd_list, env_list));
 }
