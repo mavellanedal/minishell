@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 14:26:19 by mavellan          #+#    #+#             */
-/*   Updated: 2025/06/04 16:48:53 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/11 13:50:13 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,6 @@ void	execute_if_builtin(t_cmd *cmd, t_exec_data *exec_data)
 	int	status;
 
 	if (!is_builtin(cmd->args[0]))
-		return ;
-	if (ft_strcmp(cmd->args[0], "exit") == 0)
 		return ;
 	status = execute_builtin(cmd->args, &(exec_data->env_list));
 	exit(status);

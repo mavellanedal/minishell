@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/27 13:29:46 by mavellan          #+#    #+#             */
-/*   Updated: 2025/06/04 16:57:24 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/11 13:50:40 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@ int	handle_builtin(t_cmd *cmd, t_env **env_list)
 	char	*cmd_name;
 
 	cmd_name = cmd->args[0];
+	if (ft_strcmp(cmd_name, "exit") == 0)
+		printf("exit\n");
 	status = execute_builtin(cmd->args, env_list);
 	if (ft_strcmp(cmd_name, "exit") == 0 && status != 1)
 		exit(status);
