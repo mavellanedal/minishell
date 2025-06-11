@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/06/05 13:27:30 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/11 18:25:31 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -267,6 +267,13 @@ void			handle_pipe_end(t_cmd *cmd, t_exec_data *exec_data);
 int				handle_redirection_only(t_cmd *cmd, t_exec_data *exec_data);
 int				handle_full_command(t_cmd *cmd, t_exec_data *exec_data);
 
+// executor/pipeline.c
+int				count_commands(t_cmd *cmd_list);
+int				wait_for_all_processes(pid_t *pids, int cmd_count);
+pid_t			*fork_all_processes(t_cmd *cmd_list, t_env **env_list, \
+	int cmd_count);
+int				execute_pipeline(t_cmd *cmd_list, t_env **env_list);
+int				handle_no_pipe(t_cmd *cmd, t_env **env_list);
 // executor/redirections.c
 void			handle_output_redirection(t_redir *r, int *last_out_fd, \
 	int fd);
