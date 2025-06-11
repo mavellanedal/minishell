@@ -6,7 +6,7 @@
 /*   By: mavellan <mavellan@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 12:50:46 by mavellan          #+#    #+#             */
-/*   Updated: 2025/06/11 20:18:32 by mavellan         ###   ########.fr       */
+/*   Updated: 2025/06/11 20:19:40 by mavellan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,8 +73,6 @@ int	check_pipe_syntax(t_cmd *cmd)
 	}
 	return (0);
 }
-
-/*----------------------------------------------------------------------------------*/
 
 /*
  * Espera a que terminen todos los procesos del pipeline.
