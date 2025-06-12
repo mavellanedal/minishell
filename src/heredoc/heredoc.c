@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 15:15:33 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/06/12 13:57:57 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/12 18:38:04 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,18 +57,9 @@ void	run_heredoc_child(char *delimiter, int pipefd[2], t_env *env)
 		write(STDOUT_FILENO, "> ", 2);
 		line = heredoc_readline();
 		if (!line || ft_strcmp(line, delimiter) == 0)
-			break;
+			break ;
 		expanded_line = process_token_properly(line, 0, env);
-		if (expanded_line)
-		{
-			write(pipefd[1], expanded_line, ft_strlen(expanded_line));
-			free(expanded_line);
-		}
-		else
-		{
-			write(pipefd[1], line, ft_strlen(line));
-		}
-		write(pipefd[1], "\n", 1);
+		write_heredoc_line(line, expanded_line, pipefd[1]);
 		free(line);
 	}
 	if (line)

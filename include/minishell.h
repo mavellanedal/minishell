@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/06/12 13:59:04 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/12 18:38:48 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -319,6 +319,7 @@ void			sigint_handler(int signum);
 int				handle_char_input(char c, char **line, int *i, int *capacity);
 char			*heredoc_readline(void);
 void			heredoc_sigint_handler(int sig);
+void			write_heredoc_line(char *line, char *expanded_line, int pipefd);
 
 // shlvl.c
 int				increment_shlvl_if_exists(t_env *env);
