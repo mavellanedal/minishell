@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/03 12:53:32 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/06/04 17:04:01 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/12 14:06:17 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,9 @@ void	sigint_handler(int signum)
 	rl_replace_line("", 0);
 	rl_on_new_line();
 	rl_redisplay();
+	// Si no estamos en heredoc, establecer status 130
+	if (g_heredoc_interrupted == 0)
+		g_heredoc_interrupted = 130;
 }
 
 /*

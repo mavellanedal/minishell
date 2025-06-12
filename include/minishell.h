@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/06/11 18:25:31 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/12 13:59:04 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -309,10 +309,10 @@ extern volatile sig_atomic_t	g_heredoc_interrupted;
 
 // heredoc/heredoc.c
 int				run_heredoc_parent(pid_t pid, int *fd, int pipefd[2]);
-void			run_heredoc_child(char *delimiter, int pipefd[2]);
-int				handle_heredoc(char *delimiter, int *fd);
-int				process_cmd_heredocs(t_redir *redir);
-int				process_heredocs(t_cmd *cmd_list);
+void			run_heredoc_child(char *delimiter, int pipefd[2], t_env *env);
+int				handle_heredoc(char *delimiter, int *fd, t_env *env);
+int				process_cmd_heredocs(t_redir *redir, t_env *env);
+int				process_heredocs(t_cmd *cmd_list, t_env *env);
 
 // heredoc/utils.c
 void			sigint_handler(int signum);

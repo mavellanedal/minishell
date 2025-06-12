@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:40:15 by mavellan          #+#    #+#             */
-/*   Updated: 2025/06/10 15:28:45 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/12 14:06:41 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	execute_with_heredocs(t_cmd *cmd_list, t_env **env_list)
 {
 	int	heredoc_result;
 
-	heredoc_result = process_heredocs(cmd_list);
+	heredoc_result = process_heredocs(cmd_list, *env_list);
 	if (heredoc_result == 130)
 	{
 		printf("\n");
@@ -87,6 +87,11 @@ void	shell_loop(t_env *env_list, int last_status)
 	{
 		g_heredoc_interrupted = 0;
 		line = readline("minishell$ ");
+		if (g_heredoc_interrupted == 130)
+		{
+			last_status = 130;
+			g_heredoc_interrupted = 0;
+		}
 		if (!line)
 		{
 			write(1, "exit\n", 5);
