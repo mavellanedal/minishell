@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/06/13 15:21:53 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/13 16:25:04 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -324,6 +324,7 @@ void			init_heredoc_basic(t_heredoc_data *data, t_cmd *cmd_head, \
 void			set_heredoc_fd(t_heredoc_data *data, int *fd);
 void			cleanup_heredoc_fds(t_cmd *cmd_list);
 void			clear_redirs_fds(t_cmd *cmd_head, t_redir *current_redir);
+bool			should_break_heredoc(int read_result, char buffer);
 
 // heredoc/heredoc.c
 void			run_heredoc_child(t_heredoc_data *data);

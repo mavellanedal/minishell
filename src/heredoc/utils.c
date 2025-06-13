@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/03 12:53:32 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/06/12 18:39:31 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/13 16:25:12 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,20 +59,24 @@ char	*heredoc_readline(void)
 	char	*line;
 	int		i;
 	int		capacity;
+	int		read_result;
 
 	line = malloc(100);
 	if (!line)
 		return (NULL);
 	i = 0;
 	capacity = 100;
-	while (read(STDIN_FILENO, buffer, 1) > 0)
+	while (1)
 	{
-		if (g_heredoc_interrupted || buffer[0] == '\n')
+		read_result = read(STDIN_FILENO, buffer, 1);
+		if (read_result == -1 && errno == EINTR)
+			continue ;
+		if (should_break_heredoc(read_result, buffer[0]))
 			break ;
 		if (!handle_char_input(buffer[0], &line, &i, &capacity))
 			return (NULL);
 	}
-	if (i == 0 || g_heredoc_interrupted)
+	if ((i == 0 && read_result == 0) || g_heredoc_interrupted)
 		return (free(line), NULL);
 	line[i] = '\0';
 	return (line);

@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 15:01:26 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/06/13 15:18:17 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/13 16:25:40 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,4 +83,21 @@ void	clear_redirs_fds(t_cmd *cmd_head, t_redir *current_redir)
 		}
 		cmd = cmd->next;
 	}
+}
+
+bool	should_break_heredoc(int read_result, char buffer)
+{
+	if (read_result == -1)
+	{
+		if (errno == EINTR)
+			return (false);
+		return (true);
+	}
+	if (read_result == 0)
+		return (true);
+	if (g_heredoc_interrupted)
+		return (true);
+	if (buffer == '\n')
+		return (true);
+	return (false);
 }
