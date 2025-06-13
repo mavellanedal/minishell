@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 15:15:33 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/06/12 18:38:04 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/13 12:28:15 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,11 +40,33 @@ int	run_heredoc_parent(pid_t pid, int *fd, int pipefd[2])
 	return (0);
 }
 
+void  clear_redirs(t_cmd *cmd_head, t_redir *current_redir)
+{
+	t_redir	*redir;
+	t_cmd	*cmd;
+
+	cmd = cmd_head;
+	while (cmd)
+	{
+		redir = cmd->redirs;
+		while (redir)
+		{
+			if (redir != current_redir && redir->type == REDIR_HEREDOC && redir->heredoc_fd > 2)
+			{
+				close(redir->heredoc_fd);
+				redir->heredoc_fd = -1;
+			}
+			redir = redir->next;
+		}
+		cmd = cmd->next;
+	}
+}
+
 /*
  * Ejecuta proceso hijo para capturar entrada de heredoc.
  * Lee líneas hasta delimiter y las escribe al pipe.
 */
-void	run_heredoc_child(char *delimiter, int pipefd[2], t_env *env)
+void	run_heredoc_child(t_cmd *cmd_head ,t_redir *redir, char *delimiter, int pipefd[2], t_env *env)
 {
 	char	*line;
 	char	*expanded_line;
@@ -65,6 +87,7 @@ void	run_heredoc_child(char *delimiter, int pipefd[2], t_env *env)
 	if (line)
 		free(line);
 	close(pipefd[1]);
+	clear_redirs(cmd_head, redir);
 	exit(0);
 }
 
@@ -72,7 +95,7 @@ void	run_heredoc_child(char *delimiter, int pipefd[2], t_env *env)
  * Maneja la lógica completa de heredoc.
  * Crea pipe, fork y procesa entrada hasta delimiter.
 */
-int	handle_heredoc(char *delimiter, int *fd, t_env *env)
+int	handle_heredoc(t_cmd *cmd_head, t_redir *redir,char *delimiter, int *fd, t_env *env)
 {
 	pid_t	pid;
 	int		pipefd[2];
@@ -83,7 +106,7 @@ int	handle_heredoc(char *delimiter, int *fd, t_env *env)
 	if (pid == -1)
 		return (close(pipefd[0]), close(pipefd[1]), -1);
 	if (pid == 0)
-		run_heredoc_child(delimiter, pipefd, env);
+		run_heredoc_child(cmd_head, redir, delimiter, pipefd, env);
 	return (run_heredoc_parent(pid, fd, pipefd));
 }
 
@@ -91,7 +114,7 @@ int	handle_heredoc(char *delimiter, int *fd, t_env *env)
  * Procesa heredocs de un comando específico.
  * Ejecuta todos los heredocs encontrados en las redirecciones.
 */
-int	process_cmd_heredocs(t_redir *redir, t_env *env)
+int	process_cmd_heredocs(t_cmd *cmd_head, t_redir *redir, t_env *env)
 {
 	int	fd;
 	int	result;
@@ -100,7 +123,7 @@ int	process_cmd_heredocs(t_redir *redir, t_env *env)
 	{
 		if (redir->type == REDIR_HEREDOC)
 		{
-			result = handle_heredoc(redir->file, &fd, env);
+			result = handle_heredoc(cmd_head, redir, redir->file, &fd, env);
 			if (result == 130)
 			{
 				signal(SIGINT, sigint_handler);
@@ -127,7 +150,7 @@ int	process_heredocs(t_cmd *cmd_list, t_env *env)
 	g_heredoc_interrupted = 0;
 	while (cmd_list)
 	{
-		result = process_cmd_heredocs(cmd_list->redirs, env);
+		result = process_cmd_heredocs(cmd_list, cmd_list->redirs, env);
 		if (result != 0)
 			return (result);
 		cmd_list = cmd_list->next;

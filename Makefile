@@ -9,7 +9,7 @@ RED = \033[0;91m
 NAME = minishell
 CC = cc
 MAC_FLAGS = -Werror -Wall -Wextra -g -fsanitize=address -Wno-deprecated-declarations
-FLAGS = -Werror -Wall -Wextra -g -fsanitize=address
+FLAGS = -Werror -Wall -Wextra -g #-fsanitize=address
 CFLAGS = $(FLAGS)
 
 LIBFTDIR = lib

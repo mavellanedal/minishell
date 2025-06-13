@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/06/12 18:38:48 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/13 12:29:00 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,6 +124,8 @@ typedef struct s_exec_data
 	t_env	*env_list;
 	int		exit_status;
 }	t_exec_data;
+
+void			cleanup_heredoc_fds(t_cmd *cmd_list);
 
 // main.c
 int				execute_with_heredocs(t_cmd *cmd_list, t_env **env_list);
@@ -308,10 +310,10 @@ void			free_tokens(char **tokens);
 extern volatile sig_atomic_t	g_heredoc_interrupted;
 
 // heredoc/heredoc.c
-int				run_heredoc_parent(pid_t pid, int *fd, int pipefd[2]);
-void			run_heredoc_child(char *delimiter, int pipefd[2], t_env *env);
-int				handle_heredoc(char *delimiter, int *fd, t_env *env);
-int				process_cmd_heredocs(t_redir *redir, t_env *env);
+// int				run_heredoc_parent(pid_t pid, int *fd, int pipefd[2]);
+// void			run_heredoc_child(char *delimiter, int pipefd[2], t_env *env);
+// int				handle_heredoc(char *delimiter, int *fd, t_env *env);
+// int				process_cmd_heredocs(t_redir *redir, t_env *env);
 int				process_heredocs(t_cmd *cmd_list, t_env *env);
 
 // heredoc/utils.c
