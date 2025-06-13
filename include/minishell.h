@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:42:36 by mavellan          #+#    #+#             */
-/*   Updated: 2025/06/12 13:59:04 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/13 15:21:53 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,6 +124,17 @@ typedef struct s_exec_data
 	t_env	*env_list;
 	int		exit_status;
 }	t_exec_data;
+
+// Estructura para pasar parámetros a las funciones de heredoc
+typedef struct s_heredoc_data
+{
+	t_cmd	*cmd_head;
+	t_redir	*redir;
+	char	*delimiter;
+	int		pipefd[2];
+	t_env	*env;
+	int		*fd;
+}	t_heredoc_data;
 
 // main.c
 int				execute_with_heredocs(t_cmd *cmd_list, t_env **env_list);
@@ -307,11 +318,19 @@ void			free_tokens(char **tokens);
 
 extern volatile sig_atomic_t	g_heredoc_interrupted;
 
+// heredoc/clean.c
+void			init_heredoc_basic(t_heredoc_data *data, t_cmd *cmd_head, \
+	t_redir *redir, t_env *env);
+void			set_heredoc_fd(t_heredoc_data *data, int *fd);
+void			cleanup_heredoc_fds(t_cmd *cmd_list);
+void			clear_redirs_fds(t_cmd *cmd_head, t_redir *current_redir);
+
 // heredoc/heredoc.c
+void			run_heredoc_child(t_heredoc_data *data);
+int				handle_heredoc(t_heredoc_data *data);
 int				run_heredoc_parent(pid_t pid, int *fd, int pipefd[2]);
-void			run_heredoc_child(char *delimiter, int pipefd[2], t_env *env);
-int				handle_heredoc(char *delimiter, int *fd, t_env *env);
-int				process_cmd_heredocs(t_redir *redir, t_env *env);
+int				process_cmd_heredocs(t_cmd *cmd_head, t_redir *redir, \
+	t_env *env);
 int				process_heredocs(t_cmd *cmd_list, t_env *env);
 
 // heredoc/utils.c
@@ -319,6 +338,7 @@ void			sigint_handler(int signum);
 int				handle_char_input(char c, char **line, int *i, int *capacity);
 char			*heredoc_readline(void);
 void			heredoc_sigint_handler(int sig);
+void			write_heredoc_line(char *line, char *expanded_line, int pipefd);
 
 // shlvl.c
 int				increment_shlvl_if_exists(t_env *env);

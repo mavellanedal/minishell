@@ -42,6 +42,7 @@ SRCS = 	src/main.c \
 		src/executor/redirections.c \
 		src/executor/tokens_to_cmd.c \
 		src/executor/utils.c \
+		src/heredoc/clean.c \
 		src/heredoc/heredoc.c \
 		src/heredoc/utils.c \
 		src/shlvl.c \

@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/11 18:20:30 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/06/11 18:21:41 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/13 15:01:20 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,8 +96,12 @@ int	execute_pipeline(t_cmd *cmd_list, t_env **env_list)
 	cmd_count = count_commands(cmd_list);
 	pids = fork_all_processes(cmd_list, env_list, cmd_count);
 	if (!pids)
+	{
+		cleanup_heredoc_fds(cmd_list);
 		return (1);
+	}
 	last_status = wait_for_all_processes(pids, cmd_count);
+	cleanup_heredoc_fds(cmd_list);
 	free(pids);
 	return (last_status);
 }
