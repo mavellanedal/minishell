@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/11 18:20:30 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/06/13 12:24:42 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/13 15:01:20 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,30 +84,6 @@ pid_t	*fork_all_processes(t_cmd *cmd_list, t_env **env_list, int cmd_count)
 }
 
 /*
- * Cierra los descriptores de archivo de heredoc abiertos.
- * Limpia los fds de heredoc para evitar fugas de recursos.
-*/
-void	cleanup_heredoc_fds(t_cmd *cmd_list)
-{
-	t_redir	*redir;
-
-	while (cmd_list)
-	{
-		redir = cmd_list->redirs;
-		while (redir)
-		{
-			if (redir->type == REDIR_HEREDOC && redir->heredoc_fd > 2)
-			{
-				close(redir->heredoc_fd);
-				redir->heredoc_fd = -1;
-			}
-			redir = redir->next;
-		}
-		cmd_list = cmd_list->next;
-	}
-}
-
-/*
  * Ejecuta un pipeline de comandos concurrentemente.
  * Función principal simplificada.
 */
@@ -120,7 +96,10 @@ int	execute_pipeline(t_cmd *cmd_list, t_env **env_list)
 	cmd_count = count_commands(cmd_list);
 	pids = fork_all_processes(cmd_list, env_list, cmd_count);
 	if (!pids)
+	{
+		cleanup_heredoc_fds(cmd_list);
 		return (1);
+	}
 	last_status = wait_for_all_processes(pids, cmd_count);
 	cleanup_heredoc_fds(cmd_list);
 	free(pids);

@@ -9,7 +9,7 @@ RED = \033[0;91m
 NAME = minishell
 CC = cc
 MAC_FLAGS = -Werror -Wall -Wextra -g -fsanitize=address -Wno-deprecated-declarations
-FLAGS = -Werror -Wall -Wextra -g #-fsanitize=address
+FLAGS = -Werror -Wall -Wextra -g -fsanitize=address
 CFLAGS = $(FLAGS)
 
 LIBFTDIR = lib
@@ -42,6 +42,7 @@ SRCS = 	src/main.c \
 		src/executor/redirections.c \
 		src/executor/tokens_to_cmd.c \
 		src/executor/utils.c \
+		src/heredoc/clean.c \
 		src/heredoc/heredoc.c \
 		src/heredoc/utils.c \
 		src/shlvl.c \
