@@ -6,7 +6,7 @@
 /*   By: ebalana- <ebalana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/03 12:53:32 by ebalana-          #+#    #+#             */
-/*   Updated: 2025/06/04 17:04:01 by ebalana-         ###   ########.fr       */
+/*   Updated: 2025/06/12 18:39:31 by ebalana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@ void	sigint_handler(int signum)
 	rl_replace_line("", 0);
 	rl_on_new_line();
 	rl_redisplay();
+	if (g_heredoc_interrupted == 0)
+		g_heredoc_interrupted = 130;
 }
 
 /*
@@ -85,4 +87,22 @@ void	heredoc_sigint_handler(int sig)
 	(void)sig;
 	g_heredoc_interrupted = 1;
 	exit(130);
+}
+
+/*
+ * Escribe línea expandida o original al pipe según disponibilidad.
+ * Maneja la expansión de variables y escritura al heredoc.
+*/
+void	write_heredoc_line(char *line, char *expanded_line, int pipefd)
+{
+	if (expanded_line)
+	{
+		write(pipefd, expanded_line, ft_strlen(expanded_line));
+		free(expanded_line);
+	}
+	else
+	{
+		write(pipefd, line, ft_strlen(line));
+	}
+	write(pipefd, "\n", 1);
 }
